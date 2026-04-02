@@ -3,74 +3,28 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>CityByteHub — Best Gaming Zone &amp; Cyber Cafe in Sikar | Book Now</title>
- 
-  <!-- ═══════════════════════════════════════════════
-       SECURITY: Content Security Policy
-       - Allows Firebase (firestore + rtdb + auth)
-       - Allows Google Fonts
-       - Allows reCAPTCHA v3
-       - Allows gstatic (Firebase SDK CDN)
-       - Blocks all other external scripts
-       - Blocks inline event handlers (onclick etc. removed in HTML)
-       ═══════════════════════════════════════════════ -->
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    script-src  'self'
-                https://www.google.com/recaptcha/
-                https://www.gstatic.com/
-                https://www.gstatic.com/firebasejs/
-                'sha256-INLINE_SCRIPT_HASH_PLACEHOLDER';
-    style-src   'self' 'unsafe-inline' https://fonts.googleapis.com;
-    font-src    https://fonts.gstatic.com;
-    connect-src 'self'
-                https://*.googleapis.com
-                https://*.firebaseio.com
-                https://firestore.googleapis.com
-                https://identitytoolkit.googleapis.com
-                https://securetoken.googleapis.com
-                wss://*.firebaseio.com
-                https://citybytehub-dde05-default-rtdb.asia-southeast1.firebasedatabase.app;
-    img-src     'self' data: https:;
-    frame-src   https://www.google.com/recaptcha/
-                https://recaptcha.google.com/;
-    object-src  'none';
-    base-uri    'self';
-    form-action 'self';
-  "/>
-  <!-- Referrer policy to prevent leaking URL to third parties -->
-  <meta name="referrer" content="strict-origin-when-cross-origin"/>
- 
-  <meta name="description" content="CityByteHub is Sikar's premium gaming zone &amp; cyber cafe on Piprali Road. Gaming PCs, PS5, high-speed internet, printing &amp; more. Open 7AM–9PM."/>
-  <meta name="keywords"    content="gaming zone in Sikar, cyber cafe Sikar, PS5 gaming cafe Sikar, best gaming cafe Sikar, gaming PC on rent Sikar"/>
-  <meta name="robots"      content="index,follow"/>
-  <link rel="canonical"    href="https://citybytehub.in/"/>
-  <meta property="og:type"        content="website"/>
-  <meta property="og:title"       content="CityByteHub — Best Gaming Zone &amp; Cyber Cafe in Sikar"/>
-  <meta property="og:description" content="Sikar's premium gaming zone on Piprali Road. High-end PCs, PS5, fast internet, printing &amp; more. Open 7AM–9PM."/>
-  <meta property="og:url"         content="https://citybytehub.in/"/>
-  <meta property="og:image"       content="https://citybytehub.in/assets/og-image.jpg"/>
- 
-  <!-- Google Fonts -->
+  <title>CityByteHub — Best Gaming Zone & Cyber Cafe in Sikar | Book Now</title>
+  <meta name="description" content="CityByteHub is Sikar's premium gaming zone & cyber cafe on Piprali Road. Gaming PCs, PS5, high-speed internet, printing & more. Open 7AM–9PM."/>
+  <meta name="keywords" content="gaming zone in Sikar, cyber cafe Sikar, PS5 gaming cafe Sikar, best gaming cafe Sikar, gaming PC on rent Sikar"/>
+  <meta name="robots" content="index,follow"/>
+  <link rel="canonical" href="https://citybytehub.in/"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="CityByteHub — Best Gaming Zone & Cyber Cafe in Sikar"/>
+  <meta property="og:description" content="Sikar's premium gaming zone on Piprali Road. High-end PCs, PS5, fast internet, printing & more. Open 7AM–9PM."/>
+  <meta property="og:url" content="https://citybytehub.in/"/>
+  <meta property="og:image" content="https://citybytehub.in/assets/og-image.jpg"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
- 
-  <!-- reCAPTCHA v3 — invisible, no checkbox UI -->
-  <script src="https://www.google.com/recaptcha/api.js?render=6Lcb26IsAAAAAEM5QouEhfso4Arh4SvmNRFX5cKD" defer></script>
- 
   <link rel="stylesheet" href="style.css"/>
- 
-  <!-- Structured Data -->
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":["LocalBusiness","EntertainmentBusiness"],"name":"CityByteHub","description":"Premium Gaming Zone &amp; Cyber Cafe in Sikar on Piprali Road","url":"https://citybytehub.in","email":"citybytehub@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Piprali Road","addressLocality":"Sikar","addressRegion":"Rajasthan","addressCountry":"IN"},"openingHours":"Mo-Su 07:00-21:00","priceRange":"₹₹"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":["LocalBusiness","EntertainmentBusiness"],"name":"CityByteHub","description":"Premium Gaming Zone & Cyber Cafe in Sikar on Piprali Road","url":"https://citybytehub.in","email":"citybytehub@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Piprali Road","addressLocality":"Sikar","addressRegion":"Rajasthan","addressCountry":"IN"},"openingHours":"Mo-Su 07:00-21:00","priceRange":"₹₹"}</script>
 </head>
 <body>
  
 <canvas id="particle-canvas" aria-hidden="true"></canvas>
  
 <!-- ── SIDEBAR OVERLAY ── -->
-<!-- SECURITY: onclick removed — listener added in script.js -->
-<div class="sidebar-overlay" id="sidebar-overlay" role="presentation"></div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
  
 <!-- ── SIDEBAR ── -->
 <aside class="sidebar" id="sidebar" role="navigation" aria-label="Site navigation">
@@ -85,22 +39,20 @@
     <span class="status-dot"></span>
     Open Now · 7AM – 9PM
   </div>
-  <nav class="sidebar-nav" aria-label="Primary navigation">
+  <nav class="sidebar-nav">
     <div class="nav-section-label">Main</div>
-    <!-- SECURITY: onclick replaced with data-nav attributes; JS attaches listeners -->
-    <a href="#home"     class="nav-item active"  data-nav="home"    aria-current="page"><span class="nav-icon" aria-hidden="true">🏠</span> Home</a>
-    <a href="#services" class="nav-item"          data-nav="services"><span class="nav-icon" aria-hidden="true">🎮</span> Services</a>
-    <a href="#pricing"  class="nav-item"          data-nav="pricing" ><span class="nav-icon" aria-hidden="true">💰</span> Pricing</a>
-    <a href="#prime"    class="nav-item"          data-nav="prime"   ><span class="nav-icon" aria-hidden="true">⭐</span> Prime Card</a>
-    <a href="#booking"  class="nav-item"          data-nav="booking" ><span class="nav-icon" aria-hidden="true">📅</span> Book Slot</a>
-    <a href="#inquiry"  class="nav-item"          data-nav="inquiry" ><span class="nav-icon" aria-hidden="true">📞</span> Inquiry / Contact</a>
+    <a href="#home"       class="nav-item active" onclick="navTo(this,'home')">       <span class="nav-icon">🏠</span> Home</a>
+    <a href="#services"   class="nav-item" onclick="navTo(this,'services')">    <span class="nav-icon">🎮</span> Services</a>
+    <a href="#pricing"    class="nav-item" onclick="navTo(this,'pricing')">     <span class="nav-icon">💰</span> Pricing</a>
+    <a href="#prime"      class="nav-item" onclick="navTo(this,'prime')">       <span class="nav-icon">⭐</span> Prime Card</a>
+    <a href="#booking"    class="nav-item" onclick="navTo(this,'booking')">     <span class="nav-icon">📅</span> Book Slot</a>
+    <a href="#inquiry"    class="nav-item" onclick="navTo(this,'inquiry')">     <span class="nav-icon">📞</span> Inquiry / Contact</a>
     <div class="nav-section-label" style="margin-top:0.5rem">More Info</div>
-    <a href="#about"    class="nav-item"          data-nav="about"   ><span class="nav-icon" aria-hidden="true">🏢</span> About Us</a>
-    <a href="#faq"      class="nav-item"          data-nav="faq"     ><span class="nav-icon" aria-hidden="true">❓</span> FAQ</a>
-    <a href="#reviews"  class="nav-item"          data-nav="reviews" ><span class="nav-icon" aria-hidden="true">⭐</span> Reviews</a>
-    <!-- SECURITY: Admin link kept but visually hidden (screen-reader only via class) -->
-    <a href="admin.html" class="nav-item admin-link" aria-label="Staff panel" style="margin-top:0.5rem;border-top:1px solid var(--border)">
-      <span class="nav-icon" aria-hidden="true">🔐</span> <span class="admin-link-txt">Staff Panel</span>
+    <a href="#about"      class="nav-item" onclick="navTo(this,'about')">       <span class="nav-icon">🏢</span> About Us</a>
+    <a href="#faq"        class="nav-item" onclick="navTo(this,'faq')">         <span class="nav-icon">❓</span> FAQ</a>
+    <a href="#reviews"    class="nav-item" onclick="navTo(this,'reviews')">     <span class="nav-icon">⭐</span> Reviews</a>
+    <a href="admin.html"  class="nav-item" style="margin-top:0.5rem;border-top:1px solid var(--border)">
+      <span class="nav-icon">🔐</span> Staff Panel
     </a>
   </nav>
   <div class="sidebar-bottom">
@@ -116,35 +68,30 @@
 <div class="main-content">
  
   <!-- TOPBAR -->
-  <div class="topbar" role="banner">
+  <div class="topbar">
     <div class="topbar-left">
-      <!-- SECURITY: onclick removed — listener in script.js -->
-      <button class="menu-toggle" id="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
       <span class="topbar-title" id="topbar-title">Home</span>
     </div>
     <div class="topbar-right">
-      <a href="#booking" class="btn btn-primary btn-sm" data-nav="booking">📅 Book Now</a>
-      <a href="https://wa.me/918829822950?text=Hi%20CityByteHub!" target="_blank" rel="noopener noreferrer"
-         class="btn btn-green btn-sm" style="display:none" id="wa-topbar">💬 WhatsApp</a>
+      <a href="#booking" onclick="navTo(null,'booking')" class="btn btn-primary btn-sm">📅 Book Now</a>
+      <a href="https://wa.me/918829822950?text=Hi%20CityByteHub!" target="_blank" class="btn btn-green btn-sm" style="display:none" id="wa-topbar">💬 WhatsApp</a>
     </div>
   </div>
  
   <!-- ANNOUNCEMENT BAR -->
-  <!-- SECURITY: onclick on close button moved to JS -->
-  <div class="ann-bar" id="ann-bar" role="status" aria-live="polite">
-    <span class="ann-bar-icon" aria-hidden="true">📢</span>
+  <div class="ann-bar" id="ann-bar">
+    <span class="ann-bar-icon">📢</span>
     <span class="ann-bar-text" id="ann-bar-text">Loading announcement...</span>
-    <button id="ann-bar-close" aria-label="Close announcement">✕</button>
+    <button id="ann-bar-close" onclick="document.getElementById('ann-bar').style.display='none'" aria-label="Close">✕</button>
   </div>
  
-  <!-- ══════════════════════════════════
-       HOME SECTION
-  ══════════════════════════════════ -->
-  <section class="page-section active" id="sec-home" aria-label="Home">
+  <!-- ── HOME SECTION ── -->
+  <section class="page-section active" id="sec-home">
  
     <!-- HERO -->
     <div class="hero" id="home">
-      <div class="hero-bg"   aria-hidden="true"></div>
+      <div class="hero-bg" aria-hidden="true"></div>
       <div class="hero-grid" aria-hidden="true"></div>
       <div class="hero-content">
         <div class="hero-badge">📍 Piprali Road, Sikar · Rajasthan</div>
@@ -152,32 +99,32 @@
           <span class="line1">Level Up Your</span>
           <span class="line2">Gaming Experience</span>
         </h1>
-        <p class="hero-sub">Sikar's most premium gaming zone &amp; cyber cafe. High-end PCs, PS5, blazing-fast internet — all under one roof.</p>
+        <p class="hero-sub">Sikar's most premium gaming zone & cyber cafe. High-end PCs, PS5, blazing-fast internet — all under one roof.</p>
         <div class="hero-btns">
-          <a href="#booking" class="btn btn-primary btn-lg" data-nav="booking"><span aria-hidden="true">📅</span> Book a Slot</a>
-          <a href="#prime"   class="btn btn-gold btn-lg"    data-nav="prime"  ><span aria-hidden="true">⭐</span> Get Prime Card</a>
-          <a href="#pricing" class="btn btn-outline btn-lg" data-nav="pricing"><span aria-hidden="true">💰</span> View Pricing</a>
+          <a href="#booking" class="btn btn-primary btn-lg" onclick="navTo(null,'booking')"><span>📅</span> Book a Slot</a>
+          <a href="#prime"   class="btn btn-gold btn-lg"    onclick="navTo(null,'prime')"><span>⭐</span> Get Prime Card</a>
+          <a href="#pricing" class="btn btn-outline btn-lg" onclick="navTo(null,'pricing')"><span>💰</span> View Pricing</a>
         </div>
         <div class="hero-trust">
-          <span class="trust-item"><span aria-hidden="true">✅</span> Open 7AM – 9PM</span>
-          <span class="trust-item"><span aria-hidden="true">✅</span> High-Speed Internet</span>
-          <span class="trust-item"><span aria-hidden="true">✅</span> AC Room</span>
-          <span class="trust-item"><span aria-hidden="true">⭐</span> Student Prime Card</span>
+          <span class="trust-item"><span>✅</span> Open 7AM – 9PM</span>
+          <span class="trust-item"><span>✅</span> High-Speed Internet</span>
+          <span class="trust-item"><span>✅</span> AC Room</span>
+          <span class="trust-item"><span>⭐</span> Student Prime Card</span>
         </div>
       </div>
     </div>
  
     <!-- STATS STRIP -->
-    <div class="stats-strip" aria-label="Quick stats">
+    <div class="stats-strip">
       <div class="stats-row">
         <div class="stat-i">🖥️ High-End Gaming PCs</div>
-        <div class="stat-div" aria-hidden="true">|</div>
+        <div class="stat-div">|</div>
         <div class="stat-i">🎮 PS5 Available</div>
-        <div class="stat-div" aria-hidden="true">|</div>
+        <div class="stat-div">|</div>
         <div class="stat-i">⚡ Blazing-Fast Internet</div>
-        <div class="stat-div" aria-hidden="true">|</div>
+        <div class="stat-div">|</div>
         <div class="stat-i">🕐 Open 7AM – 9PM Daily</div>
-        <div class="stat-div" aria-hidden="true">|</div>
+        <div class="stat-div">|</div>
         <div class="stat-i">😊 <span id="happy-count">200</span>+ Happy Gamers</div>
       </div>
     </div>
@@ -188,94 +135,70 @@
         <div class="prime-banner-badge">⭐ NEW</div>
         <div class="prime-banner-txt">
           <h3>Student <span class="hl-gold">Prime Card</span> — Exclusive Member Benefits</h3>
-          <p>Weekly &amp; Monthly plans · Extra gaming hours · Priority booking · Special discounts</p>
+          <p>Weekly & Monthly plans · Extra gaming hours · Priority booking · Special discounts</p>
         </div>
-        <a href="#prime" class="btn btn-gold" data-nav="prime">Get Your Card →</a>
+        <a href="#prime" class="btn btn-gold" onclick="navTo(null,'prime')">Get Your Card →</a>
       </div>
     </div>
  
     <!-- SERVICES PREVIEW -->
-    <section id="services" class="section-pad" aria-label="Our services">
+    <section id="services" class="section-pad">
       <div class="container">
         <div class="sec-header">
           <div class="sec-tag">What We Offer</div>
           <h2 class="sec-title">Our <span class="hl">Services</span></h2>
-          <p class="sec-sub">Everything you need — gaming, internet, printing &amp; more, all at one place in Sikar.</p>
+          <p class="sec-sub">Everything you need — gaming, internet, printing & more, all at one place in Sikar.</p>
         </div>
         <div class="services-grid">
           <article class="svc-card reveal">
-            <span class="svc-icon" aria-hidden="true">🖥️</span>
+            <span class="svc-icon">🖥️</span>
             <h3 class="svc-name">Gaming PCs</h3>
             <p class="svc-desc">High-performance gaming rigs with latest titles. Buttery-smooth gameplay on pro-grade hardware.</p>
-            <ul class="svc-features" aria-label="Gaming PC features">
-              <li>Latest AAA Game Titles</li>
-              <li>High Refresh Rate Monitors</li>
-              <li>Mechanical Keyboards &amp; Pro Mice</li>
-            </ul>
-            <a href="#pricing" class="btn btn-outline btn-sm" data-nav="pricing">View Pricing →</a>
+            <ul class="svc-features"><li>Latest AAA Game Titles</li><li>High Refresh Rate Monitors</li><li>Mechanical Keyboards & Pro Mice</li></ul>
+            <a href="#pricing" class="btn btn-outline btn-sm" onclick="navTo(null,'pricing')">View Pricing →</a>
           </article>
           <article class="svc-card reveal reveal-d1">
-            <span class="svc-icon" aria-hidden="true">🎮</span>
+            <span class="svc-icon">🎮</span>
             <h3 class="svc-name">PS5 Gaming</h3>
-            <p class="svc-desc">Sony PlayStation 5 with latest game library. Play FIFA, God of War, Mortal Kombat &amp; more on big screen.</p>
-            <ul class="svc-features" aria-label="PS5 features">
-              <li>Latest PS5 Titles</li>
-              <li>Large Screen Display</li>
-              <li>Dual Controllers Available</li>
-            </ul>
-            <a href="#pricing" class="btn btn-outline btn-sm" data-nav="pricing">View Pricing →</a>
+            <p class="svc-desc">Sony PlayStation 5 with latest game library. Play FIFA, God of War, Mortal Kombat & more on big screen.</p>
+            <ul class="svc-features"><li>Latest PS5 Titles</li><li>Large Screen Display</li><li>Dual Controllers Available</li></ul>
+            <a href="#pricing" class="btn btn-outline btn-sm" onclick="navTo(null,'pricing')">View Pricing →</a>
           </article>
           <article class="svc-card reveal reveal-d2">
-            <span class="svc-icon" aria-hidden="true">⚡</span>
+            <span class="svc-icon">⚡</span>
             <h3 class="svc-name">High-Speed Internet</h3>
             <p class="svc-desc">Lightning-fast broadband for browsing, downloads, video calls and all your online needs.</p>
-            <ul class="svc-features" aria-label="Internet features">
-              <li>High-Speed Broadband</li>
-              <li>Private Browsing Sessions</li>
-              <li>Video Call Friendly</li>
-            </ul>
-            <a href="#pricing" class="btn btn-outline btn-sm" data-nav="pricing">View Pricing →</a>
+            <ul class="svc-features"><li>High-Speed Broadband</li><li>Private Browsing Sessions</li><li>Video Call Friendly</li></ul>
+            <a href="#pricing" class="btn btn-outline btn-sm" onclick="navTo(null,'pricing')">View Pricing →</a>
           </article>
           <article class="svc-card reveal">
-            <span class="svc-icon" aria-hidden="true">🖨️</span>
-            <h3 class="svc-name">Printing &amp; Scanning</h3>
-            <p class="svc-desc">B&amp;W and color printing, photocopying, and document scanning — quick and affordable.</p>
-            <ul class="svc-features" aria-label="Printing features">
-              <li>B&amp;W &amp; Color Printing</li>
-              <li>Document Scanning</li>
-              <li>Photocopy Service</li>
-            </ul>
-            <a href="#inquiry" class="btn btn-outline btn-sm" data-nav="inquiry">Get Quote →</a>
+            <span class="svc-icon">🖨️</span>
+            <h3 class="svc-name">Printing & Scanning</h3>
+            <p class="svc-desc">B&W and color printing, photocopying, and document scanning — quick and affordable.</p>
+            <ul class="svc-features"><li>B&W & Color Printing</li><li>Document Scanning</li><li>Photocopy Service</li></ul>
+            <a href="#inquiry" class="btn btn-outline btn-sm" onclick="navTo(null,'inquiry')">Get Quote →</a>
           </article>
           <article class="svc-card reveal reveal-d1">
-            <span class="svc-icon" aria-hidden="true">📋</span>
+            <span class="svc-icon">📋</span>
             <h3 class="svc-name">Online Form Filling</h3>
             <p class="svc-desc">Government forms, college admissions, bank forms — we help you fill and submit correctly.</p>
-            <ul class="svc-features" aria-label="Form filling features">
-              <li>Government Portals</li>
-              <li>College Admissions</li>
-              <li>Job Applications</li>
-            </ul>
-            <a href="#inquiry" class="btn btn-outline btn-sm" data-nav="inquiry">Ask Us →</a>
+            <ul class="svc-features"><li>Government Portals</li><li>College Admissions</li><li>Job Applications</li></ul>
+            <a href="#inquiry" class="btn btn-outline btn-sm" onclick="navTo(null,'inquiry')">Ask Us →</a>
           </article>
           <article class="svc-card prime-card-svc reveal reveal-d2">
-            <div class="prime-badge-svc" aria-label="Prime service">⭐ PRIME</div>
-            <span class="svc-icon" aria-hidden="true">🎓</span>
+            <div class="prime-badge-svc">⭐ PRIME</div>
+            <span class="svc-icon">🎓</span>
             <h3 class="svc-name">Student Prime Card</h3>
-            <p class="svc-desc">Exclusive membership card for students. Weekly &amp; monthly plans with extra gaming hours, priority access &amp; member rates.</p>
-            <ul class="svc-features" aria-label="Prime card features">
-              <li>Weekly &amp; Monthly Plans</li>
-              <li>Priority Seat Booking</li>
-              <li>Member-Only Discounts</li>
-            </ul>
-            <a href="#prime" class="btn btn-gold-outline btn-sm" data-nav="prime">Get Prime Card →</a>
+            <p class="svc-desc">Exclusive membership card for students. Weekly & monthly plans with extra gaming hours, priority access & member rates.</p>
+            <ul class="svc-features"><li>Weekly & Monthly Plans</li><li>Priority Seat Booking</li><li>Member-Only Discounts</li></ul>
+            <a href="#prime" class="btn btn-gold-outline btn-sm" onclick="navTo(null,'prime')">Get Prime Card →</a>
           </article>
         </div>
       </div>
     </section>
  
     <!-- PRICING SECTION -->
-    <section id="pricing" class="section-pad" style="background:var(--bg2)" aria-label="Pricing">
+    <section id="pricing" class="section-pad" style="background:var(--bg2)">
       <div class="container">
         <div class="sec-header center">
           <div class="sec-tag">Transparent Rates</div>
@@ -283,82 +206,59 @@
           <p class="sec-sub">No hidden charges. Pay only for what you use. Student discounts available.</p>
         </div>
         <div class="pricing-grid" id="pricing-grid">
+          <!-- Loaded dynamically from RTDB -->
           <article class="price-card reveal">
-            <span class="price-icon" aria-hidden="true">🖥️</span>
+            <span class="price-icon">🖥️</span>
             <h3 class="price-name">Gaming PC</h3>
-            <div class="price-amt">
-              <span class="price-cur" aria-hidden="true">₹</span>
-              <span class="price-num ask" id="pc-price">Ask Us</span>
-              <span class="price-per">/hr</span>
-            </div>
-            <ul class="price-feats" aria-label="Gaming PC pricing features">
-              <li>✓ High-Performance Rig</li>
-              <li>✓ All Popular Games</li>
-              <li>✓ Headset Included</li>
-              <li>✓ Mechanical Keyboard</li>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="pc-price">Ask Us</span><span class="price-per">/hr</span></div>
+            <ul class="price-feats">
+              <li>✓ High-Performance Rig</li><li>✓ All Popular Games</li>
+              <li>✓ Headset Included</li><li>✓ Mechanical Keyboard</li>
             </ul>
-            <a href="#booking" class="btn btn-outline btn-block" data-nav="booking">Book Now</a>
+            <a href="#booking" class="btn btn-outline btn-block" onclick="navTo(null,'booking')">Book Now</a>
           </article>
           <article class="price-card popular reveal reveal-d1">
             <div class="pop-badge">⭐ Most Popular</div>
-            <span class="price-icon" aria-hidden="true">🎮</span>
+            <span class="price-icon">🎮</span>
             <h3 class="price-name">PS5 Gaming</h3>
-            <div class="price-amt">
-              <span class="price-cur" aria-hidden="true">₹</span>
-              <span class="price-num ask" id="ps5-price">Ask Us</span>
-              <span class="price-per">/hr</span>
-            </div>
-            <ul class="price-feats" aria-label="PS5 pricing features">
-              <li>✓ PlayStation 5 Console</li>
-              <li>✓ Big Screen Display</li>
-              <li>✓ Latest Game Library</li>
-              <li>✓ 2 Controllers</li>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="ps5-price">Ask Us</span><span class="price-per">/hr</span></div>
+            <ul class="price-feats">
+              <li>✓ PlayStation 5 Console</li><li>✓ Big Screen Display</li>
+              <li>✓ Latest Game Library</li><li>✓ 2 Controllers</li>
             </ul>
-            <a href="#booking" class="btn btn-primary btn-block" data-nav="booking">Book Now</a>
+            <a href="#booking" class="btn btn-primary btn-block" onclick="navTo(null,'booking')">Book Now</a>
           </article>
           <article class="price-card reveal reveal-d2">
-            <span class="price-icon" aria-hidden="true">🌐</span>
+            <span class="price-icon">🌐</span>
             <h3 class="price-name">Internet / Browsing</h3>
-            <div class="price-amt">
-              <span class="price-cur" aria-hidden="true">₹</span>
-              <span class="price-num ask" id="net-price">Ask Us</span>
-              <span class="price-per">/hr</span>
-            </div>
-            <ul class="price-feats" aria-label="Internet pricing features">
-              <li>✓ High-Speed Broadband</li>
-              <li>✓ Private Session</li>
-              <li>✓ Print/Scan Add-on Available</li>
-              <li>✓ Form Filling Support</li>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="net-price">Ask Us</span><span class="price-per">/hr</span></div>
+            <ul class="price-feats">
+              <li>✓ High-Speed Broadband</li><li>✓ Private Session</li>
+              <li>✓ Print/Scan Add-on Available</li><li>✓ Form Filling Support</li>
             </ul>
-            <a href="#booking" class="btn btn-outline btn-block" data-nav="booking">Book Now</a>
+            <a href="#booking" class="btn btn-outline btn-block" onclick="navTo(null,'booking')">Book Now</a>
           </article>
           <article class="price-card prime reveal">
             <div class="prime-badge-pc">🎓 PRIME CARD</div>
-            <span class="price-icon" aria-hidden="true">⭐</span>
+            <span class="price-icon">⭐</span>
             <h3 class="price-name">Student Prime</h3>
-            <div class="price-amt">
-              <span class="price-cur" aria-hidden="true">₹</span>
-              <span class="price-num ask" id="prime-price">Ask Us</span>
-              <span class="price-per">/week</span>
-            </div>
-            <ul class="price-feats" aria-label="Prime card pricing features">
-              <li>✓ Weekly &amp; Monthly Plans</li>
-              <li>✓ Bonus Gaming Hours</li>
-              <li>✓ Priority Booking</li>
-              <li>✓ Exclusive Member Rates</li>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="prime-price">Ask Us</span><span class="price-per">/week</span></div>
+            <ul class="price-feats">
+              <li>✓ Weekly & Monthly Plans</li><li>✓ Bonus Gaming Hours</li>
+              <li>✓ Priority Booking</li><li>✓ Exclusive Member Rates</li>
             </ul>
-            <a href="#prime" class="btn btn-gold btn-block" data-nav="prime">Get Prime Card</a>
+            <a href="#prime" class="btn btn-gold btn-block" onclick="navTo(null,'prime')">Get Prime Card</a>
           </article>
         </div>
         <div class="price-note" style="margin-top:1.5rem">
-          <span aria-hidden="true">💡</span>
-          <span>Prices may vary based on packages &amp; duration. <strong>Student discounts</strong> available with valid ID. <a href="#prime" style="color:var(--gold)" data-nav="prime">Get Prime Card</a> for best rates!</span>
+          <span>💡</span>
+          <span>Prices may vary based on packages & duration. <strong>Student discounts</strong> available with valid ID. <a href="#prime" style="color:var(--gold)" onclick="navTo(null,'prime')">Get Prime Card</a> for best rates!</span>
         </div>
       </div>
     </section>
  
     <!-- WHY US -->
-    <section id="why-us" class="section-pad" aria-label="Why choose us">
+    <section id="why-us" class="section-pad">
       <div class="container">
         <div class="sec-header center">
           <div class="sec-tag">Why CityByteHub?</div>
@@ -366,31 +266,30 @@
           <p class="sec-sub">We're not just another cyber cafe. We're a premium gaming experience built for serious players and everyday users.</p>
         </div>
         <div class="why-grid">
-          <div class="why-card reveal"><span class="why-icon" aria-hidden="true">⚡</span><h3>Blazing Fast Internet</h3><p>High-speed broadband ensures zero lag during gaming, downloads or video calls.</p></div>
-          <div class="why-card reveal reveal-d1"><span class="why-icon" aria-hidden="true">❄️</span><h3>AC Comfort</h3><p>Fully air-conditioned space so you game in comfort even on the hottest Rajasthan days.</p></div>
-          <div class="why-card reveal reveal-d2"><span class="why-icon" aria-hidden="true">🎯</span><h3>Pro Gaming Setup</h3><p>High-end PCs, mechanical keyboards, gaming mice, and high-refresh monitors.</p></div>
-          <div class="why-card reveal"><span class="why-icon" aria-hidden="true">📍</span><h3>Prime Location</h3><p>Conveniently located on Piprali Road, Sikar — easy to reach from anywhere in the city.</p></div>
-          <div class="why-card reveal reveal-d1"><span class="why-icon" aria-hidden="true">🤝</span><h3>Friendly Staff</h3><p>Our team includes a dedicated tech expert and support staff — always ready to help.</p></div>
-          <div class="why-card reveal reveal-d2"><span class="why-icon" aria-hidden="true">🎓</span><h3>Student Friendly</h3><p>Special discounts for students. <a href="#prime" style="color:var(--gold)" data-nav="prime">Get Prime Card →</a></p></div>
+          <div class="why-card reveal"><span class="why-icon">⚡</span><h3>Blazing Fast Internet</h3><p>High-speed broadband ensures zero lag during gaming, downloads or video calls.</p></div>
+          <div class="why-card reveal reveal-d1"><span class="why-icon">❄️</span><h3>AC Comfort</h3><p>Fully air-conditioned space so you game in comfort even on the hottest Rajasthan days.</p></div>
+          <div class="why-card reveal reveal-d2"><span class="why-icon">🎯</span><h3>Pro Gaming Setup</h3><p>High-end PCs, mechanical keyboards, gaming mice, and high-refresh monitors.</p></div>
+          <div class="why-card reveal"><span class="why-icon">📍</span><h3>Prime Location</h3><p>Conveniently located on Piprali Road, Sikar — easy to reach from anywhere in the city.</p></div>
+          <div class="why-card reveal reveal-d1"><span class="why-icon">🤝</span><h3>Friendly Staff</h3><p>Our team includes a dedicated tech expert and support staff — always ready to help.</p></div>
+          <div class="why-card reveal reveal-d2"><span class="why-icon">🎓</span><h3>Student Friendly</h3><p>Special discounts for students. <a href="#prime" style="color:var(--gold)" onclick="navTo(null,'prime')">Get Prime Card →</a></p></div>
         </div>
       </div>
     </section>
  
   </section><!-- end #sec-home -->
  
-  <!-- ══════════════════════════════════
-       PRIME CARD SECTION
-  ══════════════════════════════════ -->
-  <section class="page-section" id="sec-prime" aria-label="Prime card">
+  <!-- ── PRIME CARD SECTION ── -->
+  <section class="page-section" id="sec-prime">
     <div class="prime-hero">
       <div class="container">
         <div class="sec-tag">Exclusive Membership</div>
         <h2 class="sec-title">Student <span class="hl-gold">Prime Card</span></h2>
-        <p class="sec-sub" style="color:var(--txt2);margin-top:0.5rem">Weekly &amp; Monthly membership with exclusive gaming hours, priority seats, and member-only rates.</p>
+        <p class="sec-sub" style="color:var(--txt2);margin-top:0.5rem">Weekly & Monthly membership with exclusive gaming hours, priority seats, and member-only rates.</p>
       </div>
     </div>
     <div class="container section-pad">
  
+      <!-- PLAN TOGGLE + CARD PREVIEW + FORM -->
       <div id="prime" class="card-preview-wrap">
  
         <!-- LEFT: Card Preview -->
@@ -398,17 +297,17 @@
           <div class="sec-header">
             <div class="sec-tag">Preview Your Card</div>
             <h3 class="sec-title" style="font-size:1.4rem">How It <span class="hl">Looks</span></h3>
-            <p style="font-size:0.82rem;color:var(--muted);font-family:var(--font-alt);margin-top:0.25rem">This is a demo preview. Your actual card will have your name &amp; unique ID.</p>
+            <p style="font-size:0.82rem;color:var(--muted);font-family:var(--font-alt);margin-top:0.25rem">This is a demo preview. Your actual card will have your name & unique ID.</p>
           </div>
  
-          <!-- Plan switcher — onclick replaced with data-plan, JS binds it -->
-          <div class="plan-toggle" style="margin-bottom:1.25rem" role="group" aria-label="Card plan preview">
-            <button class="plan-btn weekly active" data-plan="weekly"  aria-pressed="true" >📅 Weekly</button>
-            <button class="plan-btn monthly"        data-plan="monthly" aria-pressed="false">📆 Monthly</button>
+          <!-- Plan switcher for preview -->
+          <div class="plan-toggle" style="margin-bottom:1.25rem">
+            <button class="plan-btn weekly active" onclick="switchCardPreview('weekly',this)">📅 Weekly</button>
+            <button class="plan-btn monthly" onclick="switchCardPreview('monthly',this)">📆 Monthly</button>
           </div>
  
           <!-- WEEKLY CARD PREVIEW -->
-          <div id="card-preview-weekly" class="prime-card-visual weekly" aria-label="Weekly prime card preview">
+          <div id="card-preview-weekly" class="prime-card-visual weekly">
             <div class="card-top">
               <div>
                 <div class="card-logo-txt">CITYBYTEHUB</div>
@@ -433,13 +332,13 @@
                 <div class="card-expiry-val" id="prev-w-bal">-- hrs</div>
               </div>
               <div style="text-align:right">
-                <div class="card-wolf" aria-hidden="true">🐺</div>
+                <div class="card-wolf">🐺</div>
               </div>
             </div>
           </div>
  
           <!-- MONTHLY CARD PREVIEW -->
-          <div id="card-preview-monthly" class="prime-card-visual monthly" style="display:none" aria-label="Monthly prime card preview">
+          <div id="card-preview-monthly" class="prime-card-visual monthly" style="display:none">
             <div class="card-top">
               <div>
                 <div class="card-logo-txt">CITYBYTEHUB</div>
@@ -464,7 +363,7 @@
                 <div class="card-expiry-val" id="prev-m-bal">-- hrs</div>
               </div>
               <div style="text-align:right">
-                <div class="card-wolf" aria-hidden="true">👑</div>
+                <div class="card-wolf">👑</div>
               </div>
             </div>
           </div>
@@ -472,23 +371,23 @@
           <!-- OFFERS & BENEFITS -->
           <div style="margin-top:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem">
             <div style="font-family:var(--font-h);font-size:0.78rem;color:var(--white);margin-bottom:0.9rem;letter-spacing:0.04em">🎁 MEMBER BENEFITS</div>
-            <div id="plan-benefits-weekly" aria-live="polite">
+            <div id="plan-benefits-weekly">
               <div style="display:flex;flex-direction:column;gap:0.5rem">
-                <div class="benefit-row"><span style="color:var(--cyan)" aria-hidden="true">✓</span> <span>Extra gaming hours bonus</span></div>
-                <div class="benefit-row"><span style="color:var(--cyan)" aria-hidden="true">✓</span> <span>Priority seat booking</span></div>
-                <div class="benefit-row"><span style="color:var(--cyan)" aria-hidden="true">✓</span> <span>Member-only pricing</span></div>
-                <div class="benefit-row"><span style="color:var(--cyan)" aria-hidden="true">✓</span> <span>Free 1 print/day</span></div>
-                <div class="benefit-row"><span style="color:var(--cyan)" aria-hidden="true">✓</span> <span>Valid for 7 days</span></div>
+                <div class="benefit-row"><span style="color:var(--cyan)">✓</span> <span>Extra gaming hours bonus</span></div>
+                <div class="benefit-row"><span style="color:var(--cyan)">✓</span> <span>Priority seat booking</span></div>
+                <div class="benefit-row"><span style="color:var(--cyan)">✓</span> <span>Member-only pricing</span></div>
+                <div class="benefit-row"><span style="color:var(--cyan)">✓</span> <span>Free 1 print/day</span></div>
+                <div class="benefit-row"><span style="color:var(--cyan)">✓</span> <span>Valid for 7 days</span></div>
               </div>
             </div>
             <div id="plan-benefits-monthly" style="display:none">
               <div style="display:flex;flex-direction:column;gap:0.5rem">
-                <div class="benefit-row"><span style="color:var(--gold)" aria-hidden="true">✓</span> <span>Max bonus gaming hours</span></div>
-                <div class="benefit-row"><span style="color:var(--gold)" aria-hidden="true">✓</span> <span>Priority seat + advance booking</span></div>
-                <div class="benefit-row"><span style="color:var(--gold)" aria-hidden="true">✓</span> <span>Best member-only pricing</span></div>
-                <div class="benefit-row"><span style="color:var(--gold)" aria-hidden="true">✓</span> <span>Free 3 prints/day</span></div>
-                <div class="benefit-row"><span style="color:var(--gold)" aria-hidden="true">✓</span> <span>Valid for 30 days</span></div>
-                <div class="benefit-row"><span style="color:var(--gold)" aria-hidden="true">✓</span> <span>PS5 priority slot</span></div>
+                <div class="benefit-row"><span style="color:var(--gold)">✓</span> <span>Max bonus gaming hours</span></div>
+                <div class="benefit-row"><span style="color:var(--gold)">✓</span> <span>Priority seat + advance booking</span></div>
+                <div class="benefit-row"><span style="color:var(--gold)">✓</span> <span>Best member-only pricing</span></div>
+                <div class="benefit-row"><span style="color:var(--gold)">✓</span> <span>Free 3 prints/day</span></div>
+                <div class="benefit-row"><span style="color:var(--gold)">✓</span> <span>Valid for 30 days</span></div>
+                <div class="benefit-row"><span style="color:var(--gold)">✓</span> <span>PS5 priority slot</span></div>
               </div>
             </div>
             <div style="margin-top:0.9rem;padding-top:0.75rem;border-top:1px solid var(--border);font-size:0.72rem;color:var(--muted);font-family:var(--font-alt)">
@@ -505,44 +404,30 @@
             <p style="font-size:0.82rem;color:var(--muted);font-family:var(--font-alt);margin-top:0.25rem">Fill the form — our staff will review and activate your card after payment.</p>
           </div>
  
-          <!-- Plan toggle — onclick removed, JS handles via data-plan-form -->
-          <div class="plan-toggle" id="form-plan-toggle" role="group" aria-label="Choose plan">
-            <button class="plan-btn weekly active" id="form-weekly-btn"  data-plan-form="weekly"  aria-pressed="true" >📅 Weekly Plan</button>
-            <button class="plan-btn monthly"        id="form-monthly-btn" data-plan-form="monthly" aria-pressed="false">📆 Monthly Plan</button>
+          <div class="plan-toggle" id="form-plan-toggle">
+            <button class="plan-btn weekly active" id="form-weekly-btn" onclick="setFormPlan('weekly')">📅 Weekly Plan</button>
+            <button class="plan-btn monthly" id="form-monthly-btn" onclick="setFormPlan('monthly')">📆 Monthly Plan</button>
           </div>
           <input type="hidden" id="selected-plan" value="weekly"/>
  
-          <div class="form-wrap" role="form" aria-label="Prime card application form">
+          <div class="form-wrap">
             <div class="form-group">
-              <label for="prime-name">Full Name <span aria-label="required">*</span></label>
-              <input type="text" id="prime-name" name="prime-name" class="fi"
-                     placeholder="Apna poora naam daalo"
-                     required minlength="2" maxlength="80"
-                     autocomplete="name"
-                     aria-required="true" aria-describedby="prime-name-err"/>
-              <span class="field-err" id="prime-name-err" role="alert" aria-live="polite"></span>
+              <label>Full Name *</label>
+              <input type="text" id="prime-name" class="fi" placeholder="Apna poora naam daalo" oninput="updateCardPreview()"/>
+              <span class="field-err" id="prime-name-err"></span>
             </div>
             <div class="form-group">
-              <label for="prime-phone">Phone Number <span aria-label="required">*</span></label>
-              <input type="tel" id="prime-phone" name="prime-phone" class="fi"
-                     placeholder="10-digit mobile number"
-                     required maxlength="10" pattern="[6-9][0-9]{9}"
-                     inputmode="numeric" autocomplete="tel"
-                     aria-required="true" aria-describedby="prime-phone-err"
-                     title="Enter a valid 10-digit Indian mobile number"/>
-              <span class="field-err" id="prime-phone-err" role="alert" aria-live="polite"></span>
+              <label>Phone Number *</label>
+              <input type="tel" id="prime-phone" class="fi" placeholder="10-digit mobile number"/>
+              <span class="field-err" id="prime-phone-err"></span>
             </div>
             <div class="form-group">
-              <label for="prime-college">College / School <span style="color:var(--muted);font-size:0.7rem">(Optional)</span></label>
-              <input type="text" id="prime-college" name="prime-college" class="fi"
-                     placeholder="Your institution name"
-                     maxlength="120" autocomplete="organization"/>
+              <label>College / School (Optional)</label>
+              <input type="text" id="prime-college" class="fi" placeholder="Your institution name"/>
             </div>
             <div class="form-group">
-              <label for="prime-note">Note / Special Request <span style="color:var(--muted);font-size:0.7rem">(Optional)</span></label>
-              <textarea id="prime-note" name="prime-note" class="fi" rows="2"
-                        placeholder="Koi special request ho to batao..."
-                        maxlength="400"></textarea>
+              <label>Note / Special Request (Optional)</label>
+              <textarea id="prime-note" class="fi" rows="2" placeholder="Koi special request ho to batao..."></textarea>
             </div>
  
             <!-- Offer section -->
@@ -553,38 +438,30 @@
               </div>
             </div>
  
-            <!-- SECURITY: onclick removed — JS listener attached -->
-            <button class="btn btn-gold btn-block" id="prime-apply-btn" type="button">
+            <button class="btn btn-gold btn-block" id="prime-apply-btn" onclick="submitPrimeApplication()">
               <span id="prime-apply-txt">⭐ Apply for Prime Card</span>
-              <span id="prime-apply-load" style="display:none" aria-live="polite">Sending...</span>
+              <span id="prime-apply-load" style="display:none">Sending...</span>
             </button>
-            <div class="form-success" id="prime-ok" style="display:none" role="status" aria-live="polite"></div>
-            <div class="form-err"     id="prime-err"                      role="alert"  aria-live="assertive"></div>
+            <div class="form-success" id="prime-ok" style="display:none"></div>
+            <div class="form-err" id="prime-err"></div>
           </div>
  
-          <!-- Status checker -->
+          <!-- Already a member? Lookup -->
           <div style="margin-top:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem">
             <div style="font-family:var(--font-h);font-size:0.78rem;color:var(--white);margin-bottom:0.9rem;letter-spacing:0.04em">🔍 CHECK YOUR CARD STATUS</div>
             <div style="display:flex;gap:0.5rem">
-              <label for="card-check-input" class="sr-only">Card number or phone number</label>
-              <input type="text" id="card-check-input" name="card-check-input" class="fi"
-                     style="margin-bottom:0" placeholder="Card number ya phone number"
-                     maxlength="20" autocomplete="off" aria-label="Card number or phone number"/>
-              <!-- SECURITY: onclick removed — JS listener -->
-              <button class="btn btn-outline" id="card-check-btn" type="button" style="white-space:nowrap">Check</button>
+              <input type="text" id="card-check-input" class="fi" style="margin-bottom:0" placeholder="Card number ya phone number"/>
+              <button class="btn btn-outline" onclick="checkCardStatus()" style="white-space:nowrap">Check</button>
             </div>
-            <div id="card-check-result" style="margin-top:0.75rem;font-size:0.82rem;font-family:var(--font-alt);display:none"
-                 role="status" aria-live="polite"></div>
+            <div id="card-check-result" style="margin-top:0.75rem;font-size:0.82rem;font-family:var(--font-alt);display:none"></div>
           </div>
         </div>
       </div>
     </div>
   </section>
  
-  <!-- ══════════════════════════════════
-       BOOKING SECTION
-  ══════════════════════════════════ -->
-  <section class="page-section" id="sec-booking" aria-label="Slot booking">
+  <!-- ── BOOKING SECTION ── -->
+  <section class="page-section" id="sec-booking">
     <div style="padding:3rem 1.5rem 1rem">
       <div class="container">
         <div class="sec-tag">Reserve Your Seat</div>
@@ -599,7 +476,7 @@
               <div class="avail-row"><span class="avail-label">🎮 PS5 Consoles</span><span class="avail-val" id="avail-ps5" style="color:var(--green)">2 consoles</span></div>
               <div class="avail-row"><span class="avail-label">🌐 Internet Seats</span><span class="avail-val" id="avail-net">Available</span></div>
               <div class="avail-row"><span class="avail-label">🕐 Open Hours</span><span class="avail-val">7:00 AM – 9:00 PM</span></div>
-              <div id="slot-availability" style="margin-top:0.5rem" aria-live="polite"></div>
+              <div id="slot-availability" style="margin-top:0.5rem"></div>
             </div>
             <div class="booking-info reveal" style="background:var(--card2)">
               <div style="font-family:var(--font-h);font-size:0.8rem;color:var(--gold);margin-bottom:0.9rem;letter-spacing:0.06em">💡 BOOKING TIPS</div>
@@ -614,51 +491,39 @@
             </div>
           </div>
           <!-- Booking Form -->
-          <div class="form-wrap reveal" role="form" aria-label="Booking form">
+          <div class="form-wrap reveal">
             <div class="form-title">📅 Advance Slot Booking</div>
             <div class="form-group">
-              <label for="bk-name">Full Name <span aria-label="required">*</span></label>
-              <input type="text" id="bk-name" name="bk-name" class="fi"
-                     placeholder="Your full name"
-                     required minlength="2" maxlength="80"
-                     autocomplete="name"
-                     aria-required="true" aria-describedby="bk-name-err"/>
-              <span class="field-err" id="bk-name-err" role="alert" aria-live="polite"></span>
+              <label>Full Name *</label>
+              <input type="text" id="bk-name" class="fi" placeholder="Your full name"/>
+              <span class="field-err" id="bk-name-err"></span>
             </div>
             <div class="form-group">
-              <label for="bk-phone">Phone Number <span aria-label="required">*</span></label>
-              <input type="tel" id="bk-phone" name="bk-phone" class="fi"
-                     placeholder="10-digit mobile number"
-                     required maxlength="10" pattern="[6-9][0-9]{9}"
-                     inputmode="numeric" autocomplete="tel"
-                     aria-required="true" aria-describedby="bk-phone-err"
-                     title="Enter a valid 10-digit Indian mobile number"/>
-              <span class="field-err" id="bk-phone-err" role="alert" aria-live="polite"></span>
+              <label>Phone Number *</label>
+              <input type="tel" id="bk-phone" class="fi" placeholder="10-digit mobile number"/>
+              <span class="field-err" id="bk-phone-err"></span>
             </div>
             <div class="form-group">
-              <label for="bk-service">Service <span aria-label="required">*</span></label>
-              <select id="bk-service" name="bk-service" class="fi"
-                      required aria-required="true" aria-describedby="bk-service-err">
+              <label>Service *</label>
+              <select id="bk-service" class="fi">
                 <option value="">-- Select Service --</option>
                 <option value="gaming-pc">🖥️ Gaming PC</option>
                 <option value="ps5">🎮 PS5 Gaming</option>
                 <option value="internet">🌐 Internet / Browsing</option>
-                <option value="printing">🖨️ Printing &amp; Scanning</option>
+                <option value="printing">🖨️ Printing & Scanning</option>
                 <option value="form-filling">📋 Online Form Filling</option>
                 <option value="other">🔧 Other</option>
               </select>
-              <span class="field-err" id="bk-service-err" role="alert" aria-live="polite"></span>
+              <span class="field-err" id="bk-service-err"></span>
             </div>
             <div class="form-group">
-              <label for="bk-date">Preferred Date <span aria-label="required">*</span> <small id="bk-date-hint" style="color:var(--cyan);font-family:var(--font-alt)"></small></label>
-              <input type="date" id="bk-date" name="bk-date" class="fi"
-                     required aria-required="true" aria-describedby="bk-date-err"/>
-              <span class="field-err" id="bk-date-err" role="alert" aria-live="polite"></span>
+              <label>Preferred Date * <small id="bk-date-hint" style="color:var(--cyan);font-family:var(--font-alt)"></small></label>
+              <input type="date" id="bk-date" class="fi"/>
+              <span class="field-err" id="bk-date-err"></span>
             </div>
             <div class="form-group">
-              <label for="bk-time">Preferred Time <span aria-label="required">*</span></label>
-              <select id="bk-time" name="bk-time" class="fi"
-                      required aria-required="true" aria-describedby="bk-time-err">
+              <label>Preferred Time *</label>
+              <select id="bk-time" class="fi">
                 <option value="">-- Select Time Slot --</option>
                 <option value="07:00">7:00 AM – 8:00 AM</option>
                 <option value="08:00">8:00 AM – 9:00 AM</option>
@@ -675,11 +540,11 @@
                 <option value="19:00">7:00 PM – 8:00 PM</option>
                 <option value="20:00">8:00 PM – 9:00 PM</option>
               </select>
-              <span class="field-err" id="bk-time-err" role="alert" aria-live="polite"></span>
+              <span class="field-err" id="bk-time-err"></span>
             </div>
             <div class="form-group">
-              <label for="bk-duration">Duration</label>
-              <select id="bk-duration" name="bk-duration" class="fi">
+              <label>Duration</label>
+              <select id="bk-duration" class="fi">
                 <option value="1">1 Hour</option>
                 <option value="2">2 Hours</option>
                 <option value="3">3 Hours</option>
@@ -687,19 +552,15 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="bk-card">Prime Card Number <span style="color:var(--muted);font-size:0.7rem">(Optional)</span></label>
-              <input type="text" id="bk-card" name="bk-card" class="fi"
-                     placeholder="If you have a prime card"
-                     maxlength="30" autocomplete="off"/>
+              <label>Prime Card Number (Optional)</label>
+              <input type="text" id="bk-card" class="fi" placeholder="If you have a prime card"/>
             </div>
             <div class="form-group">
-              <label for="bk-note">Special Request</label>
-              <textarea id="bk-note" name="bk-note" class="fi" rows="2"
-                        placeholder="Koi special request ho to batao..."
-                        maxlength="400"></textarea>
+              <label>Special Request</label>
+              <textarea id="bk-note" class="fi" rows="2" placeholder="Koi special request ho to batao..."></textarea>
             </div>
-            <!-- Payment info box — shows for advance bookings -->
-            <div id="bk-payment-box" style="display:none;background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:var(--r);padding:1rem;margin-bottom:1rem" role="note">
+            <!-- Payment box — shows for advance bookings -->
+            <div id="bk-payment-box" style="display:none;background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:var(--r);padding:1rem;margin-bottom:1rem">
               <div style="font-family:var(--font-h);font-size:0.75rem;color:var(--gold);margin-bottom:0.5rem;letter-spacing:0.05em">💳 ADVANCE BOOKING — PAYMENT REQUIRED</div>
               <p style="font-size:0.82rem;color:var(--txt2);font-family:var(--font-alt);line-height:1.7">
                 Kal ki booking ke liye <strong style="color:var(--gold)">advance payment</strong> karni hogi.<br>
@@ -708,17 +569,16 @@
                 <span style="font-size:0.75rem;color:var(--muted)">Payment ke baad hum booking confirm karenge.</span>
               </p>
             </div>
-            <!-- SECURITY: onclick removed — JS listener -->
-            <button class="btn btn-primary btn-block" id="bk-btn" type="button">
+            <button class="btn btn-primary btn-block" id="bk-btn" onclick="submitBooking()">
               <span id="bk-txt">📅 Confirm Booking</span>
-              <span id="bk-load" style="display:none" aria-live="polite">Checking availability...</span>
+              <span id="bk-load" style="display:none">Checking availability...</span>
             </button>
-            <div class="form-success" id="bk-ok"  style="display:none" role="status" aria-live="polite"></div>
-            <div class="form-err"     id="bk-err"  style="display:none" role="alert"  aria-live="assertive"></div>
+            <div class="form-success" id="bk-ok" style="display:none"></div>
+            <div class="form-err" id="bk-err" style="display:none"></div>
           </div>
         </div>
  
-        <!-- BOOKING STATUS CHECKER -->
+        <!-- ── BOOKING STATUS CHECKER ── -->
         <div style="margin-top:2.5rem;background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:1.75rem">
           <div class="sec-tag" style="margin-bottom:0.5rem">Booking Track Karo</div>
           <h3 style="font-family:var(--font-h);font-size:1.1rem;color:var(--white);margin-bottom:0.4rem">🔍 Apni Booking Check Karo</h3>
@@ -726,18 +586,15 @@
             Booking ke baad jo <strong style="color:var(--cyan)">5-digit code</strong> mila tha — woh daalo aur apni booking ka status dekho.
           </p>
           <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem">
-            <label for="bk-track-input" class="sr-only">5-digit booking code</label>
-            <input type="text" id="bk-track-input" name="bk-track-input" class="fi"
+            <input type="text" id="bk-track-input" class="fi"
               style="flex:1;min-width:200px;margin-bottom:0;text-transform:uppercase;letter-spacing:0.1em;font-family:var(--font-h);font-size:1rem"
               placeholder="e.g. 48291" maxlength="5"
-              inputmode="numeric" autocomplete="off"
-              aria-label="5-digit booking code"/>
-            <!-- SECURITY: onclick removed — JS listener -->
-            <button class="btn btn-primary" id="bk-track-btn" type="button" style="min-width:120px">
+              onkeydown="if(event.key==='Enter') checkBookingStatus()" />
+            <button class="btn btn-primary" onclick="checkBookingStatus()" style="min-width:120px">
               🔍 Check Status
             </button>
           </div>
-          <div id="bk-track-result" style="display:none" role="status" aria-live="polite"></div>
+          <div id="bk-track-result" style="display:none"></div>
  
           <!-- Instructions -->
           <div style="background:var(--bg3);border-radius:var(--r2);padding:1rem;margin-top:1rem;border:1px solid var(--border)">
@@ -752,7 +609,7 @@
                 <span style="color:var(--green);font-weight:600">✅ Confirmed</span> — Booking pakki! Aao enjoy karo 🎮<br>
                 <span style="color:var(--danger);font-weight:600">❌ Rejected</span> — Slot full tha. Doosra time book karo ya call karo
               </div>
-              <div style="margin-top:0.5rem">5️⃣ Koi problem ho toh seedha WhatsApp: <a href="https://wa.me/918829822950" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);font-weight:600">8829822950</a></div>
+              <div style="margin-top:0.5rem">5️⃣ Koi problem ho toh seedha WhatsApp: <a href="https://wa.me/918829822950" style="color:var(--cyan);font-weight:600">8829822950</a></div>
             </div>
           </div>
         </div>
@@ -761,60 +618,48 @@
     </div>
   </section>
  
-  <!-- ══════════════════════════════════
-       INQUIRY SECTION
-  ══════════════════════════════════ -->
-  <section class="page-section" id="sec-inquiry" aria-label="Inquiry and contact">
+  <!-- ── INQUIRY SECTION ── -->
+  <section class="page-section" id="sec-inquiry">
     <div style="padding:3rem 1.5rem">
       <div class="container">
         <div class="sec-tag">Get In Touch</div>
-        <h2 class="sec-title">Contact &amp; <span class="hl">Inquiry</span></h2>
+        <h2 class="sec-title">Contact & <span class="hl">Inquiry</span></h2>
         <p class="sec-sub" style="margin-bottom:2rem">Koi bhi sawaal ho — naam, number aur reason bhejo. Hum call karke sab manage kar lenge.</p>
         <div class="contact-grid">
           <div>
             <div class="info-cards">
-              <div class="info-card reveal"><span class="info-icon" aria-hidden="true">📍</span><div><h4>Location</h4><p>Piprali Road, Sikar, Rajasthan</p></div></div>
-              <div class="info-card reveal"><span class="info-icon" aria-hidden="true">📧</span><div><h4>Email</h4><a href="mailto:citybytehub@gmail.com">citybytehub@gmail.com</a></div></div>
-              <div class="info-card reveal"><span class="info-icon" aria-hidden="true">⏰</span><div><h4>Timings</h4><p>Mon – Sun: 7:00 AM – 9:00 PM</p></div></div>
+              <div class="info-card reveal"><span class="info-icon">📍</span><div><h4>Location</h4><p>Piprali Road, Sikar, Rajasthan</p></div></div>
+              <div class="info-card reveal"><span class="info-icon">📧</span><div><h4>Email</h4><a href="mailto:citybytehub@gmail.com">citybytehub@gmail.com</a></div></div>
+              <div class="info-card reveal"><span class="info-icon">⏰</span><div><h4>Timings</h4><p>Mon – Sun: 7:00 AM – 9:00 PM</p></div></div>
             </div>
             <div style="margin-top:0.75rem">
-              <a href="https://wa.me/918829822950?text=Hi%20CityByteHub%2C%20I%20want%20to%20enquire!" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-block">💬 Chat on WhatsApp</a>
+              <a href="https://wa.me/918829822950?text=Hi%20CityByteHub%2C%20I%20want%20to%20enquire!" target="_blank" class="btn btn-whatsapp btn-block">💬 Chat on WhatsApp</a>
             </div>
             <div class="map-box reveal" style="margin-top:0.75rem">
               <div class="map-inner">
-                <div class="map-pin" aria-hidden="true">📍</div>
+                <div class="map-pin">📍</div>
                 <p>CityByteHub</p>
                 <p class="sub">Piprali Road, Sikar</p>
-                <a href="https://maps.google.com/?q=CityByteHub+Sikar+Piprali+Road" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">Open in Google Maps</a>
+                <a href="https://maps.google.com/?q=CityByteHub+Sikar+Piprali+Road" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Open in Google Maps</a>
               </div>
             </div>
           </div>
-          <div class="form-wrap reveal" role="form" aria-label="Send inquiry form">
+          <div class="form-wrap reveal">
             <div class="form-title">📞 Send Inquiry</div>
             <p style="font-size:0.82rem;color:var(--muted);font-family:var(--font-alt);margin-bottom:1.25rem">Apna naam, number aur reason daalo — hum aapko call karenge.</p>
             <div class="form-group">
-              <label for="inq-name">Full Name <span aria-label="required">*</span></label>
-              <input type="text" id="inq-name" name="inq-name" class="fi"
-                     placeholder="Your full name"
-                     required minlength="2" maxlength="80"
-                     autocomplete="name"
-                     aria-required="true" aria-describedby="inq-name-err"/>
-              <span class="field-err" id="inq-name-err" role="alert" aria-live="polite"></span>
+              <label>Full Name *</label>
+              <input type="text" id="inq-name" class="fi" placeholder="Your full name"/>
+              <span class="field-err" id="inq-name-err"></span>
             </div>
             <div class="form-group">
-              <label for="inq-phone">Phone Number <span aria-label="required">*</span> <small style="color:var(--cyan);font-family:var(--font-alt)">(Hum isi pe call karenge)</small></label>
-              <input type="tel" id="inq-phone" name="inq-phone" class="fi"
-                     placeholder="10-digit mobile number"
-                     required maxlength="10" pattern="[6-9][0-9]{9}"
-                     inputmode="numeric" autocomplete="tel"
-                     aria-required="true" aria-describedby="inq-phone-err"
-                     title="Enter a valid 10-digit Indian mobile number"/>
-              <span class="field-err" id="inq-phone-err" role="alert" aria-live="polite"></span>
+              <label>Phone Number * <small style="color:var(--cyan);font-family:var(--font-alt)">(Hum isi pe call karenge)</small></label>
+              <input type="tel" id="inq-phone" class="fi" placeholder="10-digit mobile number"/>
+              <span class="field-err" id="inq-phone-err"></span>
             </div>
             <div class="form-group">
-              <label for="inq-reason">Reason / Service <span aria-label="required">*</span></label>
-              <select id="inq-reason" name="inq-reason" class="fi"
-                      required aria-required="true" aria-describedby="inq-reason-err">
+              <label>Reason / Service *</label>
+              <select id="inq-reason" class="fi">
                 <option value="">-- Select Reason --</option>
                 <option value="gaming">Gaming PC / PS5 Enquiry</option>
                 <option value="prime-card">Prime Card Application</option>
@@ -824,31 +669,26 @@
                 <option value="pricing">Pricing Enquiry</option>
                 <option value="other">Other</option>
               </select>
-              <span class="field-err" id="inq-reason-err" role="alert" aria-live="polite"></span>
+              <span class="field-err" id="inq-reason-err"></span>
             </div>
             <div class="form-group">
-              <label for="inq-msg">Message</label>
-              <textarea id="inq-msg" name="inq-msg" class="fi" rows="3"
-                        placeholder="Aur koi detail ya sawaal ho to batao..."
-                        maxlength="600"></textarea>
+              <label>Message</label>
+              <textarea id="inq-msg" class="fi" rows="3" placeholder="Aur koi detail ya sawaal ho to batao..."></textarea>
             </div>
-            <!-- SECURITY: onclick removed — JS listener -->
-            <button class="btn btn-primary btn-block" id="inq-btn" type="button">
-              <span id="inq-txt">📞 Send &amp; Request Call Back</span>
-              <span id="inq-load" style="display:none" aria-live="polite">Sending...</span>
+            <button class="btn btn-primary btn-block" id="inq-btn" onclick="submitInquiry()">
+              <span id="inq-txt">📞 Send & Request Call Back</span>
+              <span id="inq-load" style="display:none">Sending...</span>
             </button>
-            <div class="form-success" id="inq-ok" style="display:none" role="status" aria-live="polite"></div>
-            <div class="form-err"     id="inq-err"                      role="alert"  aria-live="assertive"></div>
+            <div class="form-success" id="inq-ok" style="display:none"></div>
+            <div class="form-err" id="inq-err"></div>
           </div>
         </div>
       </div>
     </div>
   </section>
  
-  <!-- ══════════════════════════════════
-       ABOUT SECTION
-  ══════════════════════════════════ -->
-  <section class="page-section" id="sec-about" aria-label="About us">
+  <!-- ── ABOUT SECTION ── -->
+  <section class="page-section" id="sec-about">
     <div class="container section-pad">
       <div class="sec-tag">Our Story</div>
       <h2 class="sec-title">Born in <span class="hl">Sikar</span>, Built for Gamers</h2>
@@ -857,8 +697,8 @@
           <p style="font-size:0.95rem;color:var(--txt2);line-height:1.8;margin-bottom:1rem">CityByteHub was founded by two passionate partners — one with deep technical expertise and the other handling operations — with a shared dream: to bring a truly premium gaming and internet experience to Sikar.</p>
           <p style="font-size:0.95rem;color:var(--txt2);line-height:1.8;margin-bottom:1.5rem">Located on Piprali Road, we offer the best gaming hardware, fastest internet, and a welcoming environment for students, gamers, and professionals alike.</p>
           <div style="display:flex;gap:1rem;flex-wrap:wrap">
-            <div class="info-card reveal" style="flex:1;min-width:180px"><span class="info-icon" aria-hidden="true">👨‍💻</span><div><h4>Technical Partner</h4><p>Hardware &amp; Tech Support</p></div></div>
-            <div class="info-card reveal" style="flex:1;min-width:180px"><span class="info-icon" aria-hidden="true">👨‍💼</span><div><h4>Operations Partner</h4><p>Customer Experience &amp; Management</p></div></div>
+            <div class="info-card reveal" style="flex:1;min-width:180px"><span class="info-icon">👨‍💻</span><div><h4>Technical Partner</h4><p>Hardware & Tech Support</p></div></div>
+            <div class="info-card reveal" style="flex:1;min-width:180px"><span class="info-icon">👨‍💼</span><div><h4>Operations Partner</h4><p>Customer Experience & Management</p></div></div>
           </div>
         </div>
         <div>
@@ -868,110 +708,44 @@
             <div class="avail-row"><span class="avail-label">Holidays</span><span class="avail-val" style="color:var(--green)">Open ✓</span></div>
             <div class="avail-row"><span class="avail-label">Location</span><span class="avail-val">Piprali Road, Sikar</span></div>
           </div>
-          <a href="https://wa.me/918829822950" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-block">💬 Contact on WhatsApp</a>
+          <a href="https://wa.me/918829822950" target="_blank" class="btn btn-whatsapp btn-block">💬 Contact on WhatsApp</a>
         </div>
       </div>
     </div>
   </section>
  
-  <!-- ══════════════════════════════════
-       FAQ SECTION
-  ══════════════════════════════════ -->
-  <section class="page-section" id="sec-faq" aria-label="Frequently asked questions">
+  <!-- ── FAQ SECTION ── -->
+  <section class="page-section" id="sec-faq">
     <div class="container section-pad">
       <div class="sec-header">
         <div class="sec-tag">Common Questions</div>
         <h2 class="sec-title">FAQ</h2>
       </div>
       <div class="faq-wrap">
-        <div class="faq-list" role="list">
-          <!-- SECURITY: onclick on faq buttons removed — JS delegates via event listener -->
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false" aria-controls="faq-a-1">
-              <span>What are your opening hours?</span><span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-a" id="faq-a-1" hidden>
-              <p>We are open every day — Monday to Sunday — from <strong>7:00 AM to 9:00 PM</strong>, including holidays.</p>
-            </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false" aria-controls="faq-a-2">
-              <span>Where exactly is CityByteHub located?</span><span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-a" id="faq-a-2" hidden>
-              <p>We are located on <strong>Piprali Road, Sikar, Rajasthan</strong>. Just search "CityByteHub Sikar" on Google Maps.</p>
-            </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false" aria-controls="faq-a-3">
-              <span>Do you offer student discounts?</span><span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-a" id="faq-a-3" hidden>
-              <p>Yes! We have special student-friendly pricing. Get our <a href="#prime" style="color:var(--gold)" data-nav="prime">Student Prime Card</a> for exclusive monthly/weekly benefits!</p>
-            </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false" aria-controls="faq-a-4">
-              <span>Can I book a slot in advance?</span><span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-a" id="faq-a-4" hidden>
-              <p>Haan! <a href="#booking" style="color:var(--cyan)" data-nav="booking">Booking section</a> mein jaao aur advance slot book karo. Ya WhatsApp karo.</p>
-            </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false" aria-controls="faq-a-5">
-              <span>What printing services do you offer?</span><span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-a" id="faq-a-5" hidden>
-              <p>Black &amp; white printing, color printing, photocopying, and document scanning. Ask us for current rates per page.</p>
-            </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false" aria-controls="faq-a-6">
-              <span>What is the Student Prime Card?</span><span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-a" id="faq-a-6" hidden>
-              <p>The <strong>CityByteHub Student Prime Card</strong> is an exclusive membership for students — weekly or monthly plans with extra hours, priority seat booking, and member-only discounts. Each card has a unique QR code and ID. <a href="#prime" style="color:var(--gold)" data-nav="prime">Learn more →</a></p>
-            </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false" aria-controls="faq-a-7">
-              <span>How does the Prime Card work?</span><span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-a" id="faq-a-7" hidden>
-              <p>Apply online ya directly aakar apply karo. Payment ke baad staff aapka card activate karega. Card pe unique QR hoga — staff scan karke aapki saari details aur balance dekh sakta hai.</p>
-            </div>
-          </div>
+        <div class="faq-list">
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>What are your opening hours?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>We are open every day — Monday to Sunday — from <strong>7:00 AM to 9:00 PM</strong>, including holidays.</p></div></div>
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Where exactly is CityByteHub located?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>We are located on <strong>Piprali Road, Sikar, Rajasthan</strong>. Just search "CityByteHub Sikar" on Google Maps.</p></div></div>
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Do you offer student discounts?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Yes! We have special student-friendly pricing. Get our <a href="#prime" style="color:var(--gold)" onclick="navTo(null,'prime')">Student Prime Card</a> for exclusive monthly/weekly benefits!</p></div></div>
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Can I book a slot in advance?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Haan! <a href="#booking" style="color:var(--cyan)" onclick="navTo(null,'booking')">Booking section</a> mein jaao aur advance slot book karo. Ya WhatsApp karo.</p></div></div>
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>What printing services do you offer?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Black & white printing, color printing, photocopying, and document scanning. Ask us for current rates per page.</p></div></div>
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>What is the Student Prime Card?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>The <strong>CityByteHub Student Prime Card</strong> is an exclusive membership for students — weekly or monthly plans with extra hours, priority seat booking, and member-only discounts. Each card has a unique QR code and ID. <a href="#prime" style="color:var(--gold)" onclick="navTo(null,'prime')">Learn more →</a></p></div></div>
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>How does the Prime Card work?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Apply online ya directly aakar apply karo. Payment ke baad staff aapka card activate karega. Card pe unique QR hoga — staff scan karke aapki saari details aur balance dekh sakta hai.</p></div></div>
         </div>
       </div>
     </div>
   </section>
  
-  <!-- ══════════════════════════════════
-       REVIEWS SECTION
-  ══════════════════════════════════ -->
-  <section class="page-section" id="sec-reviews" aria-label="Customer reviews">
+  <!-- ── REVIEWS SECTION ── -->
+  <section class="page-section" id="sec-reviews">
     <div class="container section-pad">
       <div class="sec-header center">
         <div class="sec-tag">What Gamers Say</div>
         <h2 class="sec-title">Real <span class="hl">Reviews</span></h2>
       </div>
       <div class="testi-grid">
-        <article class="testi-card reveal">
-          <div class="stars" aria-label="5 stars">★★★★★</div>
-          <p class="testi-txt">"Best gaming setup I've seen in Sikar. The PCs are super fast and the atmosphere is awesome. Totally worth it!"</p>
-          <div class="testi-author"><div class="author-av" aria-hidden="true">🧑</div><div><strong>Arjun S.</strong><span>Gamer, Sikar</span></div></div>
-        </article>
-        <article class="testi-card reveal reveal-d1">
-          <div class="stars" aria-label="5 stars">★★★★★</div>
-          <p class="testi-txt">"Came here for printing and ended up gaming for 2 hours! The staff is very helpful and the internet is super fast."</p>
-          <div class="testi-author"><div class="author-av" aria-hidden="true">👩</div><div><strong>Priya M.</strong><span>Student, Sikar</span></div></div>
-        </article>
-        <article class="testi-card reveal reveal-d2">
-          <div class="stars" aria-label="5 stars">★★★★★</div>
-          <p class="testi-txt">"PS5 gaming experience was insane. Played FIFA with my friends and it was the best evening. Will definitely come again!"</p>
-          <div class="testi-author"><div class="author-av" aria-hidden="true">🧑</div><div><strong>Rahul K.</strong><span>PS5 Gamer</span></div></div>
-        </article>
+        <article class="testi-card reveal"><div class="stars">★★★★★</div><p class="testi-txt">"Best gaming setup I've seen in Sikar. The PCs are super fast and the atmosphere is awesome. Totally worth it!"</p><div class="testi-author"><div class="author-av">🧑</div><div><strong>Arjun S.</strong><span>Gamer, Sikar</span></div></div></article>
+        <article class="testi-card reveal reveal-d1"><div class="stars">★★★★★</div><p class="testi-txt">"Came here for printing and ended up gaming for 2 hours! The staff is very helpful and the internet is super fast."</p><div class="testi-author"><div class="author-av">👩</div><div><strong>Priya M.</strong><span>Student, Sikar</span></div></div></article>
+        <article class="testi-card reveal reveal-d2"><div class="stars">★★★★★</div><p class="testi-txt">"PS5 gaming experience was insane. Played FIFA with my friends and it was the best evening. Will definitely come again!"</p><div class="testi-author"><div class="author-av">🧑</div><div><strong>Rahul K.</strong><span>PS5 Gamer</span></div></div></article>
       </div>
     </div>
   </section>
@@ -981,32 +755,29 @@
     <div class="footer-grid">
       <div>
         <div style="display:flex;align-items:center;gap:0.6rem">
-          <span style="font-size:1.5rem;color:var(--cyan)" aria-hidden="true">⬡</span>
+          <span style="font-size:1.5rem;color:var(--cyan)">⬡</span>
           <span style="font-family:var(--font-h);font-size:1rem;color:var(--white)">City<span style="color:var(--cyan)">Byte</span>Hub</span>
         </div>
-        <p class="footer-tagline">Sikar's Premium Gaming Zone &amp; Cyber Cafe on Piprali Road.</p>
+        <p class="footer-tagline">Sikar's Premium Gaming Zone & Cyber Cafe on Piprali Road.</p>
         <p class="footer-hours">🕐 Open Daily: 7:00 AM – 9:00 PM</p>
       </div>
       <div>
         <h4>Quick Links</h4>
         <ul class="footer-links">
-          <li><a href="#services" data-nav="home">Services</a></li>
-          <li><a href="#pricing"  data-nav="home">Pricing</a></li>
-          <li><a href="#about"    data-nav="about">About Us</a></li>
-          <li><a href="#faq"      data-nav="faq">FAQ</a></li>
-          <li><a href="#inquiry"  data-nav="inquiry">Contact</a></li>
-          <li><a href="#prime" style="color:var(--gold)" data-nav="prime">⭐ Prime Card</a></li>
+          <li><a href="#services" onclick="navTo(null,'home')">Services</a></li>
+          <li><a href="#pricing" onclick="navTo(null,'home')">Pricing</a></li>
+          <li><a href="#about" onclick="navTo(null,'about')">About Us</a></li>
+          <li><a href="#faq" onclick="navTo(null,'faq')">FAQ</a></li>
+          <li><a href="#inquiry" onclick="navTo(null,'inquiry')">Contact</a></li>
+          <li><a href="#prime" style="color:var(--gold)" onclick="navTo(null,'prime')">⭐ Prime Card</a></li>
         </ul>
       </div>
       <div>
         <h4>Services</h4>
-        <ul class="footer-svcs" aria-label="Services offered">
-          <li>Gaming PCs</li>
-          <li>PS5 / Console Gaming</li>
-          <li>High-Speed Internet</li>
-          <li>Printing &amp; Scanning</li>
-          <li>Online Form Filling</li>
-          <li>Student Prime Card</li>
+        <ul class="footer-svcs">
+          <li>Gaming PCs</li><li>PS5 / Console Gaming</li>
+          <li>High-Speed Internet</li><li>Printing & Scanning</li>
+          <li>Online Form Filling</li><li>Student Prime Card</li>
         </ul>
       </div>
       <div>
@@ -1017,249 +788,91 @@
           <p>🕐 7:00 AM – 9:00 PM Daily</p>
         </div>
         <div class="social-row">
-          <a href="#" class="social-btn" aria-label="CityByteHub on Instagram">📸</a>
-          <a href="#" class="social-btn" aria-label="CityByteHub on Facebook">📘</a>
-          <a href="#" class="social-btn" aria-label="CityByteHub on YouTube">▶️</a>
+          <a href="#" class="social-btn" aria-label="Instagram">📸</a>
+          <a href="#" class="social-btn" aria-label="Facebook">📘</a>
+          <a href="#" class="social-btn" aria-label="YouTube">▶️</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
       <p>© 2025 CityByteHub, Sikar. All rights reserved. | Best Gaming Zone in Sikar | Cyber Cafe Piprali Road</p>
-      <div class="footer-legal">
-        <a href="#">Privacy Policy</a>
-        <span aria-hidden="true">•</span>
-        <a href="#">Terms &amp; Conditions</a>
-      </div>
+      <div class="footer-legal"><a href="#">Privacy Policy</a><span>•</span><a href="#">Terms & Conditions</a></div>
     </div>
   </footer>
  
 </div><!-- end .main-content -->
  
 <!-- FLOATING BUTTONS -->
-<a href="https://wa.me/918829822950?text=Hi%20CityByteHub%2C%20I%20want%20to%20book%20a%20session!"
-   class="float-wa" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">💬</a>
-<a href="#booking" class="float-book" id="float-book" data-nav="booking">🎮 Book a Seat</a>
+<a href="https://wa.me/918829822950?text=Hi%20CityByteHub%2C%20I%20want%20to%20book%20a%20session!" class="float-wa" target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
+<a href="#booking" class="float-book" id="float-book" onclick="navTo(null,'booking')">🎮 Book a Seat</a>
  
-<!--
-  ══════════════════════════════════════════════════════════════
-  INLINE BOOTSTRAP SCRIPT
-  Purpose: Wires up navigation, sidebar, FAQ BEFORE script.js
-  loads (handles clicks that come in during module load).
-  SECURITY: No user data processed here; only DOM manipulation.
-  No onclick attributes in HTML — all listeners registered here.
-  ══════════════════════════════════════════════════════════════
--->
 <script>
-(function(){
-  'use strict';
- 
-  /* ── NAV MAP ── */
-  var SMAP = {
-    home:'sec-home', services:'sec-home', pricing:'sec-home', 'why-us':'sec-home',
-    prime:'sec-prime', booking:'sec-booking', inquiry:'sec-inquiry',
-    about:'sec-about', faq:'sec-faq', reviews:'sec-reviews'
-  };
-  var TMAP = {
-    home:'Home', services:'Services', pricing:'Pricing', prime:'Prime Card',
-    booking:'Book a Slot', inquiry:'Contact & Inquiry', about:'About Us',
-    faq:'FAQ', reviews:'Reviews'
-  };
- 
-  /* ── SAFE TEXT SETTER ── */
-  function safeText(el, txt) {
-    if (el) el.textContent = txt;
-  }
- 
-  /* ── NAVIGATION ── */
-  window.navTo = function(el, page) {
-    // Allowlist check — never navigate to unknown pages
-    if (!SMAP[page]) return;
-    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); n.removeAttribute('aria-current'); });
-    var navEl = el || document.querySelector('.nav-item[data-nav="' + page + '"]');
-    if (navEl) { navEl.classList.add('active'); navEl.setAttribute('aria-current','page'); }
-    document.querySelectorAll('.page-section').forEach(function(s){ s.classList.remove('active'); });
-    var sec = document.getElementById(SMAP[page] || 'sec-home');
-    if (sec) { sec.classList.add('active'); sec.querySelectorAll('.reveal').forEach(function(e){ e.classList.add('visible'); }); }
-    safeText(document.getElementById('topbar-title'), TMAP[page] || 'CityByteHub');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    var sb = document.getElementById('sidebar');
-    var ov = document.getElementById('sidebar-overlay');
-    if (window.innerWidth <= 1024 && sb && ov) { sb.classList.remove('open'); ov.classList.remove('show'); }
-    var toggle = document.getElementById('menu-toggle');
-    if (toggle) toggle.setAttribute('aria-expanded','false');
-  };
- 
-  /* ── SIDEBAR ── */
-  window.toggleSidebar = function() {
-    var sb = document.getElementById('sidebar');
-    var ov = document.getElementById('sidebar-overlay');
-    var toggle = document.getElementById('menu-toggle');
-    if (!sb || !ov) return;
-    var isOpen = sb.classList.toggle('open');
-    ov.classList.toggle('show', isOpen);
-    if (toggle) toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  };
-  window.closeSidebar = function() {
-    var sb = document.getElementById('sidebar');
-    var ov = document.getElementById('sidebar-overlay');
-    var toggle = document.getElementById('menu-toggle');
-    if (sb) sb.classList.remove('open');
-    if (ov) ov.classList.remove('show');
-    if (toggle) toggle.setAttribute('aria-expanded','false');
-  };
- 
-  /* ── FAQ TOGGLE (accessible) ── */
-  window.toggleFaq = function(btn) {
-    var item = btn.closest('.faq-item');
-    var isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item.open').forEach(function(i){
-      i.classList.remove('open');
-      var q = i.querySelector('.faq-q');
-      var a = i.querySelector('.faq-a');
-      if (q) q.setAttribute('aria-expanded','false');
-      if (a) a.hidden = true;
-    });
-    if (!isOpen) {
-      item.classList.add('open');
-      btn.setAttribute('aria-expanded','true');
-      var ans = item.querySelector('.faq-a');
-      if (ans) ans.hidden = false;
-    }
-  };
- 
-  /* ── ATTACH NAV LISTENERS (data-nav) ── */
-  document.addEventListener('click', function(e) {
-    /* data-nav links */
-    var navEl = e.target.closest('[data-nav]');
-    if (navEl) {
-      var page = navEl.getAttribute('data-nav');
-      if (SMAP[page]) { e.preventDefault(); navTo(navEl, page); }
-    }
-    /* data-plan (card preview buttons) */
-    var planEl = e.target.closest('[data-plan]');
-    if (planEl) {
-      var plan = planEl.getAttribute('data-plan');
-      if (plan === 'weekly' || plan === 'monthly') {
-        e.preventDefault();
-        if (window.switchCardPreview) window.switchCardPreview(plan, planEl);
-      }
-    }
-    /* data-plan-form (form plan buttons) */
-    var pfEl = e.target.closest('[data-plan-form]');
-    if (pfEl) {
-      var pf = pfEl.getAttribute('data-plan-form');
-      if (pf === 'weekly' || pf === 'monthly') {
-        e.preventDefault();
-        if (window.setFormPlan) window.setFormPlan(pf);
-      }
-    }
-    /* FAQ toggle */
-    var faqBtn = e.target.closest('.faq-q');
-    if (faqBtn) { e.preventDefault(); window.toggleFaq(faqBtn); }
-    /* Sidebar overlay close */
-    var sb = document.getElementById('sidebar');
-    var ov = document.getElementById('sidebar-overlay');
-    if (sb && ov && sb.classList.contains('open') &&
-        !sb.contains(e.target) &&
-        !document.getElementById('menu-toggle')?.contains(e.target)) {
-      closeSidebar();
-    }
-  });
- 
-  /* ── MENU TOGGLE BUTTON ── */
-  var menuBtn = document.getElementById('menu-toggle');
-  if (menuBtn) menuBtn.addEventListener('click', function(e){ e.stopPropagation(); toggleSidebar(); });
- 
-  /* ── ANNOUNCEMENT BAR CLOSE ── */
-  var annClose = document.getElementById('ann-bar-close');
-  if (annClose) annClose.addEventListener('click', function(){
-    var bar = document.getElementById('ann-bar');
-    if (bar) bar.style.display = 'none';
-  });
- 
-  /* ── CARD STATUS CHECK BUTTON ── */
-  var cardCheckBtn = document.getElementById('card-check-btn');
-  if (cardCheckBtn) cardCheckBtn.addEventListener('click', function(){
-    if (window._fb_checkCardStatus) window._fb_checkCardStatus();
-    else _waitAndRun('checkCardStatus', []);
-  });
- 
-  /* ── BOOKING TRACK BUTTON ── */
-  var trackBtn = document.getElementById('bk-track-btn');
-  if (trackBtn) trackBtn.addEventListener('click', function(){
-    if (window._fb_checkBookingStatus) window._fb_checkBookingStatus();
-    else _waitAndRun('checkBookingStatus', []);
-  });
-  /* Enter key on track input */
-  var trackInp = document.getElementById('bk-track-input');
-  if (trackInp) trackInp.addEventListener('keydown', function(e){
-    if (e.key === 'Enter') { e.preventDefault(); if (trackBtn) trackBtn.click(); }
-  });
- 
-  /* ── FORM SUBMIT BUTTONS (wait for module) ── */
-  function _waitAndRun(fn, args) {
-    var tries = 0;
-    var t = setInterval(function() {
-      tries++;
-      if (window['_fb_' + fn]) { clearInterval(t); window['_fb_' + fn].apply(null, args); }
-      else if (tries > 60)      { clearInterval(t); }
-    }, 100);
-  }
- 
-  var primeBtn = document.getElementById('prime-apply-btn');
-  if (primeBtn) primeBtn.addEventListener('click', function(){
-    if (window._fb_submitPrimeApplication) window._fb_submitPrimeApplication();
-    else _waitAndRun('submitPrimeApplication', []);
-  });
- 
-  var bkBtn = document.getElementById('bk-btn');
-  if (bkBtn) bkBtn.addEventListener('click', function(){
-    if (window._fb_submitBooking) window._fb_submitBooking();
-    else _waitAndRun('submitBooking', []);
-  });
- 
-  var inqBtn = document.getElementById('inq-btn');
-  if (inqBtn) inqBtn.addEventListener('click', function(){
-    if (window._fb_submitInquiry) window._fb_submitInquiry();
-    else _waitAndRun('submitInquiry', []);
-  });
- 
-  /* ── CARD PREVIEW STUBS (overridden by script.js) ── */
-  window.switchCardPreview = window.switchCardPreview || function(plan, btn) {
-    var w = document.getElementById('card-preview-weekly');
-    var m = document.getElementById('card-preview-monthly');
-    var bw = document.getElementById('plan-benefits-weekly');
-    var bm = document.getElementById('plan-benefits-monthly');
-    if (w) w.style.display = plan === 'weekly'  ? 'flex' : 'none';
-    if (m) m.style.display = plan === 'monthly' ? 'flex' : 'none';
-    if (bw) bw.style.display = plan === 'weekly'  ? 'block' : 'none';
-    if (bm) bm.style.display = plan === 'monthly' ? 'block' : 'none';
-    document.querySelectorAll('.card-preview-box .plan-btn').forEach(function(b){
-      b.classList.remove('active');
-      b.setAttribute('aria-pressed','false');
-    });
-    if (btn) { btn.classList.add('active'); btn.setAttribute('aria-pressed','true'); }
-  };
-  window.setFormPlan = window.setFormPlan || function(plan) {
-    var sel = document.getElementById('selected-plan');
-    if (sel) sel.value = plan;
-    window.switchCardPreview(plan, null);
-  };
-  window.updateCardPreview = window.updateCardPreview || function(){};
- 
-  /* ── EXPOSE legacy wrappers used by script.js ── */
-  window.submitBooking          = function(){ _waitAndRun('submitBooking',[]); };
-  window.submitPrimeApplication = function(){ _waitAndRun('submitPrimeApplication',[]); };
-  window.submitInquiry          = function(){ _waitAndRun('submitInquiry',[]); };
-  window.checkBookingStatus     = function(){ _waitAndRun('checkBookingStatus',[]); };
-  window.checkCardStatus        = function(){ _waitAndRun('checkCardStatus',[]); };
- 
-})();
+// Navigation — works immediately, no module needed
+const _SMAP = {
+  home:'sec-home',services:'sec-home',pricing:'sec-home','why-us':'sec-home',
+  prime:'sec-prime',booking:'sec-booking',inquiry:'sec-inquiry',
+  about:'sec-about',faq:'sec-faq',reviews:'sec-reviews'
+};
+const _TMAP = {
+  home:'Home',services:'Services',pricing:'Pricing',prime:'Prime Card',
+  booking:'Book a Slot',inquiry:'Contact & Inquiry',about:'About Us',
+  faq:'FAQ',reviews:'Reviews'
+};
+window.navTo = function(el, page) {
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const navEl = el || document.querySelector('.nav-item[href="#'+page+'"]');
+  if(navEl) navEl.classList.add('active');
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  const sec = document.getElementById(_SMAP[page]||'sec-home');
+  if(sec) { sec.classList.add('active'); sec.querySelectorAll('.reveal').forEach(e=>e.classList.add('visible')); }
+  const titleEl = document.getElementById('topbar-title');
+  if(titleEl) titleEl.textContent = _TMAP[page]||'CityByteHub';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(window.innerWidth<=1024){ document.getElementById('sidebar')?.classList.remove('open'); document.getElementById('sidebar-overlay')?.classList.remove('show'); }
+};
+window.toggleSidebar = function() {
+  document.getElementById('sidebar')?.classList.toggle('open');
+  document.getElementById('sidebar-overlay')?.classList.toggle('show');
+};
+window.closeSidebar = function() {
+  document.getElementById('sidebar')?.classList.remove('open');
+  document.getElementById('sidebar-overlay')?.classList.remove('show');
+};
+window.toggleFaq = function(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+};
+// Firebase functions — retry silently when module loads
+function _waitAndRun(fn, args) {
+  var tries = 0;
+  var t = setInterval(function() {
+    tries++;
+    if(window['_fb_'+fn]) { clearInterval(t); window['_fb_'+fn].apply(null, args); }
+    else if(tries > 40)   { clearInterval(t); }
+  }, 100);
+}
+window.submitBooking          = function() { _waitAndRun('submitBooking',[]); };
+window.submitPrimeApplication = function() { _waitAndRun('submitPrimeApplication',[]); };
+window.submitInquiry          = function() { _waitAndRun('submitInquiry',[]); };
+window.checkBookingStatus     = function() { _waitAndRun('checkBookingStatus',[]); };
+window.checkCardStatus        = function() { _waitAndRun('checkCardStatus',[]); };
+window.switchCardPreview = function(plan,btn) {
+  document.getElementById('card-preview-weekly').style.display = plan==='weekly'?'flex':'none';
+  document.getElementById('card-preview-monthly').style.display = plan==='monthly'?'flex':'none';
+  document.getElementById('plan-benefits-weekly').style.display = plan==='weekly'?'block':'none';
+  document.getElementById('plan-benefits-monthly').style.display = plan==='monthly'?'block':'none';
+  document.querySelectorAll('.card-preview-box .plan-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+};
+window.setFormPlan = function(plan) {
+  const sel = document.getElementById('selected-plan');
+  if(sel) sel.value = plan;
+  window.switchCardPreview(plan, null);
+};
+window.updateCardPreview = function() {};
 </script>
- 
-<!-- screen-reader utility -->
-<style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
- 
 <script type="module" src="script.js"></script>
 </body>
 </html>
