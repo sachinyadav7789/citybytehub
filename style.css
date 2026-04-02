@@ -325,6 +325,13 @@ select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 select.fi option{background:#111120;color:var(--white)}
 textarea.fi{resize:vertical;min-height:90px}
 .field-err{display:block;font-size:0.72rem;color:var(--danger);font-family:var(--font-alt);margin-top:0.3rem;min-height:1rem}
+.hp-field{
+  position:absolute !important;
+  left:-9999px !important;
+  width:1px !important;
+  height:1px !important;
+  overflow:hidden !important;
+}
 .form-success{background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.25);border-radius:var(--r2);padding:0.9rem;margin-top:0.9rem;font-size:0.87rem;color:var(--green);text-align:center;font-family:var(--font-alt);display:none}
 .form-success.show{display:block}
 .form-err{background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.25);border-radius:var(--r2);padding:0.9rem;margin-top:0.9rem;font-size:0.87rem;color:var(--danger);text-align:center;font-family:var(--font-alt);display:none}
@@ -466,6 +473,7 @@ textarea.fi{resize:vertical;min-height:90px}
 .plan-btn{flex:1;padding:0.75rem;border-radius:var(--r);font-family:var(--font-h);font-size:0.78rem;font-weight:700;letter-spacing:0.06em;cursor:pointer;border:2px solid var(--border);background:var(--card);color:var(--muted);transition:all var(--trans);text-align:center}
 .plan-btn.active.weekly{border-color:var(--cyan);color:var(--cyan);background:rgba(0,220,255,0.08);box-shadow:var(--glow-c)}
 .plan-btn.active.monthly{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,0.08);box-shadow:var(--glow-g)}
+.recaptcha-wrap{margin-top:0.75rem;display:flex;justify-content:flex-start;min-height:78px}
  
 /* ── BOOKING PAGE ── */
 .booking-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
@@ -564,6 +572,11 @@ textarea.fi{resize:vertical;min-height:90px}
   /* Plan toggle */
   .plan-toggle{flex-direction:column}
   .plan-btn{padding:0.6rem}
+  .recaptcha-wrap{transform:scale(0.86);transform-origin:0 0;height:68px;min-height:68px}
+}
+
+@media(min-width:769px) and (max-width:1024px){
+  .recaptcha-wrap{transform:scale(0.94);transform-origin:0 0;height:74px;min-height:74px}
 }
  
 /* ── SMALL MOBILE ── */

@@ -17,6 +17,11 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const db   = getFirestore(app);
 const rtdb = getDatabase(app);
+
+const RECAPTCHA_SITE_KEY = document.querySelector('meta[name="recaptcha-site-key"]')?.getAttribute('content') || '';
+const IS_PROD_HOST = /(^|\.)citybytehub\.in$/i.test(location.hostname);
+let CAPTCHA_ENABLED = Boolean(IS_PROD_HOST && RECAPTCHA_SITE_KEY);
+const rcWidgets = { prime: null, booking: null, inquiry: null };
  
 // ===== HELPERS =====
 const $  = id => document.getElementById(id);
@@ -24,6 +29,68 @@ const fmtDate = iso => { if(!iso) return '—'; const d=new Date(iso); return is
 function showErr(id,msg){ const e=$(id); if(!e) return; e.textContent=msg; e.style.display='block'; clearTimeout(e._t); e._t=setTimeout(()=>e.style.display='none',5000); }
 function clearErr(id){ const e=$(id); if(e){e.textContent='';e.style.display='none';} }
 function setEl(id,v){ const e=$(id); if(e) e.textContent=v; }
+function escHTML(v){ return String(v??'').replace(/[&<>'"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[m])); }
+function cleanInput(v,max=120){ return String(v??'').replace(/[\r\n\t]/g,' ').replace(/\s+/g,' ').trim().slice(0,max); }
+function maskCard(v){ const s=String(v||''); return s.length>8 ? s.slice(0,4)+'-****-'+s.slice(-4) : s; }
+function maskName(v){ const s=String(v||'').trim(); if(!s) return 'User'; if(s.length<=2) return s[0]+'*'; return s[0]+'***'+s[s.length-1]; }
+function isLikelyName(v){ const s=cleanInput(v,80); return s.length>=2 && /[A-Za-z\u0900-\u097F]/.test(s); }
+function isValidTimeHHMM(v){ return typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v); }
+function isWithinBookingHours(v){ return v >= '07:00' && v <= '21:00'; }
+function rateLimitCheck(key, maxAttempts, windowMs){
+  try {
+    const now=Date.now();
+    const raw=localStorage.getItem(key);
+    const state=raw?JSON.parse(raw):{count:0,start:now};
+    if(!state.start||now-state.start>windowMs){ state.count=0; state.start=now; }
+    if((state.count||0)>=maxAttempts) return false;
+    state.count=(state.count||0)+1;
+    localStorage.setItem(key,JSON.stringify(state));
+    return true;
+  } catch(e){ return true; }
+}
+function setupRecaptchaWidgets(){
+  if(!CAPTCHA_ENABLED || !window.grecaptcha || !RECAPTCHA_SITE_KEY){
+    document.querySelectorAll('.recaptcha-wrap').forEach(el=>{ el.style.display='none'; });
+    return;
+  }
+  try {
+    if($('rc-prime') && rcWidgets.prime===null) rcWidgets.prime = window.grecaptcha.render('rc-prime',{sitekey:RECAPTCHA_SITE_KEY});
+    if($('rc-booking') && rcWidgets.booking===null) rcWidgets.booking = window.grecaptcha.render('rc-booking',{sitekey:RECAPTCHA_SITE_KEY});
+    if($('rc-inquiry') && rcWidgets.inquiry===null) rcWidgets.inquiry = window.grecaptcha.render('rc-inquiry',{sitekey:RECAPTCHA_SITE_KEY});
+  } catch(e) {
+    console.warn('reCAPTCHA disabled:', e.message);
+    CAPTCHA_ENABLED = false;
+    document.querySelectorAll('.recaptcha-wrap').forEach(el=>{ el.style.display='none'; });
+  }
+}
+window.addEventListener('load',()=>{
+  let tries=0;
+  const t=setInterval(()=>{
+    setupRecaptchaWidgets();
+    tries++;
+    if(window.grecaptcha || tries>30) clearInterval(t);
+  },200);
+});
+function captchaOk(kind){
+  if(!CAPTCHA_ENABLED || !window.grecaptcha) return true;
+  const wid=rcWidgets[kind];
+  if(wid===null||wid===undefined) return false;
+  return !!window.grecaptcha.getResponse(wid);
+}
+function captchaReset(kind){
+  if(!CAPTCHA_ENABLED || !window.grecaptcha) return;
+  const wid=rcWidgets[kind];
+  if(wid!==null&&wid!==undefined) window.grecaptcha.reset(wid);
+}
+function setFormStartTs(id){ const el=$(id); if(el) el.dataset.startTs=String(Date.now()); }
+function looksLikeBot(hpId,formId,minMs=1200){
+  const hp=$(hpId);
+  if(hp&&hp.value&&hp.value.trim()) return true;
+  const form=$(formId);
+  const ts=form?parseInt(form.dataset.startTs||'0',10):0;
+  if(ts&&Date.now()-ts<minMs) return true;
+  return false;
+}
  
 // ===== NAVIGATION =====
 const SECTION_MAP = {
@@ -138,20 +205,32 @@ window.updateCardPreview = function() {
   setEl('prev-w-bal','10 hrs'); setEl('prev-m-bal','40 hrs');
 };
 updateCardPreview();
+setFormStartTs('prime-apply-btn');
+setFormStartTs('bk-btn');
+setFormStartTs('inq-btn');
  
 // ===== PRIME CARD APPLICATION =====
 window.submitPrimeApplication = async function() {
-  const name=$('prime-name')?.value.trim();
-  const phone=$('prime-phone')?.value.trim();
+  const name=cleanInput($('prime-name')?.value,80);
+  const phone=cleanInput($('prime-phone')?.value,16);
   const plan=$('selected-plan')?.value||'weekly';
-  const college=$('prime-college')?.value.trim();
-  const note=$('prime-note')?.value.trim();
+  const college=cleanInput($('prime-college')?.value,100);
+  const note=cleanInput($('prime-note')?.value,300);
   clearErr('prime-name-err'); clearErr('prime-phone-err');
   const okEl=$('prime-ok'), errEl=$('prime-err');
   if(okEl){okEl.style.display='none';okEl.textContent='';}
   if(errEl){errEl.style.display='none';errEl.textContent='';}
+  if(!captchaOk('prime')){
+    if(errEl){ errEl.textContent='❌ Please verify reCAPTCHA first.'; errEl.style.display='block'; }
+    return;
+  }
+  if(looksLikeBot('prime-website','prime-apply-btn')){
+    if(errEl){ errEl.textContent='❌ Suspicious request blocked. Thoda ruk ke dobara try karo.'; errEl.style.display='block'; }
+    return;
+  }
   let valid=true;
   if(!name){ showErr('prime-name-err','Naam required hai.'); valid=false; }
+  else if(!isLikelyName(name)){ showErr('prime-name-err','Valid naam daalo.'); valid=false; }
   if(!phone){ showErr('prime-phone-err','Phone required hai.'); valid=false; }
   else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('prime-phone-err','Valid 10-digit phone daalo.'); valid=false; }
   if(!valid) return;
@@ -170,8 +249,9 @@ window.submitPrimeApplication = async function() {
     [$('prime-name'),$('prime-phone'),$('prime-college'),$('prime-note')].forEach(el=>{if(el)el.value='';});
     updateCardPreview();
   } catch(err) {
-    if(errEl){ errEl.textContent='❌ Error: '+err.message+'. WhatsApp: 8829822950'; errEl.style.display='block'; }
+    if(errEl){ errEl.textContent='❌ Error: '+cleanInput(err.message,120)+'. WhatsApp: 8829822950'; errEl.style.display='block'; }
   } finally {
+    captchaReset('prime');
     if(btn) btn.disabled=false;
     if(btxt) btxt.style.display='inline';
     if(bload) bload.style.display='none';
@@ -183,16 +263,22 @@ window.checkCardStatus = async function() {
   const val=$('card-check-input')?.value.trim().toUpperCase();
   const res=$('card-check-result');
   if(!val||!res) return;
+  if(!rateLimitCheck('cbh_card_lookup_rl',20,3600000)){
+    res.style.display='block';
+    res.innerHTML='<span style="color:var(--danger)">❌ Too many checks. 1 ghante baad try karo.</span>';
+    return;
+  }
+  if(!/^CBH-[A-Z0-9-]{6,}$/.test(val)){
+    res.style.display='block';
+    res.innerHTML='<span style="color:var(--danger)">❌ Sirf valid card number se check hoga (phone lookup disabled).</span>';
+    return;
+  }
   res.style.display='block';
   res.innerHTML='<span style="color:var(--muted)">🔍 Checking...</span>';
   try {
     let cards=[];
     const s1=await getDocs(query(collection(db,'primeCards'),where('cardNumber','==',val)));
     s1.forEach(d=>cards.push({id:d.id,...d.data()}));
-    if(!cards.length&&val.length===10&&/^\d+$/.test(val)){
-      const s2=await getDocs(query(collection(db,'primeCards'),where('phone','==',val)));
-      s2.forEach(d=>cards.push({id:d.id,...d.data()}));
-    }
     if(!cards.length){ res.innerHTML='<span style="color:var(--danger)">❌ Card nahi mila.</span>'; return; }
     const c=cards[0];
     const sc=c.status==='active'?'var(--green)':c.status==='expired'?'var(--danger)':'var(--gold)';
@@ -200,15 +286,15 @@ window.checkCardStatus = async function() {
     res.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1rem">
       <div style="font-family:var(--font-h);font-size:0.78rem;color:${sc};margin-bottom:0.5rem">${sl}</div>
       <div style="font-size:0.82rem;color:var(--white);font-family:var(--font-alt);line-height:1.9">
-        <b>Card:</b> ${c.cardNumber||'—'}<br>
-        <b>Name:</b> ${c.name||'—'}<br>
+        <b>Card:</b> ${escHTML(maskCard(c.cardNumber||'—'))}<br>
+        <b>Name:</b> ${escHTML(maskName(c.name||''))}<br>
         <b>Plan:</b> ${c.plan==='weekly'?'📅 Weekly':'📆 Monthly'}<br>
-        <b>Balance:</b> <span style="color:var(--gold)">${c.balance||'—'}</span><br>
-        <b>Valid Till:</b> ${c.expiry||'—'}<br>
+        <b>Balance:</b> <span style="color:var(--gold)">${escHTML(c.balance||'—')}</span><br>
+        <b>Valid Till:</b> ${escHTML(c.expiry||'—')}<br>
         ${c.status!=='active'?'<span style="color:var(--danger);font-size:0.78rem">Card active nahi — staff se milein.</span>':''}
       </div>
     </div>`;
-  } catch(e){ res.innerHTML='<span style="color:var(--danger)">Error: '+e.message+'</span>'; }
+  } catch(e){ res.innerHTML='<span style="color:var(--danger)">Error: '+escHTML(cleanInput(e.message,120))+'</span>'; }
 };
  
 // ===== BOOKING =====
@@ -255,27 +341,43 @@ setTimeout(()=>{
 },500);
  
 window.submitBooking = async function() {
-  const name=$('bk-name')?.value.trim();
-  const phone=$('bk-phone')?.value.trim();
+  const name=cleanInput($('bk-name')?.value,80);
+  const phone=cleanInput($('bk-phone')?.value,16);
   const service=$('bk-service')?.value;
   const date=$('bk-date')?.value;
   const time=$('bk-time')?.value;
-  const dur=$('bk-duration')?.value;
-  const card=$('bk-card')?.value.trim().toUpperCase();
-  const note=$('bk-note')?.value.trim();
+  const durRaw=$('bk-duration')?.value;
+  const dur=durRaw?parseInt(durRaw,10):60;
+  const card=cleanInput($('bk-card')?.value,40).toUpperCase();
+  const note=cleanInput($('bk-note')?.value,300);
  
   ['bk-name-err','bk-phone-err','bk-service-err','bk-date-err','bk-time-err'].forEach(clearErr);
   const bkOk=$('bk-ok'), bkErr=$('bk-err');
   if(bkOk){bkOk.style.display='none';bkOk.innerHTML='';}
   if(bkErr){bkErr.style.display='none';bkErr.textContent='';}
+  if(!captchaOk('booking')){
+    if(bkErr){bkErr.textContent='❌ Please verify reCAPTCHA first.'; bkErr.style.display='block';}
+    return;
+  }
+  if(looksLikeBot('bk-website','bk-btn')){
+    if(bkErr){bkErr.textContent='❌ Suspicious request blocked. Thoda ruk ke dobara try karo.'; bkErr.style.display='block';}
+    return;
+  }
  
   let valid=true;
   if(!name)  { showErr('bk-name-err','Naam required hai.');      valid=false; }
+  else if(!isLikelyName(name)){ showErr('bk-name-err','Valid naam daalo.'); valid=false; }
   if(!phone) { showErr('bk-phone-err','Phone required hai.');    valid=false; }
   else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('bk-phone-err','Valid 10-digit phone daalo.'); valid=false; }
   if(!service){ showErr('bk-service-err','Service select karo.'); valid=false; }
   if(!date)  { showErr('bk-date-err','Date select karo.');       valid=false; }
-  if(!time)  { showErr('bk-time-err','Time slot select karo.');  valid=false; }
+  if(!time)  { showErr('bk-time-err','Preferred time daalo.');  valid=false; }
+  else if(!isValidTimeHHMM(time)){ showErr('bk-time-err','Valid time daalo (jaise 10:20).'); valid=false; }
+  else if(!isWithinBookingHours(time)){ showErr('bk-time-err','Time 7:00 AM se 9:00 PM ke beech hona chahiye.'); valid=false; }
+  if(!dur || dur<15 || dur>480){
+    if(bkErr){bkErr.textContent='⚠️ Duration 15 se 480 minutes ke beech honi chahiye.'; bkErr.style.display='block';}
+    valid=false;
+  }
   if(!valid) return;
  
   const today=new Date(); today.setHours(0,0,0,0);
@@ -299,7 +401,7 @@ window.submitBooking = async function() {
  
     await addDoc(collection(db,'bookings'),{
       name, phone, service, date, time,
-      duration:dur||'1', primeCard:card||null, note:note||null,
+      duration:String(dur), primeCard:card||null, note:note||null,
       status:isAdv?'pending_payment':'pending',
       bookingRef, trackCode,        // ← trackCode alag field bhi save hota hai
       isAdvance:isAdv,
@@ -331,8 +433,9 @@ window.submitBooking = async function() {
     const payBox=$('bk-payment-box'); if(payBox) payBox.style.display='none';
  
   } catch(err) {
-    if(bkErr){ bkErr.textContent='❌ Error: '+err.message+'. WhatsApp: '+PAYMENT_PHONE; bkErr.style.display='block'; }
+    if(bkErr){ bkErr.textContent='❌ Error: '+cleanInput(err.message,120)+'. WhatsApp: '+PAYMENT_PHONE; bkErr.style.display='block'; }
   } finally {
+    captchaReset('booking');
     if(btn) btn.disabled=false;
     if(btxt) btxt.style.display='inline';
     if(bload) bload.style.display='none';
@@ -341,14 +444,23 @@ window.submitBooking = async function() {
  
 // ===== INQUIRY =====
 window.submitInquiry = async function() {
-  const name=$('inq-name')?.value.trim(), phone=$('inq-phone')?.value.trim();
+  const name=cleanInput($('inq-name')?.value,80), phone=cleanInput($('inq-phone')?.value,16);
   const reason=$('inq-reason')?.value, msg=$('inq-msg')?.value.trim();
   ['inq-name-err','inq-phone-err','inq-reason-err'].forEach(clearErr);
   const okEl=$('inq-ok'), errEl=$('inq-err');
   if(okEl) okEl.style.display='none';
   if(errEl){errEl.style.display='none';errEl.textContent='';}
+  if(!captchaOk('inquiry')){
+    if(errEl){ errEl.textContent='❌ Please verify reCAPTCHA first.'; errEl.style.display='block'; }
+    return;
+  }
+  if(looksLikeBot('inq-website','inq-btn')){
+    if(errEl){ errEl.textContent='❌ Suspicious request blocked. Thoda ruk ke dobara try karo.'; errEl.style.display='block'; }
+    return;
+  }
   let valid=true;
   if(!name){ showErr('inq-name-err','Naam required hai.'); valid=false; }
+  else if(!isLikelyName(name)){ showErr('inq-name-err','Valid naam daalo.'); valid=false; }
   if(!phone){ showErr('inq-phone-err','Phone required hai.'); valid=false; }
   else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('inq-phone-err','Valid 10-digit phone daalo.'); valid=false; }
   if(!reason){ showErr('inq-reason-err','Reason select karo.'); valid=false; }
@@ -358,13 +470,14 @@ window.submitInquiry = async function() {
   if(btxt) btxt.style.display='none';
   if(bload) bload.style.display='inline';
   try {
-    await addDoc(collection(db,'inquiries'),{name,phone,reason,message:msg||null,status:'new',createdAt:new Date().toISOString(),source:'website'});
+    await addDoc(collection(db,'inquiries'),{name,phone,reason,message:cleanInput(msg,300)||null,status:'new',createdAt:new Date().toISOString(),source:'website'});
     if(okEl){ okEl.textContent='✅ Inquiry mili! Hum call karenge. WhatsApp: 8829822950'; okEl.style.display='block'; }
     [$('inq-name'),$('inq-phone'),$('inq-msg')].forEach(el=>{if(el)el.value='';});
     if($('inq-reason'))$('inq-reason').value='';
   } catch(err) {
-    if(errEl){ errEl.textContent='❌ Error: '+err.message+'. WhatsApp: 8829822950'; errEl.style.display='block'; }
+    if(errEl){ errEl.textContent='❌ Error: '+cleanInput(err.message,120)+'. WhatsApp: 8829822950'; errEl.style.display='block'; }
   } finally {
+    captchaReset('inquiry');
     if(btn) btn.disabled=false;
     if(btxt) btxt.style.display='inline';
     if(bload) bload.style.display='none';
@@ -392,6 +505,11 @@ document.querySelectorAll('.page-section.active .reveal').forEach(el=>el.classLi
 window.checkBookingStatus = async function() {
   const inp=$('bk-track-input'), res=$('bk-track-result');
   if(!inp||!res) return;
+  if(!rateLimitCheck('cbh_booking_lookup_rl',30,3600000)){
+    res.style.display='block';
+    res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Too many checks. 1 ghante baad try karo.</div>';
+    return;
+  }
   const code=inp.value.trim();
   if(!code||code.length!==5||!/^\d{5}$/.test(code)){
     res.style.display='block';
@@ -407,7 +525,7 @@ window.checkBookingStatus = async function() {
  
     if(snap.empty){
       res.innerHTML=`<div style="color:var(--danger);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px;border:1px solid rgba(255,68,68,0.2)">
-        ❌ Code <b>${code}</b> se koi booking nahi mili.<br>
+        ❌ Code <b>${escHTML(code)}</b> se koi booking nahi mili.<br>
         <span style="font-size:0.78rem;color:var(--muted)">WhatsApp: <a href="https://wa.me/918829822950" style="color:var(--cyan)">8829822950</a></span>
       </div>`;
       return;
@@ -427,17 +545,16 @@ window.checkBookingStatus = async function() {
     res.innerHTML=`<div style="background:var(--card);border:1px solid ${sColor}44;border-radius:var(--r);padding:1.25rem">
       <div style="font-family:var(--font-h);font-size:1rem;color:${sColor};margin-bottom:1rem;padding:0.6rem 1rem;background:${sColor}11;border-radius:8px;border:1px solid ${sColor}33">${sl[b.status]||'⏳ Pending'}</div>
       <div style="font-family:var(--font-alt);font-size:0.85rem;line-height:2.2;color:var(--txt2)">
-        <b style="color:var(--white)">Naam:</b> ${b.name||'—'}<br>
-        <b style="color:var(--white)">Service:</b> ${svcL[b.service]||b.service||'—'}<br>
-        <b style="color:var(--white)">Date:</b> ${b.date||'—'} &nbsp; <b style="color:var(--white)">Time:</b> ${b.time||'—'}<br>
-        <b style="color:var(--white)">Code:</b> <span style="color:var(--cyan);font-family:var(--font-h);letter-spacing:0.1em">${code}</span>
+        <b style="color:var(--white)">Customer:</b> ${escHTML(maskName(b.name||''))}<br>
+        <b style="color:var(--white)">Date:</b> ${escHTML(b.date||'—')}<br>
+        <b style="color:var(--white)">Code:</b> <span style="color:var(--cyan);font-family:var(--font-h);letter-spacing:0.1em">${escHTML(code)}</span>
       </div>
       ${b.status==='rejected'?`<div style="margin-top:1rem;padding:0.75rem;background:rgba(0,220,255,0.05);border-radius:8px;font-size:0.8rem;color:var(--txt2)">
         📞 Naya slot: <a href="https://wa.me/918829822950" style="color:var(--cyan);font-weight:600">WhatsApp 8829822950</a>
       </div>`:''}
     </div>`;
   } catch(err) {
-    res.innerHTML=`<div style="color:var(--danger);font-size:0.82rem;padding:0.75rem">❌ Error: ${err.message}</div>`;
+    res.innerHTML=`<div style="color:var(--danger);font-size:0.82rem;padding:0.75rem">❌ Error: ${escHTML(cleanInput(err.message,120))}</div>`;
   }
 };
  

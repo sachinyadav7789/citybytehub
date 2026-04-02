@@ -13,10 +13,12 @@
   <meta property="og:description" content="Sikar's premium gaming zone on Piprali Road. High-end PCs, PS5, fast internet, printing & more. Open 7AM–9PM."/>
   <meta property="og:url" content="https://citybytehub.in/"/>
   <meta property="og:image" content="https://citybytehub.in/assets/og-image.jpg"/>
+  <meta name="recaptcha-site-key" content="6Lcb26lsAAAAAEM5QouEhfso4Arh4SvmNRFX5ckD"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
+  <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":["LocalBusiness","EntertainmentBusiness"],"name":"CityByteHub","description":"Premium Gaming Zone & Cyber Cafe in Sikar on Piprali Road","url":"https://citybytehub.in","email":"citybytehub@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Piprali Road","addressLocality":"Sikar","addressRegion":"Rajasthan","addressCountry":"IN"},"openingHours":"Mo-Su 07:00-21:00","priceRange":"₹₹"}</script>
 </head>
 <body>
@@ -51,7 +53,7 @@
     <a href="#about"      class="nav-item" onclick="navTo(this,'about')">       <span class="nav-icon">🏢</span> About Us</a>
     <a href="#faq"        class="nav-item" onclick="navTo(this,'faq')">         <span class="nav-icon">❓</span> FAQ</a>
     <a href="#reviews"    class="nav-item" onclick="navTo(this,'reviews')">     <span class="nav-icon">⭐</span> Reviews</a>
-    <a href="admin.html"  class="nav-item" style="margin-top:0.5rem;border-top:1px solid var(--border)">
+    <a href="../admin panal/index.html"  class="nav-item" style="margin-top:0.5rem;border-top:1px solid var(--border)">
       <span class="nav-icon">🔐</span> Staff Panel
     </a>
   </nav>
@@ -413,21 +415,25 @@
           <div class="form-wrap">
             <div class="form-group">
               <label>Full Name *</label>
-              <input type="text" id="prime-name" class="fi" placeholder="Apna poora naam daalo" oninput="updateCardPreview()"/>
+              <input type="text" id="prime-name" class="fi" placeholder="Apna poora naam daalo" oninput="updateCardPreview()" maxlength="80"/>
               <span class="field-err" id="prime-name-err"></span>
             </div>
             <div class="form-group">
               <label>Phone Number *</label>
-              <input type="tel" id="prime-phone" class="fi" placeholder="10-digit mobile number"/>
+              <input type="tel" id="prime-phone" class="fi" placeholder="10-digit mobile number" maxlength="10"/>
               <span class="field-err" id="prime-phone-err"></span>
+            </div>
+            <div class="hp-field" aria-hidden="true">
+              <label for="prime-website">Website</label>
+              <input type="text" id="prime-website" tabindex="-1" autocomplete="off" />
             </div>
             <div class="form-group">
               <label>College / School (Optional)</label>
-              <input type="text" id="prime-college" class="fi" placeholder="Your institution name"/>
+              <input type="text" id="prime-college" class="fi" placeholder="Your institution name" maxlength="100"/>
             </div>
             <div class="form-group">
               <label>Note / Special Request (Optional)</label>
-              <textarea id="prime-note" class="fi" rows="2" placeholder="Koi special request ho to batao..."></textarea>
+              <textarea id="prime-note" class="fi" rows="2" placeholder="Koi special request ho to batao..." maxlength="300"></textarea>
             </div>
  
             <!-- Offer section -->
@@ -442,6 +448,7 @@
               <span id="prime-apply-txt">⭐ Apply for Prime Card</span>
               <span id="prime-apply-load" style="display:none">Sending...</span>
             </button>
+            <div class="recaptcha-wrap"><div id="rc-prime"></div></div>
             <div class="form-success" id="prime-ok" style="display:none"></div>
             <div class="form-err" id="prime-err"></div>
           </div>
@@ -450,7 +457,7 @@
           <div style="margin-top:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem">
             <div style="font-family:var(--font-h);font-size:0.78rem;color:var(--white);margin-bottom:0.9rem;letter-spacing:0.04em">🔍 CHECK YOUR CARD STATUS</div>
             <div style="display:flex;gap:0.5rem">
-              <input type="text" id="card-check-input" class="fi" style="margin-bottom:0" placeholder="Card number ya phone number"/>
+              <input type="text" id="card-check-input" class="fi" style="margin-bottom:0" placeholder="Card number (CBH-...)" maxlength="24"/>
               <button class="btn btn-outline" onclick="checkCardStatus()" style="white-space:nowrap">Check</button>
             </div>
             <div id="card-check-result" style="margin-top:0.75rem;font-size:0.82rem;font-family:var(--font-alt);display:none"></div>
@@ -465,7 +472,7 @@
     <div style="padding:3rem 1.5rem 1rem">
       <div class="container">
         <div class="sec-tag">Reserve Your Seat</div>
-        <h2 class="sec-title">Book a <span class="hl">Slot</span></h2>
+        <h2 class="sec-title">Book a <span class="hl">Time</span></h2>
         <p class="sec-sub" style="margin-bottom:2rem">Advance booking karo — apni timing aur service choose karo.</p>
         <div class="booking-grid">
           <!-- Availability Info -->
@@ -484,7 +491,7 @@
                 • Sirf <strong style="color:var(--cyan)">aaj ya kal</strong> ki booking allowed hai<br>
                 • Kal ki booking ke liye <strong style="color:var(--gold)">payment call zaruri</strong> hai<br>
                 • Peak hours: 4PM – 8PM — jaldi book karo!<br>
-                • PC: max 5 per slot &nbsp;·&nbsp; PS5: max 2 per slot<br>
+                • PC: max 5 per time window &nbsp;·&nbsp; PS5: max 2 per time window<br>
                 • Booking ke baad confirmation call aayegi<br>
                 • Walk-in bhi welcome hai anytime
               </div>
@@ -492,16 +499,20 @@
           </div>
           <!-- Booking Form -->
           <div class="form-wrap reveal">
-            <div class="form-title">📅 Advance Slot Booking</div>
+            <div class="form-title">📅 Advance Booking</div>
             <div class="form-group">
               <label>Full Name *</label>
-              <input type="text" id="bk-name" class="fi" placeholder="Your full name"/>
+              <input type="text" id="bk-name" class="fi" placeholder="Your full name" maxlength="80"/>
               <span class="field-err" id="bk-name-err"></span>
             </div>
             <div class="form-group">
               <label>Phone Number *</label>
-              <input type="tel" id="bk-phone" class="fi" placeholder="10-digit mobile number"/>
+              <input type="tel" id="bk-phone" class="fi" placeholder="10-digit mobile number" maxlength="10"/>
               <span class="field-err" id="bk-phone-err"></span>
+            </div>
+            <div class="hp-field" aria-hidden="true">
+              <label for="bk-website">Website</label>
+              <input type="text" id="bk-website" tabindex="-1" autocomplete="off" />
             </div>
             <div class="form-group">
               <label>Service *</label>
@@ -523,41 +534,20 @@
             </div>
             <div class="form-group">
               <label>Preferred Time *</label>
-              <select id="bk-time" class="fi">
-                <option value="">-- Select Time Slot --</option>
-                <option value="07:00">7:00 AM – 8:00 AM</option>
-                <option value="08:00">8:00 AM – 9:00 AM</option>
-                <option value="09:00">9:00 AM – 10:00 AM</option>
-                <option value="10:00">10:00 AM – 11:00 AM</option>
-                <option value="11:00">11:00 AM – 12:00 PM</option>
-                <option value="12:00">12:00 PM – 1:00 PM</option>
-                <option value="13:00">1:00 PM – 2:00 PM</option>
-                <option value="14:00">2:00 PM – 3:00 PM</option>
-                <option value="15:00">3:00 PM – 4:00 PM</option>
-                <option value="16:00">4:00 PM – 5:00 PM</option>
-                <option value="17:00">5:00 PM – 6:00 PM</option>
-                <option value="18:00">6:00 PM – 7:00 PM</option>
-                <option value="19:00">7:00 PM – 8:00 PM</option>
-                <option value="20:00">8:00 PM – 9:00 PM</option>
-              </select>
+              <input type="time" id="bk-time" class="fi" step="60" min="07:00" max="21:00" placeholder="10:20"/>
               <span class="field-err" id="bk-time-err"></span>
             </div>
             <div class="form-group">
-              <label>Duration</label>
-              <select id="bk-duration" class="fi">
-                <option value="1">1 Hour</option>
-                <option value="2">2 Hours</option>
-                <option value="3">3 Hours</option>
-                <option value="4">4+ Hours</option>
-              </select>
+              <label>Duration (Minutes)</label>
+              <input type="number" id="bk-duration" class="fi" min="15" max="480" step="15" value="60" placeholder="e.g. 90"/>
             </div>
             <div class="form-group">
               <label>Prime Card Number (Optional)</label>
-              <input type="text" id="bk-card" class="fi" placeholder="If you have a prime card"/>
+              <input type="text" id="bk-card" class="fi" placeholder="If you have a prime card" maxlength="24"/>
             </div>
             <div class="form-group">
               <label>Special Request</label>
-              <textarea id="bk-note" class="fi" rows="2" placeholder="Koi special request ho to batao..."></textarea>
+              <textarea id="bk-note" class="fi" rows="2" placeholder="Koi special request ho to batao..." maxlength="300"></textarea>
             </div>
             <!-- Payment box — shows for advance bookings -->
             <div id="bk-payment-box" style="display:none;background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:var(--r);padding:1rem;margin-bottom:1rem">
@@ -573,6 +563,7 @@
               <span id="bk-txt">📅 Confirm Booking</span>
               <span id="bk-load" style="display:none">Checking availability...</span>
             </button>
+            <div class="recaptcha-wrap"><div id="rc-booking"></div></div>
             <div class="form-success" id="bk-ok" style="display:none"></div>
             <div class="form-err" id="bk-err" style="display:none"></div>
           </div>
@@ -607,7 +598,7 @@
               <div style="padding-left:1.5rem;margin-top:0.25rem">
                 <span style="color:var(--gold);font-weight:600">⏳ Pending</span> — Hum review kar rahe hain, thodi der mein call aayegi<br>
                 <span style="color:var(--green);font-weight:600">✅ Confirmed</span> — Booking pakki! Aao enjoy karo 🎮<br>
-                <span style="color:var(--danger);font-weight:600">❌ Rejected</span> — Slot full tha. Doosra time book karo ya call karo
+                <span style="color:var(--danger);font-weight:600">❌ Rejected</span> — Time unavailable tha. Doosra time book karo ya call karo
               </div>
               <div style="margin-top:0.5rem">5️⃣ Koi problem ho toh seedha WhatsApp: <a href="https://wa.me/918829822950" style="color:var(--cyan);font-weight:600">8829822950</a></div>
             </div>
@@ -649,13 +640,17 @@
             <p style="font-size:0.82rem;color:var(--muted);font-family:var(--font-alt);margin-bottom:1.25rem">Apna naam, number aur reason daalo — hum aapko call karenge.</p>
             <div class="form-group">
               <label>Full Name *</label>
-              <input type="text" id="inq-name" class="fi" placeholder="Your full name"/>
+              <input type="text" id="inq-name" class="fi" placeholder="Your full name" maxlength="80"/>
               <span class="field-err" id="inq-name-err"></span>
             </div>
             <div class="form-group">
               <label>Phone Number * <small style="color:var(--cyan);font-family:var(--font-alt)">(Hum isi pe call karenge)</small></label>
-              <input type="tel" id="inq-phone" class="fi" placeholder="10-digit mobile number"/>
+              <input type="tel" id="inq-phone" class="fi" placeholder="10-digit mobile number" maxlength="10"/>
               <span class="field-err" id="inq-phone-err"></span>
+            </div>
+            <div class="hp-field" aria-hidden="true">
+              <label for="inq-website">Website</label>
+              <input type="text" id="inq-website" tabindex="-1" autocomplete="off" />
             </div>
             <div class="form-group">
               <label>Reason / Service *</label>
@@ -673,12 +668,13 @@
             </div>
             <div class="form-group">
               <label>Message</label>
-              <textarea id="inq-msg" class="fi" rows="3" placeholder="Aur koi detail ya sawaal ho to batao..."></textarea>
+              <textarea id="inq-msg" class="fi" rows="3" placeholder="Aur koi detail ya sawaal ho to batao..." maxlength="300"></textarea>
             </div>
             <button class="btn btn-primary btn-block" id="inq-btn" onclick="submitInquiry()">
               <span id="inq-txt">📞 Send & Request Call Back</span>
               <span id="inq-load" style="display:none">Sending...</span>
             </button>
+            <div class="recaptcha-wrap"><div id="rc-inquiry"></div></div>
             <div class="form-success" id="inq-ok" style="display:none"></div>
             <div class="form-err" id="inq-err"></div>
           </div>
@@ -726,7 +722,7 @@
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>What are your opening hours?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>We are open every day — Monday to Sunday — from <strong>7:00 AM to 9:00 PM</strong>, including holidays.</p></div></div>
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Where exactly is CityByteHub located?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>We are located on <strong>Piprali Road, Sikar, Rajasthan</strong>. Just search "CityByteHub Sikar" on Google Maps.</p></div></div>
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Do you offer student discounts?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Yes! We have special student-friendly pricing. Get our <a href="#prime" style="color:var(--gold)" onclick="navTo(null,'prime')">Student Prime Card</a> for exclusive monthly/weekly benefits!</p></div></div>
-          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Can I book a slot in advance?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Haan! <a href="#booking" style="color:var(--cyan)" onclick="navTo(null,'booking')">Booking section</a> mein jaao aur advance slot book karo. Ya WhatsApp karo.</p></div></div>
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Can I book in advance?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Haan! <a href="#booking" style="color:var(--cyan)" onclick="navTo(null,'booking')">Booking section</a> mein jaao aur advance time book karo. Ya WhatsApp karo.</p></div></div>
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>What printing services do you offer?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Black & white printing, color printing, photocopying, and document scanning. Ask us for current rates per page.</p></div></div>
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>What is the Student Prime Card?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>The <strong>CityByteHub Student Prime Card</strong> is an exclusive membership for students — weekly or monthly plans with extra hours, priority seat booking, and member-only discounts. Each card has a unique QR code and ID. <a href="#prime" style="color:var(--gold)" onclick="navTo(null,'prime')">Learn more →</a></p></div></div>
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>How does the Prime Card work?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Apply online ya directly aakar apply karo. Payment ke baad staff aapka card activate karega. Card pe unique QR hoga — staff scan karke aapki saari details aur balance dekh sakta hai.</p></div></div>
