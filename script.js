@@ -54,6 +54,35 @@ function formatTime12(v){
   const ampm = h >= 12 ? 'pm' : 'am';
   return `${hour12}:${String(m).padStart(2,'0')} ${ampm}`;
 }
+function normalizeTimeWithAmPm(timeValue, ampmValue){
+  const raw = String(timeValue || '');
+  if(!isValidTimeHHMM(raw)) return raw;
+
+  const mer = String(ampmValue || '').toLowerCase();
+  if(mer !== 'am' && mer !== 'pm') return raw;
+
+  let [h, m] = raw.split(':').map(Number);
+  if(h > 12) return raw;
+  if(mer === 'am') {
+    if(h === 12) h = 0;
+  } else {
+    if(h < 12) h += 12;
+  }
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+function getBookingStartTime24(){
+  return normalizeTimeWithAmPm($('bk-time')?.value || '', $('bk-time-ampm')?.value || '');
+}
+function getBookingEndTime24(){
+  return normalizeTimeWithAmPm($('bk-end-time')?.value || '', $('bk-end-time-ampm')?.value || '');
+}
+function syncAmPmFromTime(inputId, ampmId){
+  const t = $(inputId)?.value || '';
+  const ampm = $(ampmId);
+  if(!ampm || !isValidTimeHHMM(t)) return;
+  const h = Number(t.split(':')[0]);
+  ampm.value = h >= 12 ? 'pm' : 'am';
+}
 function todayYmd(){ return new Date().toISOString().split('T')[0]; }
 function getDailyDeviceBucket(key){
   const day = todayYmd();
@@ -659,8 +688,8 @@ function updateBookingBillPreview() {
   if(!box || !mainTxt || !amtEl || !noteEl) return;
 
   const service = $('bk-service')?.value;
-  const startTime = $('bk-time')?.value || '';
-  const endTime = $('bk-end-time')?.value || '';
+  const startTime = getBookingStartTime24();
+  const endTime = getBookingEndTime24();
   const manualDur = parseInt($('bk-duration')?.value || '0', 10);
   const rangeDur = endTime ? durationFromTimeRange(startTime, endTime) : null;
   const dur = rangeDur || manualDur;
@@ -747,8 +776,8 @@ async function checkSlotCapacityBeforeSave(service, date, time, endTime, duratio
 async function checkSlotAvail() {
   const service=$('bk-service')?.value;
   const date=$('bk-date')?.value;
-  const startTime=$('bk-time')?.value;
-  const endTime=$('bk-end-time')?.value || '';
+  const startTime=getBookingStartTime24();
+  const endTime=getBookingEndTime24() || '';
   const duration = parseInt($('bk-duration')?.value || '0', 10);
   const box=$('slot-availability');
   if(!box) return;
@@ -763,6 +792,31 @@ async function checkSlotAvail() {
     return;
   }
 
+  if(!isValidTimeHHMM(startTime)) {
+    box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Start time valid format me select karo.</div>';
+    return;
+  }
+
+  if(!isWithinBookingHours(startTime)) {
+    box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Gaming cafe off-time me entry ho rahi hai. Time 7:00 AM se 9:00 PM ke beech rakho.</div>';
+    return;
+  }
+
+  if(endTime) {
+    if(!isValidTimeHHMM(endTime)) {
+      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time valid format me select karo.</div>';
+      return;
+    }
+    if(!isWithinBookingHours(endTime)) {
+      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time off-time me ja raha hai. Time 7:00 AM se 9:00 PM ke beech rakho.</div>';
+      return;
+    }
+    if(durationFromTimeRange(startTime, endTime) === null) {
+      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time start time se aage hona chahiye.</div>';
+      return;
+    }
+  }
+
   box.innerHTML='<div style="background:rgba(0,220,255,0.06);border:1px solid rgba(0,220,255,0.2);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--cyan);font-family:var(--font-alt)">⏳ Checking live slot availability...</div>';
   try {
     const state = await checkSlotCapacityBeforeSave(service, date, startTime, endTime, duration || 60);
@@ -775,6 +829,11 @@ async function checkSlotAvail() {
     const status = left <= 0 ? 'Slot currently full' : `${left} seats left`;
     box.innerHTML=`<div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.18);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:${color};font-family:var(--font-alt)">📊 ${status} (used ${state.used}/${state.limit})</div>`;
   } catch (e) {
+    const code = String(e?.code || '');
+    if(code.includes('permission-denied')) {
+      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Live availability check temporary unavailable hai. Submit ke time final validation hoga.</div>';
+      return;
+    }
     box.innerHTML='<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--danger);font-family:var(--font-alt)">⚠️ Availability fetch nahi ho payi. Submit ke time re-check hoga.</div>';
   }
 }
@@ -782,10 +841,12 @@ async function checkSlotAvail() {
 setTimeout(()=>{
   $('bk-service')?.addEventListener('change',()=>{ checkSlotAvail(); updateBookingBillPreview(); });
   $('bk-date')?.addEventListener('change',()=>{ checkSlotAvail(); checkAdvanceBooking($('bk-date')?.value); });
-  $('bk-time')?.addEventListener('change',()=>{ checkSlotAvail(); checkAdvanceBooking($('bk-date')?.value); });
+  $('bk-time')?.addEventListener('change',()=>{ syncAmPmFromTime('bk-time','bk-time-ampm'); checkSlotAvail(); checkAdvanceBooking($('bk-date')?.value); });
   $('bk-time')?.addEventListener('input',updateBookingBillPreview);
-  $('bk-end-time')?.addEventListener('change',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
+  $('bk-end-time')?.addEventListener('change',()=>{ syncAmPmFromTime('bk-end-time','bk-end-time-ampm'); updateBookingBillPreview(); checkSlotAvail(); });
   $('bk-end-time')?.addEventListener('input',updateBookingBillPreview);
+  $('bk-time-ampm')?.addEventListener('change',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
+  $('bk-end-time-ampm')?.addEventListener('change',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
   $('bk-duration')?.addEventListener('input',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
   updateBookingBillPreview();
 },500);
@@ -796,8 +857,8 @@ window.submitBooking = async function() {
   const phone=cleanInput($('bk-phone')?.value,16);
   const service=$('bk-service')?.value;
   const date=$('bk-date')?.value;
-  const time=$('bk-time')?.value;
-  const endTime=$('bk-end-time')?.value;
+  const time=getBookingStartTime24();
+  const endTime=getBookingEndTime24();
   const durRaw=$('bk-duration')?.value;
   let dur=durRaw?parseInt(durRaw,10):60;
   const card=cleanInput($('bk-card')?.value,40).toUpperCase();
@@ -836,14 +897,14 @@ window.submitBooking = async function() {
   if(!date)  { showErr('bk-date-err','Date select karo.');       valid=false; }
   if(!time)  { showErr('bk-time-err','Start time daalo.');  valid=false; }
   else if(!isValidTimeHHMM(time)){ showErr('bk-time-err','Valid time daalo (jaise 10:20).'); valid=false; }
-  else if(!isWithinBookingHours(time)){ showErr('bk-time-err','Time 7:00 AM se 9:00 PM ke beech hona chahiye.'); valid=false; }
+  else if(!isWithinBookingHours(time)){ showErr('bk-time-err','Gaming cafe off-time me entry ho rahi hai. Time 7:00 AM se 9:00 PM ke beech rakho.'); valid=false; }
 
   if(endTime) {
     if(!isValidTimeHHMM(endTime)) {
       showErr('bk-end-time-err','End time valid format me daalo (jaise 11:20).');
       valid = false;
     } else if(!isWithinBookingHours(endTime)) {
-      showErr('bk-end-time-err','End time 7:00 AM se 9:00 PM ke beech hona chahiye.');
+      showErr('bk-end-time-err','End time off-time me ja raha hai. Time 7:00 AM se 9:00 PM ke beech rakho.');
       valid = false;
     } else {
       const rangeDur = durationFromTimeRange(time, endTime);
@@ -951,6 +1012,8 @@ window.submitBooking = async function() {
     if($('bk-service'))$('bk-service').value='';
     if($('bk-time'))$('bk-time').value='';
     if($('bk-end-time'))$('bk-end-time').value='';
+    if($('bk-time-ampm'))$('bk-time-ampm').value='am';
+    if($('bk-end-time-ampm'))$('bk-end-time-ampm').value='am';
     if($('bk-duration'))$('bk-duration').value='60';
     const sab=$('slot-availability'); if(sab) sab.innerHTML='';
     const payBox=$('bk-payment-box'); if(payBox) payBox.style.display='none';

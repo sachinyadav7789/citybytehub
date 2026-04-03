@@ -360,6 +360,8 @@ input,select,textarea,button{font-family:var(--font-alt)}
 select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300dcff' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.9rem center;padding-right:2.25rem;cursor:pointer;-webkit-appearance:none;appearance:none}
 select.fi option{background:#111120;color:var(--white)}
 textarea.fi{resize:vertical;min-height:90px}
+.time-ampm-row{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:0.55rem;align-items:center}
+.time-note{font-size:0.7rem;color:var(--muted);font-family:var(--font-alt);margin-top:0.35rem}
 .field-err{display:block;font-size:0.72rem;color:var(--danger);font-family:var(--font-alt);margin-top:0.3rem;min-height:1rem}
 .hp-field{
   position:absolute !important;
@@ -655,5 +657,6 @@ textarea.fi{resize:vertical;min-height:90px}
   .topbar{padding:0.5rem 0.75rem}
   .container{padding:0 0.75rem}
   .form-wrap{padding:1rem 0.75rem}
+  .time-ampm-row{grid-template-columns:minmax(0,1fr) 92px;gap:0.45rem}
 }
  

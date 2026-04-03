@@ -543,12 +543,25 @@
             </div>
             <div class="form-group">
               <label>Start Time *</label>
-              <input type="time" id="bk-time" class="fi" step="60" min="07:00" max="21:00" placeholder="10:20" required/>
+              <div class="time-ampm-row">
+                <input type="time" id="bk-time" class="fi" step="60" placeholder="10:20" required/>
+                <select id="bk-time-ampm" class="fi" aria-label="Start time AM/PM">
+                  <option value="am" selected>AM</option>
+                  <option value="pm">PM</option>
+                </select>
+              </div>
+              <div class="time-note">Cafe open window: 7:00 AM to 9:00 PM</div>
               <span class="field-err" id="bk-time-err"></span>
             </div>
             <div class="form-group">
               <label>End Time (Optional)</label>
-              <input type="time" id="bk-end-time" class="fi" step="60" min="07:00" max="21:00" placeholder="11:20"/>
+              <div class="time-ampm-row">
+                <input type="time" id="bk-end-time" class="fi" step="60" placeholder="11:20"/>
+                <select id="bk-end-time-ampm" class="fi" aria-label="End time AM/PM">
+                  <option value="am" selected>AM</option>
+                  <option value="pm">PM</option>
+                </select>
+              </div>
               <span class="field-err" id="bk-end-time-err"></span>
             </div>
             <div class="form-group">
