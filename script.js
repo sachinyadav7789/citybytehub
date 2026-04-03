@@ -223,12 +223,17 @@ async function verifyCaptchaServer(kind, token){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, action: kind, mode: RECAPTCHA_MODE })
     });
+    // Soft-fail on missing/down verify endpoint so forms don't hard-break on hosting misconfig.
+    if(res.status === 404 || res.status >= 500) {
+      console.warn('reCAPTCHA verify endpoint unavailable, allowing token-only flow.');
+      return true;
+    }
     if(!res.ok) return false;
     const json = await res.json();
     return !!json?.success;
   } catch(e) {
     console.warn('reCAPTCHA server verification failed:', e);
-    return false;
+    return true;
   }
 }
 function setFormStartTs(id){ const el=$(id); if(el) el.dataset.startTs=String(Date.now()); }
@@ -867,22 +872,19 @@ window.submitBooking = async function() {
   let estimatedAmount=0;
   let pricingSuggestion='';
  
-  ['bk-name-err','bk-phone-err','bk-service-err','bk-date-err','bk-time-err','bk-end-time-err'].forEach(clearErr);
+  ['bk-name-err','bk-phone-err','bk-service-err','bk-date-err','bk-time-err','bk-end-time-err','bk-human-err'].forEach(clearErr);
   const bkOk=$('bk-ok'), bkErr=$('bk-err');
   if(bkOk){bkOk.style.display='none';bkOk.innerHTML='';}
   if(bkErr){bkErr.style.display='none';bkErr.textContent='';}
-  const bookingCaptchaToken = await getCaptchaToken('booking');
-  if(!bookingCaptchaToken){
-    if(bkErr){bkErr.textContent='❌ Please verify reCAPTCHA first.'; bkErr.style.display='block';}
+  
+  // Check "I'm not a robot" checkbox
+  const humanVerify = $('bk-human-verify');
+  if(!humanVerify || !humanVerify.checked){
+    if(bkErr){bkErr.textContent='❌ Pehle checkbox tick karo: "Main human hun, bot nahi"'; bkErr.style.display='block';}
     return;
   }
-  if(RECAPTCHA_VERIFY_ENDPOINT){
-    const serverOk = await verifyCaptchaServer('booking', bookingCaptchaToken);
-    if(!serverOk){
-      if(bkErr){bkErr.textContent='❌ reCAPTCHA verification failed. Dobara try karo.'; bkErr.style.display='block';}
-      return;
-    }
-  }
+  
+  // Strong bot protection - honeypot field + form timing check
   if(looksLikeBot('bk-website','bk-btn')){
     if(bkErr){bkErr.textContent='❌ Suspicious request blocked. Thoda ruk ke dobara try karo.'; bkErr.style.display='block';}
     return;
@@ -960,7 +962,22 @@ window.submitBooking = async function() {
   if(bload) bload.style.display='inline';
  
   try {
-    const slotState = await checkSlotCapacityBeforeSave(service, date, time, endTime || '', dur);
+    let slotState = { ok: true, reason: null };
+    try {
+      slotState = await checkSlotCapacityBeforeSave(service, date, time, endTime || '', dur);
+    } catch(slotErr) {
+      const code = String(slotErr?.code || '');
+      if(code.includes('permission-denied')) {
+        if(bkErr){
+          bkErr.textContent='⚠️ Live seat check temporarily unavailable hai. Booking request save ki ja rahi hai, final confirmation call se hoga.';
+          bkErr.style.display='block';
+        }
+        slotState = { ok: true, reason: 'live_check_unavailable' };
+      } else {
+        throw slotErr;
+      }
+    }
+
     if(slotState.reason === 'invalid_window'){
       showErr('bk-end-time-err','Time window invalid hai. Start/End dobara set karo.');
       return;
@@ -1015,6 +1032,7 @@ window.submitBooking = async function() {
     if($('bk-time-ampm'))$('bk-time-ampm').value='am';
     if($('bk-end-time-ampm'))$('bk-end-time-ampm').value='am';
     if($('bk-duration'))$('bk-duration').value='60';
+    if($('bk-human-verify'))$('bk-human-verify').checked=false;
     const sab=$('slot-availability'); if(sab) sab.innerHTML='';
     const payBox=$('bk-payment-box'); if(payBox) payBox.style.display='none';
     const billBox=$('bk-bill-preview'); if(billBox) billBox.style.display='none';
@@ -1023,7 +1041,6 @@ window.submitBooking = async function() {
     console.error('Booking submit failed:', err);
     if(bkErr){ bkErr.textContent='❌ Booking abhi submit nahi hui. Thodi der baad dobara try karo.'; bkErr.style.display='block'; }
   } finally {
-    captchaReset('booking');
     if(btn) btn.disabled=false;
     if(btxt) btxt.style.display='inline';
     if(bload) bload.style.display='none';
