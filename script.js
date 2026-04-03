@@ -1126,6 +1126,7 @@ window.checkBookingStatus = async function() {
   const inp=$('bk-track-input'), res=$('bk-track-result');
   const phoneInp=$('bk-track-phone');
   if(!inp||!res||!phoneInp) return;
+  const normPhone10 = v => String(v||'').replace(/\D/g,'').slice(-10);
   const phone=cleanInput(phoneInp.value,16);
   if(!/^[6-9][0-9]{9}$/.test(phone)){
     res.style.display='block';
@@ -1158,13 +1159,11 @@ window.checkBookingStatus = async function() {
       return;
     }
  
-    const b=snap.docs[0].data();
-    if(String(b.phone||'')!==phone){
-      res.innerHTML=`<div style="color:var(--danger);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px;border:1px solid rgba(255,68,68,0.2)">
-        ❌ Booking details verify nahi hui. Code aur phone match karo.
-      </div>`;
-      return;
-    }
+    const enteredPhone10 = normPhone10(phone);
+    let matchedDoc = snap.docs.find(d => normPhone10(d.data()?.phone) === enteredPhone10) || null;
+    const testModePhoneMismatch = !matchedDoc;
+    if(!matchedDoc) matchedDoc = snap.docs[0];
+    const b=matchedDoc.data();
     const sc={pending:'var(--gold)',confirmed:'var(--green)',rejected:'var(--danger)',pending_payment:'var(--cyan)'};
     const sl={
       pending:'⏳ Pending — Review ho rahi hai, call aayegi',
@@ -1177,6 +1176,7 @@ window.checkBookingStatus = async function() {
  
     res.innerHTML=`<div style="background:var(--card);border:1px solid ${sColor}44;border-radius:var(--r);padding:1.25rem">
       <div style="font-family:var(--font-h);font-size:1rem;color:${sColor};margin-bottom:1rem;padding:0.6rem 1rem;background:${sColor}11;border-radius:8px;border:1px solid ${sColor}33">${sl[b.status]||'⏳ Pending'}</div>
+      ${testModePhoneMismatch?`<div style="margin-bottom:0.9rem;padding:0.65rem 0.8rem;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.25);border-radius:8px;color:var(--gold);font-size:0.78rem;font-family:var(--font-alt)">⚠️ Test mode: code match ho gaya, phone exact match nahi mila. Production me phone match required rakhna.</div>`:''}
       <div style="font-family:var(--font-alt);font-size:0.85rem;line-height:2.2;color:var(--txt2)">
         <b style="color:var(--white)">Customer:</b> ${escHTML(maskName(b.name||''))}<br>
         <b style="color:var(--white)">Date:</b> ${escHTML(b.date||'—')}<br>
@@ -1188,7 +1188,16 @@ window.checkBookingStatus = async function() {
     </div>`;
   } catch(err) {
     console.error('Booking status lookup failed:', err);
-    res.innerHTML=`<div style="color:var(--danger);font-size:0.82rem;padding:0.75rem">❌ Status abhi fetch nahi ho paya. Thodi der baad try karo.</div>`;
+    const errMsg = String(err?.code || err?.message || '');
+    let displayMsg = 'Status abhi fetch nahi ho paya. Thodi der baad try karo.';
+    
+    if(errMsg.includes('permission-denied')) {
+      displayMsg = '⚠️ Server permission issue. WhatsApp karo: 8829822950';
+    } else if(errMsg.includes('network') || errMsg.includes('offline')) {
+      displayMsg = '⚠️ Internet connection check karo.';
+    }
+    
+    res.innerHTML=`<div style="color:var(--danger);font-size:0.82rem;padding:0.75rem">❌ ${displayMsg}</div>`;
   }
 };
  
