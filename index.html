@@ -13,12 +13,16 @@
   <meta property="og:description" content="Sikar's premium gaming zone on Piprali Road. High-end PCs, PS5, fast internet, printing & more. Open 7AM–9PM."/>
   <meta property="og:url" content="https://citybytehub.in/"/>
   <meta property="og:image" content="https://citybytehub.in/assets/og-image.jpg"/>
-  <meta name="recaptcha-site-key" content="6Lcb26lsAAAAAEM5QouEhfso4Arh4SvmNRFX5ckD"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com https://www.google.com; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; frame-src https://www.google.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.firebasestorage.app;">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="recaptcha-site-key" content="6Lc_RqUsAAAAACCx3OyP-haGx_9liAXQ0tRaWBNS"/>
+  <meta name="recaptcha-mode" content="v3"/>
+  <meta name="recaptcha-verify-endpoint" content="/api/recaptcha/verify"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
-  <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":["LocalBusiness","EntertainmentBusiness"],"name":"CityByteHub","description":"Premium Gaming Zone & Cyber Cafe in Sikar on Piprali Road","url":"https://citybytehub.in","email":"citybytehub@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Piprali Road","addressLocality":"Sikar","addressRegion":"Rajasthan","addressCountry":"IN"},"openingHours":"Mo-Su 07:00-21:00","priceRange":"₹₹"}</script>
 </head>
 <body>
@@ -53,9 +57,6 @@
     <a href="#about"      class="nav-item" onclick="navTo(this,'about')">       <span class="nav-icon">🏢</span> About Us</a>
     <a href="#faq"        class="nav-item" onclick="navTo(this,'faq')">         <span class="nav-icon">❓</span> FAQ</a>
     <a href="#reviews"    class="nav-item" onclick="navTo(this,'reviews')">     <span class="nav-icon">⭐</span> Reviews</a>
-    <a href="../admin panal/index.html"  class="nav-item" style="margin-top:0.5rem;border-top:1px solid var(--border)">
-      <span class="nav-icon">🔐</span> Staff Panel
-    </a>
   </nav>
   <div class="sidebar-bottom">
     <div class="sidebar-hours">
@@ -212,7 +213,7 @@
           <article class="price-card reveal">
             <span class="price-icon">🖥️</span>
             <h3 class="price-name">Gaming PC</h3>
-            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="pc-price">Ask Us</span><span class="price-per">/hr</span></div>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num" id="pc-price">40</span><span class="price-per">/hr</span></div>
             <ul class="price-feats">
               <li>✓ High-Performance Rig</li><li>✓ All Popular Games</li>
               <li>✓ Headset Included</li><li>✓ Mechanical Keyboard</li>
@@ -223,7 +224,7 @@
             <div class="pop-badge">⭐ Most Popular</div>
             <span class="price-icon">🎮</span>
             <h3 class="price-name">PS5 Gaming</h3>
-            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="ps5-price">Ask Us</span><span class="price-per">/hr</span></div>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num" id="ps5-price">60</span><span class="price-per">/hr</span></div>
             <ul class="price-feats">
               <li>✓ PlayStation 5 Console</li><li>✓ Big Screen Display</li>
               <li>✓ Latest Game Library</li><li>✓ 2 Controllers</li>
@@ -233,7 +234,7 @@
           <article class="price-card reveal reveal-d2">
             <span class="price-icon">🌐</span>
             <h3 class="price-name">Internet / Browsing</h3>
-            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="net-price">Ask Us</span><span class="price-per">/hr</span></div>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num" id="net-price">30</span><span class="price-per">/hr</span></div>
             <ul class="price-feats">
               <li>✓ High-Speed Broadband</li><li>✓ Private Session</li>
               <li>✓ Print/Scan Add-on Available</li><li>✓ Form Filling Support</li>
@@ -415,12 +416,12 @@
           <div class="form-wrap">
             <div class="form-group">
               <label>Full Name *</label>
-              <input type="text" id="prime-name" class="fi" placeholder="Apna poora naam daalo" oninput="updateCardPreview()" maxlength="80"/>
+              <input type="text" id="prime-name" class="fi" placeholder="Apna poora naam daalo" oninput="updateCardPreview()" maxlength="80" autocomplete="name" required/>
               <span class="field-err" id="prime-name-err"></span>
             </div>
             <div class="form-group">
               <label>Phone Number *</label>
-              <input type="tel" id="prime-phone" class="fi" placeholder="10-digit mobile number" maxlength="10"/>
+              <input type="tel" id="prime-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" pattern="[6-9][0-9]{9}" required/>
               <span class="field-err" id="prime-phone-err"></span>
             </div>
             <div class="hp-field" aria-hidden="true">
@@ -492,8 +493,15 @@
                 • Kal ki booking ke liye <strong style="color:var(--gold)">payment call zaruri</strong> hai<br>
                 • Peak hours: 4PM – 8PM — jaldi book karo!<br>
                 • PC: max 5 per time window &nbsp;·&nbsp; PS5: max 2 per time window<br>
+                • Mobile / Browsing seat: <strong style="color:var(--gold)" id="mobile-tip-price">Rs.30 per hour</strong><br>
                 • Booking ke baad confirmation call aayegi<br>
                 • Walk-in bhi welcome hai anytime
+              </div>
+            </div>
+            <div class="booking-info reveal" style="margin-top:1rem">
+              <div style="font-family:var(--font-h);font-size:0.8rem;color:var(--cyan);margin-bottom:0.9rem;letter-spacing:0.06em">💸 LIVE SERVICE RATES</div>
+              <div id="bk-live-rate-list" style="font-size:0.82rem;color:var(--txt2);font-family:var(--font-alt)">
+                Loading rates...
               </div>
             </div>
           </div>
@@ -502,12 +510,12 @@
             <div class="form-title">📅 Advance Booking</div>
             <div class="form-group">
               <label>Full Name *</label>
-              <input type="text" id="bk-name" class="fi" placeholder="Your full name" maxlength="80"/>
+              <input type="text" id="bk-name" class="fi" placeholder="Your full name" maxlength="80" autocomplete="name" required/>
               <span class="field-err" id="bk-name-err"></span>
             </div>
             <div class="form-group">
               <label>Phone Number *</label>
-              <input type="tel" id="bk-phone" class="fi" placeholder="10-digit mobile number" maxlength="10"/>
+              <input type="tel" id="bk-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" pattern="[6-9][0-9]{9}" required/>
               <span class="field-err" id="bk-phone-err"></span>
             </div>
             <div class="hp-field" aria-hidden="true">
@@ -516,7 +524,7 @@
             </div>
             <div class="form-group">
               <label>Service *</label>
-              <select id="bk-service" class="fi">
+              <select id="bk-service" class="fi" required>
                 <option value="">-- Select Service --</option>
                 <option value="gaming-pc">🖥️ Gaming PC</option>
                 <option value="ps5">🎮 PS5 Gaming</option>
@@ -525,21 +533,34 @@
                 <option value="form-filling">📋 Online Form Filling</option>
                 <option value="other">🔧 Other</option>
               </select>
+              <div style="font-size:0.72rem;color:var(--muted);font-family:var(--font-alt);margin-top:0.35rem">Owner-added custom services automatically yahin show hongi.</div>
               <span class="field-err" id="bk-service-err"></span>
             </div>
             <div class="form-group">
               <label>Preferred Date * <small id="bk-date-hint" style="color:var(--cyan);font-family:var(--font-alt)"></small></label>
-              <input type="date" id="bk-date" class="fi"/>
+              <input type="date" id="bk-date" class="fi" required/>
               <span class="field-err" id="bk-date-err"></span>
             </div>
             <div class="form-group">
-              <label>Preferred Time *</label>
-              <input type="time" id="bk-time" class="fi" step="60" min="07:00" max="21:00" placeholder="10:20"/>
+              <label>Start Time *</label>
+              <input type="time" id="bk-time" class="fi" step="60" min="07:00" max="21:00" placeholder="10:20" required/>
               <span class="field-err" id="bk-time-err"></span>
+            </div>
+            <div class="form-group">
+              <label>End Time (Optional)</label>
+              <input type="time" id="bk-end-time" class="fi" step="60" min="07:00" max="21:00" placeholder="11:20"/>
+              <span class="field-err" id="bk-end-time-err"></span>
             </div>
             <div class="form-group">
               <label>Duration (Minutes)</label>
               <input type="number" id="bk-duration" class="fi" min="15" max="480" step="15" value="60" placeholder="e.g. 90"/>
+            </div>
+            <div id="bk-bill-preview" class="billing-preview" style="display:none">
+              <div class="bill-main">
+                <span id="bk-bill-main-txt">Estimated charge</span>
+                <span class="bill-amt" id="bk-bill-amt">₹0</span>
+              </div>
+              <div class="bill-note" id="bk-bill-note">Service aur duration choose karo.</div>
             </div>
             <div class="form-group">
               <label>Prime Card Number (Optional)</label>
@@ -574,12 +595,16 @@
           <div class="sec-tag" style="margin-bottom:0.5rem">Booking Track Karo</div>
           <h3 style="font-family:var(--font-h);font-size:1.1rem;color:var(--white);margin-bottom:0.4rem">🔍 Apni Booking Check Karo</h3>
           <p style="font-size:0.82rem;color:var(--txt2);font-family:var(--font-alt);margin-bottom:1.25rem;line-height:1.7">
-            Booking ke baad jo <strong style="color:var(--cyan)">5-digit code</strong> mila tha — woh daalo aur apni booking ka status dekho.
+            Booking ke baad jo <strong style="color:var(--cyan)">8-character booking code</strong> mila tha woh daalo, saath me booking wala phone number daalo, tabhi status dikhega.
           </p>
           <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem">
+            <input type="tel" id="bk-track-phone" class="fi"
+              style="flex:1;min-width:200px;margin-bottom:0"
+              placeholder="Phone number (booking wala)" maxlength="10"
+              onkeydown="if(event.key==='Enter') checkBookingStatus()" />
             <input type="text" id="bk-track-input" class="fi"
               style="flex:1;min-width:200px;margin-bottom:0;text-transform:uppercase;letter-spacing:0.1em;font-family:var(--font-h);font-size:1rem"
-              placeholder="e.g. 48291" maxlength="5"
+              placeholder="e.g. A1B2C3D4" maxlength="8"
               onkeydown="if(event.key==='Enter') checkBookingStatus()" />
             <button class="btn btn-primary" onclick="checkBookingStatus()" style="min-width:120px">
               🔍 Check Status
@@ -591,9 +616,9 @@
           <div style="background:var(--bg3);border-radius:var(--r2);padding:1rem;margin-top:1rem;border:1px solid var(--border)">
             <div style="font-family:var(--font-h);font-size:0.7rem;color:var(--cyan);letter-spacing:0.08em;margin-bottom:0.75rem">📋 CODE KAISE USE KARO</div>
             <div style="font-family:var(--font-alt);font-size:0.8rem;color:var(--txt2);line-height:2">
-              <div>1️⃣ Booking submit karne ke baad screen pe <strong style="color:var(--white)">5-digit code</strong> dikhega</div>
+              <div>1️⃣ Booking submit karne ke baad screen pe <strong style="color:var(--white)">8-character code</strong> dikhega</div>
               <div>2️⃣ Ye code <strong style="color:var(--white)">note karo ya screenshot lo</strong> — ye aapka booking reference hai</div>
-              <div>3️⃣ Is box mein code daalo aur <strong style="color:var(--white)">"Check Status"</strong> karo</div>
+              <div>3️⃣ Is box mein booking code ke saath booking wala <strong style="color:var(--white)">phone number</strong> bhi daalo</div>
               <div>4️⃣ Status teen tarah ka ho sakta hai:</div>
               <div style="padding-left:1.5rem;margin-top:0.25rem">
                 <span style="color:var(--gold);font-weight:600">⏳ Pending</span> — Hum review kar rahe hain, thodi der mein call aayegi<br>
@@ -640,12 +665,12 @@
             <p style="font-size:0.82rem;color:var(--muted);font-family:var(--font-alt);margin-bottom:1.25rem">Apna naam, number aur reason daalo — hum aapko call karenge.</p>
             <div class="form-group">
               <label>Full Name *</label>
-              <input type="text" id="inq-name" class="fi" placeholder="Your full name" maxlength="80"/>
+              <input type="text" id="inq-name" class="fi" placeholder="Your full name" maxlength="80" autocomplete="name" required/>
               <span class="field-err" id="inq-name-err"></span>
             </div>
             <div class="form-group">
               <label>Phone Number * <small style="color:var(--cyan);font-family:var(--font-alt)">(Hum isi pe call karenge)</small></label>
-              <input type="tel" id="inq-phone" class="fi" placeholder="10-digit mobile number" maxlength="10"/>
+              <input type="tel" id="inq-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" pattern="[6-9][0-9]{9}" required/>
               <span class="field-err" id="inq-phone-err"></span>
             </div>
             <div class="hp-field" aria-hidden="true">
@@ -654,7 +679,7 @@
             </div>
             <div class="form-group">
               <label>Reason / Service *</label>
-              <select id="inq-reason" class="fi">
+              <select id="inq-reason" class="fi" required>
                 <option value="">-- Select Reason --</option>
                 <option value="gaming">Gaming PC / PS5 Enquiry</option>
                 <option value="prime-card">Prime Card Application</option>
@@ -760,8 +785,8 @@
       <div>
         <h4>Quick Links</h4>
         <ul class="footer-links">
-          <li><a href="#services" onclick="navTo(null,'home')">Services</a></li>
-          <li><a href="#pricing" onclick="navTo(null,'home')">Pricing</a></li>
+          <li><a href="#services" onclick="navTo(null,'services')">Services</a></li>
+          <li><a href="#pricing" onclick="navTo(null,'pricing')">Pricing</a></li>
           <li><a href="#about" onclick="navTo(null,'about')">About Us</a></li>
           <li><a href="#faq" onclick="navTo(null,'faq')">FAQ</a></li>
           <li><a href="#inquiry" onclick="navTo(null,'inquiry')">Contact</a></li>
@@ -815,6 +840,7 @@ const _TMAP = {
   faq:'FAQ',reviews:'Reviews'
 };
 window.navTo = function(el, page) {
+  if(window.event && typeof window.event.preventDefault === 'function') window.event.preventDefault();
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const navEl = el || document.querySelector('.nav-item[href="#'+page+'"]');
   if(navEl) navEl.classList.add('active');
@@ -823,7 +849,18 @@ window.navTo = function(el, page) {
   if(sec) { sec.classList.add('active'); sec.querySelectorAll('.reveal').forEach(e=>e.classList.add('visible')); }
   const titleEl = document.getElementById('topbar-title');
   if(titleEl) titleEl.textContent = _TMAP[page]||'CityByteHub';
-  window.scrollTo({top:0,behavior:'smooth'});
+
+  const target = document.getElementById(page);
+  const topbar = document.querySelector('.topbar');
+  const topOffset = (topbar ? topbar.offsetHeight : 0) + 12;
+  if(target) {
+    const y = Math.max(0, target.getBoundingClientRect().top + window.scrollY - topOffset);
+    window.scrollTo({top:y,behavior:'smooth'});
+  } else {
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  if(history && history.replaceState) history.replaceState(null,'','#'+page);
   if(window.innerWidth<=1024){ document.getElementById('sidebar')?.classList.remove('open'); document.getElementById('sidebar-overlay')?.classList.remove('show'); }
 };
 window.toggleSidebar = function() {
