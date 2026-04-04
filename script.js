@@ -530,6 +530,30 @@ function applyBookingAvailabilitySettings(raw = {}) {
   } catch(_) {}
 }
 
+function availabilityLooksLoading() {
+  const ids = ['avail-pc', 'avail-ps5', 'avail-net-pc', 'avail-mobile', 'avail-hours'];
+  return ids.some((id) => String($(id)?.textContent || '').toLowerCase().includes('loading'));
+}
+
+function applyAvailabilitySafeFallback() {
+  if(!availabilityLooksLoading()) return;
+  const cached = readCachedBookingAvailability();
+  if(cached && typeof cached === 'object') {
+    applyBookingAvailabilitySettings(cached);
+    return;
+  }
+  // Final safety fallback so users never see a permanent loading state.
+  applyLiveSeats(5);
+  applyBookingAvailabilitySettings({
+    gamingPcSeats: 5,
+    ps5Consoles: 2,
+    internetBrowsingPcs: 3,
+    mobileSeats: 3,
+    openHours: '7:00 AM - 9:00 PM',
+    updatedAt: new Date().toISOString()
+  });
+}
+
 async function syncLiveStateOnce() {
   try {
     const [seatsRes, annRes, availabilityResPrimary, availabilityResSecondary] = await Promise.allSettled([
@@ -645,14 +669,15 @@ const _cachedAvailability = readCachedBookingAvailability();
 if(_cachedAvailability) applyBookingAvailabilitySettings(_cachedAvailability);
 onValue(ref(rtdb,'booking/availability'), snap => {
   if(snap.exists()) applyBookingAvailabilitySettings(snap.val() || {});
-},()=>{});
+},()=>{ syncLiveStateOnce(); });
 
 onValue(ref(rtdb,'live/bookingAvailability'), snap => {
   if(snap.exists()) applyBookingAvailabilitySettings(snap.val() || {});
-},()=>{});
+},()=>{ syncLiveStateOnce(); });
 
 ensureLiveStateFallbackSync();
 syncLiveStateOnce();
+setTimeout(applyAvailabilitySafeFallback, 2500);
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden) syncLiveStateOnce();
 });
