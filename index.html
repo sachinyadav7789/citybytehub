@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
   <title>CityByteHub — Best Gaming Zone & Cyber Cafe in Sikar | Book Now</title>
   <meta name="description" content="CityByteHub is Sikar's premium gaming zone & cyber cafe on Piprali Road. Gaming PCs, PS5, high-speed internet, printing & more. Open 7AM–9PM."/>
   <meta name="keywords" content="gaming zone in Sikar, cyber cafe Sikar, PS5 gaming cafe Sikar, best gaming cafe Sikar, gaming PC on rent Sikar"/>
@@ -13,19 +16,20 @@
   <meta property="og:description" content="Sikar's premium gaming zone on Piprali Road. High-end PCs, PS5, fast internet, printing & more. Open 7AM–9PM."/>
   <meta property="og:url" content="https://citybytehub.in/"/>
   <meta property="og:image" content="https://citybytehub.in/assets/og-image.jpg"/>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com https://www.google.com; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; frame-src https://www.google.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.firebasestorage.app;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com https://www.google.com https://citybytehub-dde05-default-rtdb.asia-southeast1.firebasedatabase.app; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; frame-src https://www.google.com; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://*.firebasestorage.app https://citybytehub-dde05-default-rtdb.asia-southeast1.firebasedatabase.app wss://citybytehub-dde05-default-rtdb.asia-southeast1.firebasedatabase.app https://api64.ipify.org;">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="recaptcha-site-key" content="6Lc_RqUsAAAAACCx3OyP-haGx_9liAXQ0tRaWBNS"/>
   <meta name="recaptcha-mode" content="v3"/>
   <meta name="recaptcha-verify-endpoint" content="/api/recaptcha/verify"/>
+  <meta name="abuse-check-endpoint" content="/api/abuse-check"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":["LocalBusiness","EntertainmentBusiness"],"name":"CityByteHub","description":"Premium Gaming Zone & Cyber Cafe in Sikar on Piprali Road","url":"https://citybytehub.in","email":"citybytehub@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Piprali Road","addressLocality":"Sikar","addressRegion":"Rajasthan","addressCountry":"IN"},"openingHours":"Mo-Su 07:00-21:00","priceRange":"₹₹"}</script>
 </head>
-<body>
+<body class="pricing-loading">
  
 <canvas id="particle-canvas" aria-hidden="true"></canvas>
  
@@ -86,7 +90,7 @@
   <div class="ann-bar" id="ann-bar">
     <span class="ann-bar-icon">📢</span>
     <span class="ann-bar-text" id="ann-bar-text">Loading announcement...</span>
-    <button id="ann-bar-close" onclick="document.getElementById('ann-bar').style.display='none'" aria-label="Close">✕</button>
+    <button id="ann-bar-close" onclick="dismissAnnouncementBar()" aria-label="Close">✕</button>
   </div>
  
   <!-- ── HOME SECTION ── -->
@@ -113,6 +117,15 @@
           <span class="trust-item"><span>✅</span> High-Speed Internet</span>
           <span class="trust-item"><span>✅</span> AC Room</span>
           <span class="trust-item"><span>⭐</span> Student Prime Card</span>
+        </div>
+      </div>
+      <div class="hero-side" aria-hidden="true">
+        <div class="hero-radar">
+          <span class="hero-ring hero-ring-1"></span>
+          <span class="hero-ring hero-ring-2"></span>
+          <span class="hero-ring hero-ring-3"></span>
+          <span class="hero-ring hero-ring-4"></span>
+          <span class="hero-core">CBH</span>
         </div>
       </div>
     </div>
@@ -211,9 +224,10 @@
         <div class="pricing-grid" id="pricing-grid">
           <!-- Loaded dynamically from RTDB -->
           <article class="price-card reveal">
+            <div class="offer-chip" id="offer-chip-pc" style="display:none"></div>
             <span class="price-icon">🖥️</span>
             <h3 class="price-name">Gaming PC</h3>
-            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num" id="pc-price">40</span><span class="price-per">/hr</span></div>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="pc-price">...</span><span class="price-per">/hr</span></div>
             <ul class="price-feats">
               <li>✓ High-Performance Rig</li><li>✓ All Popular Games</li>
               <li>✓ Headset Included</li><li>✓ Mechanical Keyboard</li>
@@ -222,9 +236,10 @@
           </article>
           <article class="price-card popular reveal reveal-d1">
             <div class="pop-badge">⭐ Most Popular</div>
+            <div class="offer-chip" id="offer-chip-ps5" style="display:none"></div>
             <span class="price-icon">🎮</span>
             <h3 class="price-name">PS5 Gaming</h3>
-            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num" id="ps5-price">60</span><span class="price-per">/hr</span></div>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="ps5-price">...</span><span class="price-per">/hr</span></div>
             <ul class="price-feats">
               <li>✓ PlayStation 5 Console</li><li>✓ Big Screen Display</li>
               <li>✓ Latest Game Library</li><li>✓ 2 Controllers</li>
@@ -232,9 +247,10 @@
             <a href="#booking" class="btn btn-primary btn-block" onclick="navTo(null,'booking')">Book Now</a>
           </article>
           <article class="price-card reveal reveal-d2">
+            <div class="offer-chip" id="offer-chip-net" style="display:none"></div>
             <span class="price-icon">🌐</span>
             <h3 class="price-name">Internet / Browsing</h3>
-            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num" id="net-price">30</span><span class="price-per">/hr</span></div>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="net-price">...</span><span class="price-per">/hr</span></div>
             <ul class="price-feats">
               <li>✓ High-Speed Broadband</li><li>✓ Private Session</li>
               <li>✓ Print/Scan Add-on Available</li><li>✓ Form Filling Support</li>
@@ -243,15 +259,26 @@
           </article>
           <article class="price-card prime reveal">
             <div class="prime-badge-pc">🎓 PRIME CARD</div>
+            <div class="offer-chip" id="offer-chip-prime" style="display:none"></div>
             <span class="price-icon">⭐</span>
             <h3 class="price-name">Student Prime</h3>
-            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="prime-price">Ask Us</span><span class="price-per">/week</span></div>
+            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask" id="prime-price">...</span><span class="price-per">/week</span></div>
+            <div class="price-amt" style="margin-top:-0.7rem;margin-bottom:1rem"><span class="price-cur">₹</span><span class="price-num ask" id="prime-price-monthly">...</span><span class="price-per">/month</span></div>
             <ul class="price-feats">
               <li>✓ Weekly & Monthly Plans</li><li>✓ Bonus Gaming Hours</li>
               <li>✓ Priority Booking</li><li>✓ Exclusive Member Rates</li>
             </ul>
             <a href="#prime" class="btn btn-gold btn-block" onclick="navTo(null,'prime')">Get Prime Card</a>
           </article>
+        </div>
+        <div class="pricing-master-card reveal" id="pricing-all-card" style="margin-top:1.25rem">
+          <div class="pricing-master-head">
+            <div class="pricing-master-title">📊 All Live Prices & Offers</div>
+            <div class="pricing-master-sub">Admin panel se jo bhi rates/offers set honge, yahan auto update honge.</div>
+          </div>
+          <div id="pricing-all-card-body" class="pricing-master-grid">
+            <div style="color:var(--muted)">Loading live pricing details...</div>
+          </div>
         </div>
         <div class="price-note" style="margin-top:1.5rem">
           <span>💡</span>
@@ -480,10 +507,11 @@
           <div>
             <div class="booking-info reveal" style="margin-bottom:1rem">
               <div style="font-family:var(--font-h);font-size:0.8rem;color:var(--cyan);margin-bottom:1rem;letter-spacing:0.06em">📊 TODAY'S AVAILABILITY</div>
-              <div class="avail-row"><span class="avail-label">🖥️ Gaming PCs</span><span class="avail-val" id="avail-pc" style="color:var(--green)">5 seats</span></div>
-              <div class="avail-row"><span class="avail-label">🎮 PS5 Consoles</span><span class="avail-val" id="avail-ps5" style="color:var(--green)">2 consoles</span></div>
-              <div class="avail-row"><span class="avail-label">🌐 Internet Seats</span><span class="avail-val" id="avail-net">Available</span></div>
-              <div class="avail-row"><span class="avail-label">🕐 Open Hours</span><span class="avail-val">7:00 AM – 9:00 PM</span></div>
+              <div class="avail-row"><span class="avail-label">🖥️ Gaming PCs</span><span class="avail-val" id="avail-pc" style="color:var(--green)">Loading...</span></div>
+              <div class="avail-row"><span class="avail-label">🎮 PS5 Consoles</span><span class="avail-val" id="avail-ps5" style="color:var(--green)">Loading...</span></div>
+              <div class="avail-row"><span class="avail-label">🌐 Internet Browsing PCs</span><span class="avail-val" id="avail-net-pc" style="color:var(--green)">Loading...</span></div>
+              <div class="avail-row"><span class="avail-label">📱 Mobile Seats</span><span class="avail-val" id="avail-mobile" style="color:var(--green)">Loading...</span></div>
+              <div class="avail-row"><span class="avail-label">🕐 Open Hours</span><span class="avail-val" id="avail-hours">Loading...</span></div>
               <div id="slot-availability" style="margin-top:0.5rem"></div>
             </div>
             <div class="booking-info reveal" style="background:var(--card2)">
@@ -493,7 +521,7 @@
                 • Kal ki booking ke liye <strong style="color:var(--gold)">payment call zaruri</strong> hai<br>
                 • Peak hours: 4PM – 8PM — jaldi book karo!<br>
                 • PC: max 5 per time window &nbsp;·&nbsp; PS5: max 2 per time window<br>
-                • Mobile / Browsing seat: <strong style="color:var(--gold)" id="mobile-tip-price">Rs.30 per hour</strong><br>
+                • Mobile / Browsing seat: <strong style="color:var(--gold)" id="mobile-tip-price">Loading live rate...</strong><br>
                 • Booking ke baad confirmation call aayegi<br>
                 • Walk-in bhi welcome hai anytime
               </div>
@@ -535,6 +563,35 @@
               </select>
               <div style="font-size:0.72rem;color:var(--muted);font-family:var(--font-alt);margin-top:0.35rem">Owner-added custom services automatically yahin show hongi.</div>
               <span class="field-err" id="bk-service-err"></span>
+            </div>
+            <div id="bk-service-detail-box" style="display:none;background:rgba(0,220,255,0.06);border:1px solid rgba(0,220,255,0.2);border-radius:var(--r2);padding:0.8rem 0.85rem;margin-bottom:1rem">
+              <div id="bk-service-detail-title" style="font-family:var(--font-h);font-size:0.68rem;color:var(--cyan);letter-spacing:0.08em;margin-bottom:0.6rem">SERVICE DETAILS</div>
+              <div id="bk-print-fields" style="display:none">
+                <div class="form-group" style="margin-bottom:0.65rem">
+                  <label>Single Side Pages</label>
+                  <input type="number" id="bk-print-single" class="fi" min="0" max="500" step="1" value="0" />
+                </div>
+                <div class="form-group" style="margin-bottom:0.2rem">
+                  <label>Both Side Sheets</label>
+                  <input type="number" id="bk-print-double" class="fi" min="0" max="500" step="1" value="0" />
+                </div>
+              </div>
+              <div id="bk-form-fields" style="display:none">
+                <div class="form-group" style="margin-bottom:0.65rem">
+                  <label>Form Type</label>
+                  <input type="text" id="bk-form-kind" class="fi" placeholder="e.g. Scholarship, Admit Card, Govt Form" maxlength="90" />
+                </div>
+                <div class="form-group" style="margin-bottom:0.2rem">
+                  <label>Form Notes</label>
+                  <textarea id="bk-form-extra" class="fi" rows="2" maxlength="220" placeholder="Required docs, urgency, extra details"></textarea>
+                </div>
+              </div>
+              <div id="bk-custom-fields" style="display:none">
+                <div class="form-group" style="margin-bottom:0.2rem">
+                  <label>Quantity / Units</label>
+                  <input type="number" id="bk-custom-qty" class="fi" min="1" max="200" step="1" value="1" />
+                </div>
+              </div>
             </div>
             <div class="form-group">
               <label>Preferred Date * <small id="bk-date-hint" style="color:var(--cyan);font-family:var(--font-alt)"></small></label>
@@ -926,7 +983,7 @@ window.setFormPlan = function(plan) {
 };
 window.updateCardPreview = function() {};
 </script>
-<script type="module" src="script.js"></script>
+  <script type="module" src="script.js?v=20260405f"></script>
 </body>
 </html>
  

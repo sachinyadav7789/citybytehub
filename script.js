@@ -17,16 +17,27 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const db   = getFirestore(app);
 const rtdb = getDatabase(app);
+const RTDB_REST_PRICING_URL = `${String(firebaseConfig.databaseURL || '').replace(/\/+$/,'')}/pricing.json`;
+const RTDB_REST_ANNOUNCEMENT_URL = `${String(firebaseConfig.databaseURL || '').replace(/\/+$/,'')}/announcements/latest.json`;
+const RTDB_REST_SEATS_URL = `${String(firebaseConfig.databaseURL || '').replace(/\/+$/,'')}/seats.json`;
+const RTDB_REST_BOOKING_AVAILABILITY_URLS = [
+  `${String(firebaseConfig.databaseURL || '').replace(/\/+$/,'')}/booking/availability.json`,
+  `${String(firebaseConfig.databaseURL || '').replace(/\/+$/,'')}/live/bookingAvailability.json`
+];
 
 // SECURITY NOTE: Enable Firebase App Check for CSRF protection.
 // SECURITY NOTE: Restrict authorized domains in Firebase Console.
 
 const RECAPTCHA_SITE_KEY = document.querySelector('meta[name="recaptcha-site-key"]')?.getAttribute('content') || '';
 const RECAPTCHA_VERIFY_ENDPOINT = document.querySelector('meta[name="recaptcha-verify-endpoint"]')?.getAttribute('content') || '';
+const ABUSE_CHECK_ENDPOINT = document.querySelector('meta[name="abuse-check-endpoint"]')?.getAttribute('content') || '/api/abuse-check';
 const RECAPTCHA_MODE = (document.querySelector('meta[name="recaptcha-mode"]')?.getAttribute('content') || 'v3').toLowerCase();
 const IS_LOCAL_DEV = /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname);
+const IP_LOOKUP_URL = 'https://api64.ipify.org?format=json';
 let CAPTCHA_ENABLED = Boolean(RECAPTCHA_SITE_KEY) && !IS_LOCAL_DEV;
 const rcWidgets = { prime: null, booking: null, inquiry: null };
+let _cachedPublicIpPromise = null;
+const DEVICE_ID_KEY = 'cbh_device_id_v1';
 
 if (IS_LOCAL_DEV) {
   console.warn('reCAPTCHA bypassed in local development (localhost).');
@@ -101,6 +112,107 @@ function incrementDailyDeviceQuota(key){
     state.count += 1;
     localStorage.setItem(key, JSON.stringify(state));
   } catch(e) {}
+}
+function getDailyIpBucket(key){
+  const day = todayYmd();
+  const raw = localStorage.getItem(key);
+  const state = raw ? JSON.parse(raw) : { day, count: 0 };
+  if(!state || state.day !== day) return { day, count: 0 };
+  return { day, count: Number(state.count) || 0 };
+}
+function getOrCreateDeviceId(){
+  try {
+    const existing = localStorage.getItem(DEVICE_ID_KEY);
+    if(existing && existing.length >= 12) return existing;
+    const id = window.crypto?.randomUUID
+      ? window.crypto.randomUUID()
+      : 'dev-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem(DEVICE_ID_KEY, id);
+    return id;
+  } catch(e) {
+    return 'dev-fallback';
+  }
+}
+function canUseDailyIpQuota(key, maxAttempts){
+  try { return getDailyIpBucket(key).count < maxAttempts; }
+  catch(e) { return true; }
+}
+function incrementDailyIpQuota(key){
+  try {
+    const state = getDailyIpBucket(key);
+    state.count += 1;
+    localStorage.setItem(key, JSON.stringify(state));
+  } catch(e) {}
+}
+async function getPublicIpSafe(){
+  if(IS_LOCAL_DEV) return '';
+  if(_cachedPublicIpPromise) return _cachedPublicIpPromise;
+  _cachedPublicIpPromise = (async ()=>{
+    try {
+      const res = await fetch(IP_LOOKUP_URL, { cache: 'no-store' });
+      if(!res.ok) return '';
+      const json = await res.json();
+      const ip = String(json?.ip || '').trim();
+      return /^\d{1,3}(\.\d{1,3}){3}$/.test(ip) ? ip : '';
+    } catch(e) {
+      return '';
+    }
+  })();
+  return _cachedPublicIpPromise;
+}
+async function evaluateIpDeviceGuard(scope, opts = {}){
+  const windowLimit = Number(opts.windowLimit || 4);
+  const windowMs = Number(opts.windowMs || 10 * 60 * 1000);
+  const dailyIpLimit = Number(opts.dailyIpLimit || 25);
+  const dailyDeviceLimit = Number(opts.dailyDeviceLimit || 8);
+  const ip = await getPublicIpSafe();
+
+  if(ip) {
+    if(!consumeWindowRateLimit(`cbh_${scope}_ip_window_${ip}`, windowLimit, windowMs)) {
+      return { ok: false, reason: 'ip_window', ip };
+    }
+    if(!canUseDailyIpQuota(`cbh_${scope}_ip_daily_${ip}`, dailyIpLimit)) {
+      return { ok: false, reason: 'ip_daily', ip };
+    }
+  }
+  if(!canUseDailyDeviceQuota(`cbh_${scope}_device_daily`, dailyDeviceLimit)) {
+    return { ok: false, reason: 'device_daily', ip };
+  }
+  return { ok: true, ip };
+}
+function commitIpDeviceGuard(scope, ip){
+  incrementDailyDeviceQuota(`cbh_${scope}_device_daily`);
+  if(ip) incrementDailyIpQuota(`cbh_${scope}_ip_daily_${ip}`);
+}
+async function evaluateServerAbuseGuard(scope, phone){
+  if(IS_LOCAL_DEV || !ABUSE_CHECK_ENDPOINT) return { ok: true, reason: null };
+  try {
+    const res = await fetch(ABUSE_CHECK_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        scope,
+        phone: String(phone || '').replace(/\D/g,'').slice(-10),
+        deviceId: getOrCreateDeviceId()
+      })
+    });
+    if(!res.ok) {
+      const data = await res.json().catch(()=>({}));
+      return { ok: false, reason: String(data?.reason || 'server_rate_limit') };
+    }
+    const data = await res.json().catch(()=>({ ok: true }));
+    return { ok: !!data?.ok, reason: String(data?.reason || '') || null };
+  } catch(e) {
+    // Do not hard-break when endpoint is temporarily unavailable.
+    return { ok: true, reason: null };
+  }
+}
+function abuseReasonText(reason, fallback){
+  if(reason === 'ip_window') return '⚠️ Is network se bahut requests aa rahi hain. Thodi der baad try karo.';
+  if(reason === 'ip_daily') return '⚠️ Is network ki aaj ki limit ho gayi hai.';
+  if(reason === 'device_daily') return '⚠️ Is device ki aaj ki limit ho gayi hai.';
+  if(reason === 'phone_window') return '⚠️ Is phone number se bahut tez requests aa rahi hain. Thoda rukke try karo.';
+  return fallback;
 }
 function rateLimitCheck(key, maxAttempts, windowMs){
   try {
@@ -294,49 +406,228 @@ const TITLE_MAP = {
   showAll(); setTimeout(showAll,300); setTimeout(showAll,1000);
 })();
  
-// ===== RTDB: ANNOUNCEMENTS =====
-onValue(ref(rtdb,'announcements/latest'), snap => {
-  const bar=$('ann-bar'), txt=$('ann-bar-text');
-  if(snap.exists()&&snap.val()?.message&&bar&&txt){ txt.textContent=snap.val().message; bar.classList.add('show'); }
-},()=>{});
- 
-// ===== RTDB: PRICING =====
-onValue(ref(rtdb,'pricing'), snap => {
-  const p = snap.exists() ? (snap.val() || {}) : {};
+// ===== RTDB: ANNOUNCEMENTS / LIVE STATUS =====
+let _liveStateSyncTimer = null;
+let _lastLiveSeats = null;
+let _lastLiveAnnouncement = '';
+let _lastBookingAvailabilityVersion = '';
+let _lastBookingAvailabilityUpdatedAt = 0;
+const ANN_DISMISS_KEY = 'cbh_ann_dismissed_message_v1';
+const BOOKING_AVAIL_CACHE_KEY = 'cbh_booking_availability_cache_v1';
+let _announcementDismissedMessage = sessionStorage.getItem(ANN_DISMISS_KEY) || '';
 
-  const normalized = normalizeBookingRates(
-    p.serviceRates || {
-      'gaming-pc': p.pc,
-      ps5: p.ps5,
-      internet: p.net,
-      mobile: p.mobile,
-      printing: p.printing,
-      'form-filling': p.formFilling,
-      other: p.other
-    }
-  );
-  BOOKING_HOURLY_RATES = { ...BOOKING_HOURLY_RATES, ...normalized };
-  CUSTOM_BOOKING_SERVICES = normalizeBookingCustomServices(p.customServices || {});
+window.dismissAnnouncementBar = function() {
+  const bar = $('ann-bar');
+  if(!bar) return;
+  _announcementDismissedMessage = String(_lastLiveAnnouncement || '').trim();
+  try { sessionStorage.setItem(ANN_DISMISS_KEY, _announcementDismissedMessage); } catch(_) {}
+  bar.classList.remove('show');
+};
 
-  const pcEl = $('pc-price');
-  if(pcEl){ pcEl.textContent = String(BOOKING_HOURLY_RATES['gaming-pc']); pcEl.classList.remove('ask'); }
-  const psEl = $('ps5-price');
-  if(psEl){ psEl.textContent = String(BOOKING_HOURLY_RATES.ps5); psEl.classList.remove('ask'); }
-  const netEl = $('net-price');
-  if(netEl){ netEl.textContent = String(BOOKING_HOURLY_RATES.internet); netEl.classList.remove('ask'); }
+function applyLiveAnnouncement(message) {
+  const bar = $('ann-bar');
+  const txt = $('ann-bar-text');
+  if(!bar || !txt) return;
+  const cleanMsg = String(message || '').trim();
+  if(!cleanMsg) {
+    _lastLiveAnnouncement = '';
+    bar.classList.remove('show');
+    return;
+  }
+  _lastLiveAnnouncement = cleanMsg;
+  txt.textContent = cleanMsg;
+  if(_announcementDismissedMessage && _announcementDismissedMessage === cleanMsg) {
+    bar.classList.remove('show');
+    return;
+  }
+  bar.style.display = 'flex';
+  bar.classList.add('show');
+}
 
-  if(p.prime) {
-    const primeEl = $('prime-price');
-    if(primeEl){ primeEl.textContent = p.prime; primeEl.classList.remove('ask'); }
+function applyLiveSeats(value) {
+  const parsed = parseInt(value, 10);
+  const v = Number.isFinite(parsed) ? Math.max(0, parsed) : 5;
+  const el = $('avail-pc');
+  if(el) {
+    el.textContent = v + ' seats available';
+    el.style.color = v <= 0 ? 'var(--danger)' : v <= 2 ? 'var(--gold)' : 'var(--green)';
+  }
+  _lastLiveSeats = v;
+}
+
+function normalizeBookingAvailability(raw = {}) {
+  const src = (raw && typeof raw === 'object') ? raw : {};
+  const gamingPcParsed = parseInt(src.gamingPcSeats ?? src.seats, 10);
+  const ps5Parsed = parseInt(src.ps5Consoles, 10);
+  const internetParsed = parseInt(src.internetBrowsingPcs ?? src.internetStatus ?? src.internetSeats, 10);
+  const mobileParsed = parseInt(src.mobileSeats, 10);
+  const gamingPcSeats = Number.isFinite(gamingPcParsed) ? Math.max(0, gamingPcParsed) : 5;
+  const ps5Consoles = Number.isFinite(ps5Parsed) ? Math.max(0, ps5Parsed) : 2;
+  const internetBrowsingPcs = Number.isFinite(internetParsed) ? Math.max(0, internetParsed) : 3;
+  const mobileSeats = Number.isFinite(mobileParsed) ? Math.max(0, mobileParsed) : 3;
+  const openHours = String(src.openHours || '7:00 AM - 9:00 PM').trim() || '7:00 AM - 9:00 PM';
+  return { gamingPcSeats, ps5Consoles, internetBrowsingPcs, mobileSeats, openHours };
+}
+
+function getAvailabilityUpdatedAt(raw = {}) {
+  const t = Date.parse(String(raw?.updatedAt || ''));
+  return Number.isFinite(t) ? t : 0;
+}
+
+function readCachedBookingAvailability() {
+  try {
+    const raw = localStorage.getItem(BOOKING_AVAIL_CACHE_KEY);
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch(_) {
+    return null;
+  }
+}
+
+function applyBookingAvailabilitySettings(raw = {}) {
+  if(!raw || typeof raw !== 'object' || !Object.keys(raw).length) return;
+  const incomingTs = getAvailabilityUpdatedAt(raw);
+  if(_lastBookingAvailabilityUpdatedAt > 0) {
+    if(incomingTs === 0) return;
+    if(incomingTs < _lastBookingAvailabilityUpdatedAt) return;
   }
 
-  const mobileTip = $('mobile-tip-price');
-  if(mobileTip) mobileTip.textContent = `Rs.${BOOKING_HOURLY_RATES.mobile} per hour`;
+  const normalized = normalizeBookingAvailability(raw);
 
-  renderBookingServiceOptions();
-  renderBookingLiveRateList();
-  updateBookingBillPreview();
-},()=>{});
+  const ps5El = $('avail-ps5');
+  if (ps5El) {
+    ps5El.textContent = `${normalized.ps5Consoles} consoles`;
+    ps5El.style.color = normalized.ps5Consoles <= 0 ? 'var(--danger)' : normalized.ps5Consoles <= 1 ? 'var(--gold)' : 'var(--green)';
+  }
+
+  const pcEl = $('avail-pc');
+  if (pcEl) {
+    pcEl.textContent = `${normalized.gamingPcSeats} seats available`;
+    pcEl.style.color = normalized.gamingPcSeats <= 0 ? 'var(--danger)' : normalized.gamingPcSeats <= 2 ? 'var(--gold)' : 'var(--green)';
+  }
+
+  const netEl = $('avail-net-pc');
+  if (netEl) {
+    netEl.textContent = `${normalized.internetBrowsingPcs} PCs`;
+    netEl.style.color = normalized.internetBrowsingPcs <= 0 ? 'var(--danger)' : normalized.internetBrowsingPcs <= 1 ? 'var(--gold)' : 'var(--green)';
+  }
+
+  const mobileEl = $('avail-mobile');
+  if (mobileEl) {
+    mobileEl.textContent = `${normalized.mobileSeats} seats`;
+    mobileEl.style.color = normalized.mobileSeats <= 0 ? 'var(--danger)' : normalized.mobileSeats <= 1 ? 'var(--gold)' : 'var(--green)';
+  }
+
+  const hrsEl = $('avail-hours');
+  if (hrsEl) hrsEl.textContent = normalized.openHours;
+
+  _lastBookingAvailabilityVersion = JSON.stringify(normalized);
+  if(incomingTs > 0) _lastBookingAvailabilityUpdatedAt = incomingTs;
+  try {
+    const cacheUpdatedAt = raw?.updatedAt || (incomingTs > 0 ? new Date(incomingTs).toISOString() : new Date().toISOString());
+    localStorage.setItem(BOOKING_AVAIL_CACHE_KEY, JSON.stringify({ ...normalized, updatedAt: cacheUpdatedAt }));
+  } catch(_) {}
+}
+
+async function syncLiveStateOnce() {
+  try {
+    const [seatsRes, annRes, availabilityResPrimary, availabilityResSecondary] = await Promise.allSettled([
+      get(ref(rtdb, 'seats')),
+      get(ref(rtdb, 'announcements/latest')),
+      get(ref(rtdb, 'booking/availability')),
+      get(ref(rtdb, 'live/bookingAvailability'))
+    ]);
+
+    let seatsVal = 5;
+    if(seatsRes.status === 'fulfilled') {
+      const seatsSnap = seatsRes.value;
+      seatsVal = seatsSnap.exists() ? seatsSnap.val() : 5;
+    } else if(RTDB_REST_SEATS_URL) {
+      try {
+        const res = await fetch(`${RTDB_REST_SEATS_URL}?ts=${Date.now()}`, { cache: 'no-store' });
+        if(res.ok) seatsVal = await res.json();
+      } catch(_) {}
+    }
+
+    let annMsg = '';
+    if(annRes.status === 'fulfilled') {
+      const annSnap = annRes.value;
+      annMsg = annSnap.exists() ? String(annSnap.val()?.message || '').trim() : '';
+    } else if(RTDB_REST_ANNOUNCEMENT_URL) {
+      try {
+        const res = await fetch(`${RTDB_REST_ANNOUNCEMENT_URL}?ts=${Date.now()}`, { cache: 'no-store' });
+        if(res.ok) {
+          const data = await res.json();
+          annMsg = String(data?.message || '').trim();
+        }
+      } catch(_) {}
+    }
+
+    if(_lastLiveSeats === null || parseInt(seatsVal, 10) !== _lastLiveSeats) applyLiveSeats(seatsVal);
+    if(annMsg && annMsg !== _lastLiveAnnouncement) applyLiveAnnouncement(annMsg);
+
+    let availabilityData = null;
+    if(availabilityResPrimary.status === 'fulfilled' && availabilityResPrimary.value.exists()) {
+      availabilityData = availabilityResPrimary.value.val() || {};
+    } else if(availabilityResSecondary.status === 'fulfilled' && availabilityResSecondary.value.exists()) {
+      availabilityData = availabilityResSecondary.value.val() || {};
+    } else {
+      for (const url of RTDB_REST_BOOKING_AVAILABILITY_URLS) {
+        try {
+          const res = await fetch(`${url}?ts=${Date.now()}`, { cache: 'no-store' });
+          if(res.ok) {
+            const data = await res.json();
+            if(data && typeof data === 'object') {
+              availabilityData = data;
+              break;
+            }
+          }
+        } catch(_) {}
+      }
+    }
+
+    if(!availabilityData) {
+      availabilityData = readCachedBookingAvailability();
+    }
+
+    if(availabilityData) {
+      const nextVersion = JSON.stringify(normalizeBookingAvailability(availabilityData));
+      if(nextVersion !== _lastBookingAvailabilityVersion) applyBookingAvailabilitySettings(availabilityData);
+    }
+  } catch(err) {
+    console.warn('Live state fallback sync failed:', err);
+  }
+}
+
+function ensureLiveStateFallbackSync() {
+  if(_liveStateSyncTimer) return;
+  _liveStateSyncTimer = setInterval(syncLiveStateOnce, 5000);
+}
+
+onValue(ref(rtdb,'announcements/latest'), snap => {
+  if(snap.exists()) applyLiveAnnouncement(snap.val()?.message || '');
+},(err)=>{
+  console.warn('RTDB announcement listener issue:', err);
+  syncLiveStateOnce();
+});
+ 
+// ===== RTDB: PRICING =====
+let _pricingSyncTimer = null;
+let _lastPricingVersion = '';
+
+function initBookingRealtimePricing() {
+  onValue(ref(rtdb,'pricing'), snap => {
+    const p = snap.exists() ? (snap.val() || {}) : {};
+    _lastPricingVersion = String(p.updatedAt || JSON.stringify(p.serviceRates || p));
+    applyBookingPricing(p);
+  },err=>{
+    console.warn('RTDB pricing listener issue, fallback polling enabled:', err);
+    ensurePricingFallbackSync();
+  });
+  ensurePricingFallbackSync();
+  syncBookingPricingOnce();
+}
  
 // ===== RTDB: OFFERS =====
 onValue(ref(rtdb,'offers/current'), snap => {
@@ -346,14 +637,27 @@ onValue(ref(rtdb,'offers/current'), snap => {
  
 // ===== RTDB: LIVE SEATS — admin panel se update hoga, yahan live dikhega =====
 onValue(ref(rtdb,'seats'), snap => {
-  const v = snap.exists() ? parseInt(snap.val()) : 5;
-  const el = $('avail-pc');
-  if(el) {
-    el.textContent = v + ' seats available';
-    el.style.color = v<=0 ? 'var(--danger)' : v<=2 ? 'var(--gold)' : 'var(--green)';
-  }
+  applyLiveSeats(snap.exists() ? snap.val() : 5);
 },()=>{ setEl('avail-pc','5 seats available'); });
- 
+
+// ===== RTDB: BOOKING AVAILABILITY SETTINGS =====
+const _cachedAvailability = readCachedBookingAvailability();
+if(_cachedAvailability) applyBookingAvailabilitySettings(_cachedAvailability);
+onValue(ref(rtdb,'booking/availability'), snap => {
+  if(snap.exists()) applyBookingAvailabilitySettings(snap.val() || {});
+},()=>{});
+
+onValue(ref(rtdb,'live/bookingAvailability'), snap => {
+  if(snap.exists()) applyBookingAvailabilitySettings(snap.val() || {});
+},()=>{});
+
+ensureLiveStateFallbackSync();
+syncLiveStateOnce();
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden) syncLiveStateOnce();
+});
+window.addEventListener('focus', syncLiveStateOnce);
+
 // ===== CARD PREVIEW =====
 window.switchCardPreview = function(plan, btn) {
   $('card-preview-weekly').style.display  = plan==='weekly'  ? 'flex' : 'none';
@@ -507,10 +811,22 @@ const DEFAULT_BOOKING_HOURLY_RATES = {
   'mobile': 30,
   'printing': 30,
   'form-filling': 30,
-  'other': 30
+  'other': 0
+};
+const DEFAULT_BOOKING_PRICE_DETAILS = {
+  printing: { singleSideRate: 8, bothSideRate: 12 },
+  formFilling: { note: 'Contact for quote' },
+  primePlans: { weekly: 499, monthly: 1499 },
+  otherContact: { phone: '8829822950', email: 'citybytehub@gmail.com' }
+};
+const DEFAULT_BOOKING_OFFERS = {
+  global: { tag: '', percent: 0 },
+  services: {}
 };
 let BOOKING_HOURLY_RATES = { ...DEFAULT_BOOKING_HOURLY_RATES };
 let CUSTOM_BOOKING_SERVICES = {};
+let BOOKING_PRICE_DETAILS = JSON.parse(JSON.stringify(DEFAULT_BOOKING_PRICE_DETAILS));
+let BOOKING_OFFERS = JSON.parse(JSON.stringify(DEFAULT_BOOKING_OFFERS));
 
 const BOOKING_SERVICE_LABELS = {
   'gaming-pc': '🖥️ Gaming PC',
@@ -525,9 +841,78 @@ function normalizeBookingRates(raw = {}) {
   const base = { ...DEFAULT_BOOKING_HOURLY_RATES };
   Object.keys(base).forEach(k => {
     const n = parseInt(raw[k], 10);
+    if (k === 'other') {
+      base[k] = 0;
+      return;
+    }
     if (Number.isFinite(n) && n > 0) base[k] = n;
   });
   return base;
+}
+
+function normalizeBookingPriceDetails(raw = {}) {
+  const src = raw && typeof raw === 'object' ? raw : {};
+  const printing = src.printing && typeof src.printing === 'object' ? src.printing : {};
+  const form = src.formFilling && typeof src.formFilling === 'object' ? src.formFilling : {};
+  const prime = src.primePlans && typeof src.primePlans === 'object' ? src.primePlans : {};
+  const otherContact = src.otherContact && typeof src.otherContact === 'object' ? src.otherContact : {};
+
+  const singleSideRate = parseInt(printing.singleSideRate ?? printing.single ?? DEFAULT_BOOKING_PRICE_DETAILS.printing.singleSideRate, 10);
+  const bothSideRate = parseInt(printing.bothSideRate ?? printing.doubleSideRate ?? printing.double ?? DEFAULT_BOOKING_PRICE_DETAILS.printing.bothSideRate, 10);
+  const weekly = parseInt(prime.weekly ?? DEFAULT_BOOKING_PRICE_DETAILS.primePlans.weekly, 10);
+  const monthly = parseInt(prime.monthly ?? DEFAULT_BOOKING_PRICE_DETAILS.primePlans.monthly, 10);
+  const phone = String(otherContact.phone || '').replace(/\D/g, '').slice(-10);
+  const email = String(otherContact.email || '').trim().slice(0, 120).toLowerCase();
+
+  return {
+    printing: {
+      singleSideRate: Number.isFinite(singleSideRate) && singleSideRate > 0 ? singleSideRate : DEFAULT_BOOKING_PRICE_DETAILS.printing.singleSideRate,
+      bothSideRate: Number.isFinite(bothSideRate) && bothSideRate > 0 ? bothSideRate : DEFAULT_BOOKING_PRICE_DETAILS.printing.bothSideRate
+    },
+    formFilling: {
+      note: String(form.note || DEFAULT_BOOKING_PRICE_DETAILS.formFilling.note || '').trim().slice(0, 160) || DEFAULT_BOOKING_PRICE_DETAILS.formFilling.note
+    },
+    primePlans: {
+      weekly: Number.isFinite(weekly) && weekly > 0 ? weekly : DEFAULT_BOOKING_PRICE_DETAILS.primePlans.weekly,
+      monthly: Number.isFinite(monthly) && monthly > 0 ? monthly : DEFAULT_BOOKING_PRICE_DETAILS.primePlans.monthly
+    },
+    otherContact: {
+      phone: phone || DEFAULT_BOOKING_PRICE_DETAILS.otherContact.phone,
+      email: email || DEFAULT_BOOKING_PRICE_DETAILS.otherContact.email
+    }
+  };
+}
+
+function bookingOtherContactLine() {
+  const phone = BOOKING_PRICE_DETAILS?.otherContact?.phone || DEFAULT_BOOKING_PRICE_DETAILS.otherContact.phone;
+  const email = BOOKING_PRICE_DETAILS?.otherContact?.email || DEFAULT_BOOKING_PRICE_DETAILS.otherContact.email;
+  return { phone, email, text: `Call ${phone} or ${email}` };
+}
+
+function normalizeBookingOffers(raw = {}) {
+  const src = raw && typeof raw === 'object' ? raw : {};
+  const globalSrc = src.global && typeof src.global === 'object' ? src.global : {};
+  const servicesSrc = src.services && typeof src.services === 'object' ? src.services : {};
+
+  const out = {
+    global: {
+      tag: String(globalSrc.tag || '').trim().slice(0, 36),
+      percent: Math.max(0, Math.min(90, parseInt(globalSrc.percent || 0, 10) || 0))
+    },
+    services: {}
+  };
+
+  Object.entries(servicesSrc).forEach(([k, v]) => {
+    const key = String(k || '').trim().toLowerCase();
+    if(!key) return;
+    const entry = v && typeof v === 'object' ? v : {};
+    const percent = Math.max(0, Math.min(90, parseInt(entry.percent || 0, 10) || 0));
+    const tag = String(entry.tag || '').trim().slice(0, 36);
+    if(!percent) return;
+    out.services[key] = { tag, percent };
+  });
+
+  return out;
 }
 
 function normalizeBookingCustomServices(raw = {}) {
@@ -551,6 +936,206 @@ function normalizeBookingCustomServices(raw = {}) {
   });
 
   return out;
+}
+
+function getOfferForService(serviceKey) {
+  const key = String(serviceKey || '').trim().toLowerCase();
+  const serviceOffer = BOOKING_OFFERS.services[key];
+  if(serviceOffer && serviceOffer.percent > 0) return serviceOffer;
+  if(BOOKING_OFFERS.global.percent > 0) return BOOKING_OFFERS.global;
+  return { tag: '', percent: 0 };
+}
+
+function applyOfferAmount(amount, serviceKey) {
+  const amt = Math.max(0, parseInt(amount, 10) || 0);
+  const offer = getOfferForService(serviceKey);
+  if(!offer.percent) {
+    return { amount: amt, baseAmount: amt, offerTag: '', offerPercent: 0, discount: 0 };
+  }
+  const discount = Math.round((amt * offer.percent) / 100);
+  const finalAmount = Math.max(0, amt - discount);
+  return {
+    amount: finalAmount,
+    baseAmount: amt,
+    offerTag: offer.tag || `${offer.percent}% OFF`,
+    offerPercent: offer.percent,
+    discount
+  };
+}
+
+function renderOfferChip(chipId, serviceKey) {
+  const chip = $(chipId);
+  if(!chip) return;
+  const offer = getOfferForService(serviceKey);
+  if(!offer.percent) {
+    chip.style.display = 'none';
+    chip.textContent = '';
+    return;
+  }
+  chip.textContent = `🏷 ${offer.tag || `${offer.percent}% OFF`}`;
+  chip.style.display = 'inline-flex';
+}
+
+function priceServiceLabel(serviceKey) {
+  const key = String(serviceKey || '').trim().toLowerCase();
+  if (BOOKING_SERVICE_LABELS[key]) return BOOKING_SERVICE_LABELS[key];
+  if (key === 'prime') return '🎓 Prime Card';
+  if (CUSTOM_BOOKING_SERVICES[key]?.name) return `✨ ${CUSTOM_BOOKING_SERVICES[key].name}`;
+  return key || 'Service';
+}
+
+function renderAllPricingCard() {
+  const host = $('pricing-all-card-body');
+  if (!host) return;
+
+  const rows = [
+    { label: '🖥️ Gaming PC', amount: BOOKING_HOURLY_RATES['gaming-pc'], unit: '/hr', offerKey: 'gaming-pc' },
+    { label: '🎮 PS5', amount: BOOKING_HOURLY_RATES.ps5, unit: '/hr', offerKey: 'ps5' },
+    { label: '🌐 Internet', amount: BOOKING_HOURLY_RATES.internet, unit: '/hr', offerKey: 'internet' },
+    { label: '📱 Mobile', amount: BOOKING_HOURLY_RATES.mobile, unit: '/hr', offerKey: 'mobile' },
+    { label: '🖨️ Printing Single Side', amount: BOOKING_PRICE_DETAILS.printing.singleSideRate, unit: '/page', offerKey: 'printing' },
+    { label: '🖨️ Printing Both Side', amount: BOOKING_PRICE_DETAILS.printing.bothSideRate, unit: '/sheet', offerKey: 'printing' },
+    { label: '📋 Form Filling', type: 'contact', offerKey: 'form-filling' },
+    { label: '🔧 Other Service', type: 'contact' },
+    { label: '⭐ Prime Weekly', amount: BOOKING_PRICE_DETAILS.primePlans.weekly, unit: '/week', offerKey: 'prime' },
+    { label: '⭐ Prime Monthly', amount: BOOKING_PRICE_DETAILS.primePlans.monthly, unit: '/month', offerKey: 'prime' }
+  ];
+
+  Object.entries(CUSTOM_BOOKING_SERVICES).forEach(([key, data]) => {
+    rows.push({ label: `✨ ${data.name}`, amount: data.price, unit: '/unit', offerKey: key });
+  });
+
+  const rowHtml = rows.map((row) => {
+    const rowClass = row.offerKey === 'prime' ? 'pricing-master-row is-prime' : 'pricing-master-row is-bubble';
+    if (row.type === 'contact') {
+      const contact = bookingOtherContactLine();
+      return `
+      <div class="pricing-master-row is-bubble is-contact">
+        <span class="pricing-master-label">${escHTML(row.label)}</span>
+        <span class="pricing-master-val">${escHTML(contact.text)}</span>
+      </div>
+    `;
+    }
+    const offer = applyOfferAmount(row.amount, row.offerKey);
+    const hasDiscount = offer.discount > 0;
+    const offerTag = hasDiscount ? (offer.offerTag || `${offer.offerPercent}% OFF`) : '';
+    return `
+      <div class="${rowClass}">
+        <span class="pricing-master-label">${escHTML(row.label)}</span>
+        <span class="pricing-master-val">
+          ${hasDiscount ? `<span class="pricing-master-base">Rs.${offer.baseAmount}${row.unit}</span>` : ''}
+          <span class="pricing-master-final">Rs.${offer.amount}${row.unit}</span>
+          ${offerTag ? `<span class="pricing-master-tag">${escHTML(offerTag)}</span>` : ''}
+        </span>
+      </div>
+    `;
+  }).join('');
+
+  const globalTag = BOOKING_OFFERS.global.percent > 0
+    ? `<div class="pricing-master-row is-bubble is-offer"><span class="pricing-master-label">🌍 Global Offer</span><span class="pricing-master-val"><span class="pricing-master-tag">${escHTML(BOOKING_OFFERS.global.tag || `${BOOKING_OFFERS.global.percent}% OFF`)}</span></span></div>`
+    : '';
+
+  const serviceOfferRows = Object.entries(BOOKING_OFFERS.services || {}).map(([key, value]) => `
+    <div class="pricing-master-row is-bubble is-offer">
+      <span class="pricing-master-label">🏷 ${escHTML(priceServiceLabel(key))}</span>
+      <span class="pricing-master-val"><span class="pricing-master-tag">${escHTML(value.tag || `${value.percent}% OFF`)}</span></span>
+    </div>
+  `).join('');
+
+  host.innerHTML = rowHtml + globalTag + serviceOfferRows;
+}
+
+function getBookingServiceDetailPayload() {
+  return {
+    printSingle: parseInt($('bk-print-single')?.value || '0', 10) || 0,
+    printDouble: parseInt($('bk-print-double')?.value || '0', 10) || 0,
+    formKind: cleanInput($('bk-form-kind')?.value || '', 90),
+    formExtra: cleanInput($('bk-form-extra')?.value || '', 220),
+    customQty: Math.max(1, parseInt($('bk-custom-qty')?.value || '1', 10) || 1)
+  };
+}
+
+function updateBookingServiceDetailUi() {
+  const service = String($('bk-service')?.value || '');
+  const wrap = $('bk-service-detail-box');
+  const printFields = $('bk-print-fields');
+  const formFields = $('bk-form-fields');
+  const customFields = $('bk-custom-fields');
+  const title = $('bk-service-detail-title');
+  if(!wrap || !printFields || !formFields || !customFields || !title) return;
+
+  const isPrinting = service === 'printing';
+  const isForm = service === 'form-filling';
+  const isCustom = !!CUSTOM_BOOKING_SERVICES[service];
+  wrap.style.display = (isPrinting || isForm || isCustom) ? 'block' : 'none';
+  printFields.style.display = isPrinting ? 'block' : 'none';
+  formFields.style.display = isForm ? 'block' : 'none';
+  customFields.style.display = isCustom ? 'block' : 'none';
+  if(isPrinting) title.textContent = 'PRINTING DETAILS';
+  else if(isForm) title.textContent = 'FORM DETAILS';
+  else if(isCustom) title.textContent = 'CUSTOM SERVICE DETAILS';
+}
+
+function computeBookingCharge(service, durationMin, details = {}) {
+  const key = String(service || '').trim().toLowerCase();
+  if(!key) return { amount: 0, mainText: 'Service select karo', noteText: 'Service choose karo.', raw: { baseAmount: 0, discount: 0, offerTag: '' } };
+
+  if(key === 'other') {
+    const contact = bookingOtherContactLine();
+    return {
+      amount: 0,
+      mainText: 'Other Service (custom requirement)',
+      noteText: `Contact: ${contact.phone} | ${contact.email}`,
+      raw: { baseAmount: 0, discount: 0, offerTag: '' }
+    };
+  }
+
+  if(key === 'printing') {
+    const single = Math.max(0, parseInt(details.printSingle || 0, 10) || 0);
+    const both = Math.max(0, parseInt(details.printDouble || 0, 10) || 0);
+    const base = (single * BOOKING_PRICE_DETAILS.printing.singleSideRate) + (both * BOOKING_PRICE_DETAILS.printing.bothSideRate);
+    const priced = applyOfferAmount(base, key);
+    const desc = `Print: ${single} single + ${both} both-side`;
+    const note = priced.discount > 0
+      ? `Offer ${priced.offerTag}: -Rs.${priced.discount} applied`
+      : `Single Rs.${BOOKING_PRICE_DETAILS.printing.singleSideRate}/page | Both-side Rs.${BOOKING_PRICE_DETAILS.printing.bothSideRate}/sheet`;
+    return { amount: priced.amount, mainText: desc, noteText: note, raw: priced };
+  }
+
+  if(key === 'form-filling') {
+    const contact = bookingOtherContactLine();
+    const kind = String(details.formKind || '').trim();
+    const desc = kind ? `Form (${kind})` : 'Form Filling Service';
+    return {
+      amount: 0,
+      mainText: desc,
+      noteText: `Contact: ${contact.phone} | ${contact.email}`,
+      raw: { baseAmount: 0, discount: 0, offerTag: '' }
+    };
+  }
+
+  const rate = bookingRateForService(key);
+  const dur = Math.max(0, parseInt(durationMin || 0, 10) || 0);
+  if(CUSTOM_BOOKING_SERVICES[key]) {
+    const qty = Math.max(1, parseInt(details.customQty || 1, 10) || 1);
+    const base = rate * qty;
+    const priced = applyOfferAmount(base, key);
+    const desc = `${CUSTOM_BOOKING_SERVICES[key].name} x ${qty} @ Rs.${rate}`;
+    const note = priced.discount > 0
+      ? `Offer ${priced.offerTag}: -Rs.${priced.discount} applied`
+      : 'Custom service quantity ke hisab se amount auto-calc hua.';
+    return { amount: priced.amount, mainText: desc, noteText: note, raw: priced };
+  }
+
+  const base = calcAmountByDuration(rate, dur);
+  const priced = applyOfferAmount(base, key);
+  const hoursTxt = (dur / 60).toFixed(2).replace(/\.00$/, '');
+  const desc = `${dur} min (${hoursTxt} hr) @ Rs.${rate}/hr`;
+  const suggestion = findNearestFiveSuggestion(rate, dur);
+  const note = priced.discount > 0
+    ? `Offer ${priced.offerTag}: -Rs.${priced.discount} applied`
+    : (suggestion || 'Rounded amount direct billed hoga.');
+  return { amount: priced.amount, mainText: desc, noteText: note, raw: priced };
 }
 
 function renderBookingServiceOptions() {
@@ -593,7 +1178,8 @@ function renderBookingLiveRateList() {
     { key: 'gaming-pc', label: BOOKING_SERVICE_LABELS['gaming-pc'] },
     { key: 'ps5', label: BOOKING_SERVICE_LABELS.ps5 },
     { key: 'internet', label: BOOKING_SERVICE_LABELS.internet },
-    { key: 'printing', label: BOOKING_SERVICE_LABELS.printing },
+    { key: 'printing', label: `${BOOKING_SERVICE_LABELS.printing} (Single Page)` },
+    { key: 'printing-double', label: '🖨️ Printing (Both Side Sheet)' },
     { key: 'form-filling', label: BOOKING_SERVICE_LABELS['form-filling'] },
     { key: 'other', label: BOOKING_SERVICE_LABELS.other }
   ];
@@ -603,17 +1189,150 @@ function renderBookingLiveRateList() {
     .map(([key, data]) => ({ key, label: `✨ ${data.name}`, rate: data.price }));
 
   const rowHtml = [
-    ...baseRows.map(r => ({ ...r, rate: BOOKING_HOURLY_RATES[r.key] || 30 })),
+    ...baseRows.map(r => {
+      if(r.key === 'other') {
+        const contact = bookingOtherContactLine();
+        return { ...r, isContact: true, text: contact.text };
+      }
+      if(r.key === 'printing') return { ...r, rate: BOOKING_PRICE_DETAILS.printing.singleSideRate, unit: '/page' };
+      if(r.key === 'printing-double') return { ...r, rate: BOOKING_PRICE_DETAILS.printing.bothSideRate, unit: '/sheet' };
+      if(r.key === 'form-filling') return { ...r, rate: BOOKING_PRICE_DETAILS.formFilling.baseCharge, unit: '/form' };
+      return { ...r, rate: Number.isFinite(BOOKING_HOURLY_RATES[r.key]) ? BOOKING_HOURLY_RATES[r.key] : 30, unit: '/hr' };
+    }),
     ...customRows
-  ].map(r => `
+  ].map(r => {
+    if(r.isContact) {
+      return `
     <div class="avail-row">
       <span class="avail-label">${escHTML(r.label)}</span>
-      <span class="avail-val" style="color:var(--gold)">Rs.${r.rate}/hr</span>
+      <span class="avail-val" style="color:var(--cyan)">${escHTML(r.text)}</span>
     </div>
-  `).join('');
+  `;
+    }
+    return `
+    <div class="avail-row">
+      <span class="avail-label">${escHTML(r.label)}</span>
+      <span class="avail-val" style="color:var(--gold)">Rs.${r.rate}${r.unit || '/hr'}</span>
+    </div>
+  `;
+  }).join('');
 
   host.innerHTML = rowHtml || '<div style="color:var(--muted)">Rates unavailable right now.</div>';
 }
+
+function applyBookingPricing(payload = {}) {
+  const p = payload && typeof payload === 'object' ? payload : {};
+  const normalized = normalizeBookingRates(
+    p.serviceRates || {
+      'gaming-pc': p.pc,
+      ps5: p.ps5,
+      internet: p.net,
+      mobile: p.mobile,
+      printing: p.printing,
+      'form-filling': p.formFilling,
+      other: p.other
+    }
+  );
+
+  BOOKING_HOURLY_RATES = normalized;
+  CUSTOM_BOOKING_SERVICES = normalizeBookingCustomServices(p.customServices || {});
+  BOOKING_PRICE_DETAILS = normalizeBookingPriceDetails(p.details || {});
+  BOOKING_OFFERS = normalizeBookingOffers(p.offers || {});
+
+  const pcEl = $('pc-price');
+  if(pcEl){
+    const priced = applyOfferAmount(BOOKING_HOURLY_RATES['gaming-pc'], 'gaming-pc');
+    pcEl.textContent = String(priced.amount);
+    pcEl.classList.remove('ask');
+  }
+  const psEl = $('ps5-price');
+  if(psEl){
+    const priced = applyOfferAmount(BOOKING_HOURLY_RATES.ps5, 'ps5');
+    psEl.textContent = String(priced.amount);
+    psEl.classList.remove('ask');
+  }
+  const netEl = $('net-price');
+  if(netEl){
+    const priced = applyOfferAmount(BOOKING_HOURLY_RATES.internet, 'internet');
+    netEl.textContent = String(priced.amount);
+    netEl.classList.remove('ask');
+  }
+
+  const primeWeekly = BOOKING_PRICE_DETAILS.primePlans.weekly;
+  const primeMonthly = BOOKING_PRICE_DETAILS.primePlans.monthly;
+  const primeDisplay = p.prime || p.primePrice || p.primeDisplayPrice || String(primeWeekly);
+  if(primeDisplay) {
+    const primeEl = $('prime-price');
+    if(primeEl){
+      const weeklyPriced = applyOfferAmount(parseInt(primeWeekly || 0, 10) || parseInt(primeDisplay, 10) || 0, 'prime');
+      primeEl.textContent = String(weeklyPriced.amount || primeDisplay);
+      primeEl.classList.remove('ask');
+    }
+  }
+  const primeMonthlyEl = $('prime-price-monthly');
+  if(primeMonthlyEl) {
+    const monthlyPriced = applyOfferAmount(primeMonthly, 'prime');
+    primeMonthlyEl.textContent = String(monthlyPriced.amount);
+    primeMonthlyEl.classList.remove('ask');
+  }
+
+  const mobileTip = $('mobile-tip-price');
+  if(mobileTip) mobileTip.textContent = `Rs.${BOOKING_HOURLY_RATES.mobile} per hour`;
+
+  renderOfferChip('offer-chip-pc', 'gaming-pc');
+  renderOfferChip('offer-chip-ps5', 'ps5');
+  renderOfferChip('offer-chip-net', 'internet');
+  renderOfferChip('offer-chip-prime', 'prime');
+
+  renderBookingServiceOptions();
+  updateBookingServiceDetailUi();
+  renderBookingLiveRateList();
+  renderAllPricingCard();
+  updateBookingBillPreview();
+  document.body?.classList.remove('pricing-loading');
+  document.body?.classList.add('pricing-ready');
+}
+
+async function syncBookingPricingOnce() {
+  try {
+    const snap = await get(ref(rtdb, 'pricing'));
+    if(!snap.exists()) return;
+    const p = snap.val() || {};
+    const version = String(p.updatedAt || JSON.stringify(p.serviceRates || p));
+    if(version === _lastPricingVersion) return;
+    _lastPricingVersion = version;
+    applyBookingPricing(p);
+  } catch(err) {
+    console.warn('Pricing polling failed:', err);
+    await syncBookingPricingViaRest();
+  }
+}
+
+async function syncBookingPricingViaRest() {
+  if(!RTDB_REST_PRICING_URL) return;
+  try {
+    const res = await fetch(`${RTDB_REST_PRICING_URL}?ts=${Date.now()}`, { cache: 'no-store' });
+    if(!res.ok) return;
+    const p = await res.json();
+    if(!p || typeof p !== 'object') return;
+    const version = String(p.updatedAt || JSON.stringify(p.serviceRates || p));
+    if(version === _lastPricingVersion) return;
+    _lastPricingVersion = version;
+    applyBookingPricing(p);
+  } catch(err) {
+    console.warn('REST pricing fallback failed:', err);
+  }
+}
+
+function ensurePricingFallbackSync() {
+  if(_pricingSyncTimer) return;
+  _pricingSyncTimer = setInterval(syncBookingPricingOnce, 15000);
+}
+
+// Render defaults only after the rate constants exist, so startup cannot trip on TDZ errors.
+renderBookingServiceOptions();
+updateBookingBillPreview();
+initBookingRealtimePricing();
 
 function durationFromTimeRange(startTime, endTime) {
   if (!isValidTimeHHMM(startTime) || !isValidTimeHHMM(endTime)) return null;
@@ -653,6 +1372,7 @@ function windowsOverlap(a, b) {
 }
 
 function bookingRateForService(service) {
+  if (service === 'other') return 0;
   if (CUSTOM_BOOKING_SERVICES[service]?.price) return CUSTOM_BOOKING_SERVICES[service].price;
   return BOOKING_HOURLY_RATES[service] || 30;
 }
@@ -695,6 +1415,8 @@ function updateBookingBillPreview() {
   const service = $('bk-service')?.value;
   const startTime = getBookingStartTime24();
   const endTime = getBookingEndTime24();
+  const detailPayload = getBookingServiceDetailPayload();
+  updateBookingServiceDetailUi();
   const manualDur = parseInt($('bk-duration')?.value || '0', 10);
   const rangeDur = endTime ? durationFromTimeRange(startTime, endTime) : null;
   const dur = rangeDur || manualDur;
@@ -708,20 +1430,20 @@ function updateBookingBillPreview() {
   }
 
   if(!service || !dur || dur < 1) {
-    box.style.display = 'none';
-    return;
+    if(service === 'printing' || service === 'form-filling' || service === 'other' || CUSTOM_BOOKING_SERVICES[service]) {
+      // continue for non-hourly services
+    } else {
+      box.style.display = 'none';
+      return;
+    }
   }
 
   if(rangeDur && $('bk-duration')) $('bk-duration').value = String(rangeDur);
 
-  const rate = bookingRateForService(service);
-  const amount = calcAmountByDuration(rate, dur);
-  const suggestion = findNearestFiveSuggestion(rate, dur);
-  const hoursTxt = (dur / 60).toFixed(2).replace(/\.00$/, '');
-
-  mainTxt.textContent = `${dur} min (${hoursTxt} hr) @ Rs.${rate}/hr`;
-  amtEl.textContent = `Rs.${amount}`;
-  noteEl.textContent = suggestion || (rangeDur ? 'Duration start/end time se auto-calc hui hai.' : 'Rounded amount direct billed hoga.');
+  const charge = computeBookingCharge(service, dur, detailPayload);
+  mainTxt.textContent = charge.mainText;
+  amtEl.textContent = `Rs.${charge.amount}`;
+  noteEl.textContent = charge.noteText || (rangeDur ? 'Duration start/end time se auto-calc hui hai.' : 'Rounded amount direct billed hoga.');
   box.style.display = 'block';
 }
  
@@ -844,7 +1566,7 @@ async function checkSlotAvail() {
 }
  
 setTimeout(()=>{
-  $('bk-service')?.addEventListener('change',()=>{ checkSlotAvail(); updateBookingBillPreview(); });
+  $('bk-service')?.addEventListener('change',()=>{ updateBookingServiceDetailUi(); checkSlotAvail(); updateBookingBillPreview(); });
   $('bk-date')?.addEventListener('change',()=>{ checkSlotAvail(); checkAdvanceBooking($('bk-date')?.value); });
   $('bk-time')?.addEventListener('change',()=>{ syncAmPmFromTime('bk-time','bk-time-ampm'); checkSlotAvail(); checkAdvanceBooking($('bk-date')?.value); });
   $('bk-time')?.addEventListener('input',updateBookingBillPreview);
@@ -853,6 +1575,12 @@ setTimeout(()=>{
   $('bk-time-ampm')?.addEventListener('change',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
   $('bk-end-time-ampm')?.addEventListener('change',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
   $('bk-duration')?.addEventListener('input',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
+  $('bk-print-single')?.addEventListener('input',updateBookingBillPreview);
+  $('bk-print-double')?.addEventListener('input',updateBookingBillPreview);
+  $('bk-form-kind')?.addEventListener('input',updateBookingBillPreview);
+  $('bk-form-extra')?.addEventListener('input',updateBookingBillPreview);
+  $('bk-custom-qty')?.addEventListener('input',updateBookingBillPreview);
+  updateBookingServiceDetailUi();
   updateBookingBillPreview();
 },500);
  
@@ -868,9 +1596,13 @@ window.submitBooking = async function() {
   let dur=durRaw?parseInt(durRaw,10):60;
   const card=cleanInput($('bk-card')?.value,40).toUpperCase();
   const note=cleanInput($('bk-note')?.value,300);
+  const detailPayload=getBookingServiceDetailPayload();
+  const isNonHourlyService = service === 'printing' || service === 'form-filling' || service === 'other' || !!CUSTOM_BOOKING_SERVICES[service];
   let ratePerHour=bookingRateForService(service);
   let estimatedAmount=0;
   let pricingSuggestion='';
+  let chargeSummary='';
+  let discountApplied=0;
  
   ['bk-name-err','bk-phone-err','bk-service-err','bk-date-err','bk-time-err','bk-end-time-err','bk-human-err'].forEach(clearErr);
   const bkOk=$('bk-ok'), bkErr=$('bk-err');
@@ -919,15 +1651,25 @@ window.submitBooking = async function() {
     }
   }
 
-  if(!dur || dur<15 || dur>480){
-    if(bkErr){bkErr.textContent='⚠️ Duration 15 se 480 minutes ke beech honi chahiye.'; bkErr.style.display='block';}
-    valid=false;
+  if(!isNonHourlyService) {
+    if(!dur || dur<15 || dur>480){
+      if(bkErr){bkErr.textContent='⚠️ Duration 15 se 480 minutes ke beech honi chahiye.'; bkErr.style.display='block';}
+      valid=false;
+    }
+  } else if(service === 'printing') {
+    if((detailPayload.printSingle + detailPayload.printDouble) < 1) {
+      if(bkErr){bkErr.textContent='⚠️ Printing ke liye pages/sheets daalo.'; bkErr.style.display='block';}
+      valid = false;
+    }
   }
   if(!valid) return;
 
-  ratePerHour=bookingRateForService(service);
-  estimatedAmount=calcAmountByDuration(ratePerHour,dur);
-  pricingSuggestion=findNearestFiveSuggestion(ratePerHour,dur);
+  const charge = computeBookingCharge(service, dur, detailPayload);
+  estimatedAmount = charge.amount;
+  chargeSummary = charge.mainText;
+  discountApplied = charge.raw?.discount || 0;
+  ratePerHour = bookingRateForService(service);
+  pricingSuggestion = charge.noteText || '';
  
   const today=new Date(); today.setHours(0,0,0,0);
   const selDate=new Date(date+'T00:00:00');
@@ -947,8 +1689,29 @@ window.submitBooking = async function() {
     if(bkErr){bkErr.textContent='⚠️ Is phone se aaj 3 bookings ho chuki hain. WhatsApp: '+PAYMENT_PHONE; bkErr.style.display='block';}
     return;
   }
-  if(!canUseDailyDeviceQuota('cbh_bk_device_daily', 8)){
-    if(bkErr){bkErr.textContent='⚠️ Is device se aaj booking attempts limit ho gayi hai. Kal try karo ya contact karo.'; bkErr.style.display='block';}
+  const abuseGuard = await evaluateIpDeviceGuard('bk', {
+    windowLimit: 3,
+    windowMs: 10 * 60 * 1000,
+    dailyIpLimit: 20,
+    dailyDeviceLimit: 8
+  });
+  if(!abuseGuard.ok){
+    if(bkErr){
+      bkErr.textContent = abuseGuard.reason === 'ip_window'
+        ? '⚠️ Is network se bahut requests aa rahi hain. 10 min baad try karo.'
+        : abuseGuard.reason === 'ip_daily'
+          ? '⚠️ Is network ki aaj ki booking limit ho gayi hai.'
+          : '⚠️ Is device se aaj booking attempts limit ho gayi hai. Kal try karo ya contact karo.';
+      bkErr.style.display='block';
+    }
+    return;
+  }
+  const serverGuard = await evaluateServerAbuseGuard('bk_submit', phone);
+  if(!serverGuard.ok){
+    if(bkErr){
+      bkErr.textContent = abuseReasonText(serverGuard.reason, '⚠️ Request limit exceed ho gayi hai. Thodi der baad try karo.');
+      bkErr.style.display='block';
+    }
     return;
   }
   if(!consumeWindowRateLimit('cbh_bk_submit_min_'+phone,1,60000)){
@@ -995,6 +1758,15 @@ window.submitBooking = async function() {
       name, phone, service, date, time, startTime: time, endTime: endTime || null,
       duration:String(dur), primeCard:card||null, note:note||null,
       ratePerHour, estimatedAmount, pricingSuggestion:pricingSuggestion||null,
+      pricingSummary: chargeSummary || null,
+      discountApplied: discountApplied || 0,
+      serviceDetail: {
+        printSingle: detailPayload.printSingle,
+        printDouble: detailPayload.printDouble,
+        formKind: detailPayload.formKind,
+        formExtra: detailPayload.formExtra,
+        customQty: detailPayload.customQty
+      },
       status:isAdv?'pending_payment':'pending',
       bookingRef, trackCode,        // ← trackCode alag field bhi save hota hai
       isAdvance:isAdv,
@@ -1002,19 +1774,23 @@ window.submitBooking = async function() {
     });
  
     incrementRateLimit(phone);
-    incrementDailyDeviceQuota('cbh_bk_device_daily');
+    commitIpDeviceGuard('bk', abuseGuard.ip);
 
     const prettyStart = formatTime12(time);
     const prettyEnd = endTime ? formatTime12(endTime) : null;
  
+    const estimatedText = service === 'other'
+      ? `Estimated Charge: ${bookingOtherContactLine().text}`
+      : `Estimated Charge: Rs.${estimatedAmount} (${chargeSummary || `${dur} min @ Rs.${ratePerHour}/hr`})`;
+
     if(bkOk){
-      bkOk.innerHTML=`<div style="text-align:center;padding:0.5rem 0 1rem">
+      bkOk.innerHTML=`<div style="text-align:center;padding:0.5rem 0 1rem;max-width:100%;overflow:hidden">
         <div style="font-size:0.75rem;color:var(--green);font-family:var(--font-alt);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.08em">✅ Booking Request Mili!</div>
         <div style="font-size:0.72rem;color:var(--txt2);font-family:var(--font-alt);margin-bottom:0.75rem">Apna booking code note karo:</div>
-        <div style="font-family:var(--font-h);font-size:2.5rem;font-weight:900;color:var(--cyan);letter-spacing:0.15em;text-shadow:0 0 20px rgba(0,220,255,0.4);margin-bottom:0.5rem">${trackCode}</div>
+        <div style="font-family:var(--font-h);font-size:clamp(1.9rem,10vw,2.5rem);font-weight:900;color:var(--cyan);letter-spacing:0.08em;text-shadow:0 0 20px rgba(0,220,255,0.4);margin-bottom:0.5rem;line-height:1.05;word-break:break-all;overflow-wrap:anywhere">${trackCode}</div>
         <div style="font-size:0.68rem;color:var(--muted);font-family:var(--font-alt);margin-bottom:1rem">Ye 8-character code save karo — status check karne ke kaam aayega</div>
-        <div style="font-size:0.8rem;color:var(--gold);font-family:var(--font-h);margin-bottom:0.4rem">Estimated Charge: Rs.${estimatedAmount} (${dur} min @ Rs.${ratePerHour}/hr)</div>
-        <div style="font-size:0.75rem;color:var(--txt2);font-family:var(--font-alt);margin-bottom:0.8rem">Time: ${prettyStart}${prettyEnd?` - ${prettyEnd}`:''}</div>
+        <div style="font-size:0.8rem;color:var(--gold);font-family:var(--font-h);margin-bottom:0.4rem;overflow-wrap:anywhere">${escHTML(estimatedText)}</div>
+        <div style="font-size:0.75rem;color:var(--txt2);font-family:var(--font-alt);margin-bottom:0.8rem;overflow-wrap:anywhere">Time: ${prettyStart}${prettyEnd?` - ${prettyEnd}`:''}</div>
         ${isAdv?`<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:8px;padding:0.75rem;font-size:0.8rem;color:var(--gold);font-family:var(--font-alt)">
           💳 Kal ki booking ke liye payment karni hogi<br>
           📞 Call karo: <a href="tel:+91${PAYMENT_PHONE}" style="color:var(--cyan);font-weight:700">${PAYMENT_PHONE}</a>
@@ -1048,6 +1824,7 @@ window.submitBooking = async function() {
 };
  
 // ===== INQUIRY =====
+  syncBookingPricingViaRest();
 window.submitInquiry = async function() {
   // SECURITY NOTE: Client-side checks are bypassable. Validate all inputs server-side in Cloud Functions/Rules.
   const name=cleanInput($('inq-name')?.value,80), phone=cleanInput($('inq-phone')?.value,16);
@@ -1079,8 +1856,29 @@ window.submitInquiry = async function() {
   else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('inq-phone-err','Valid 10-digit phone daalo.'); valid=false; }
   if(!reason){ showErr('inq-reason-err','Reason select karo.'); valid=false; }
   if(!valid) return;
-  if(!canUseDailyDeviceQuota('cbh_inquiry_device_daily', 6)){
-    if(errEl){ errEl.textContent='⚠️ Is device se aaj inquiry limit ho gayi hai. Kal try karo.'; errEl.style.display='block'; }
+  const inquiryGuard = await evaluateIpDeviceGuard('inq', {
+    windowLimit: 4,
+    windowMs: 10 * 60 * 1000,
+    dailyIpLimit: 24,
+    dailyDeviceLimit: 6
+  });
+  if(!inquiryGuard.ok){
+    if(errEl){
+      errEl.textContent = inquiryGuard.reason === 'ip_window'
+        ? '⚠️ Is network se bahut inquiry requests aa rahi hain. 10 min baad try karo.'
+        : inquiryGuard.reason === 'ip_daily'
+          ? '⚠️ Is network ki aaj ki inquiry limit ho gayi hai.'
+          : '⚠️ Is device se aaj inquiry limit ho gayi hai. Kal try karo.';
+      errEl.style.display='block';
+    }
+    return;
+  }
+  const inquiryServerGuard = await evaluateServerAbuseGuard('inq_submit', phone);
+  if(!inquiryServerGuard.ok){
+    if(errEl){
+      errEl.textContent = abuseReasonText(inquiryServerGuard.reason, '⚠️ Inquiry request limit exceed ho gayi hai. Thodi der baad try karo.');
+      errEl.style.display='block';
+    }
     return;
   }
   const btn=$('inq-btn'); if(btn) btn.disabled=true;
@@ -1089,7 +1887,7 @@ window.submitInquiry = async function() {
   if(bload) bload.style.display='inline';
   try {
     await addDoc(collection(db,'inquiries'),{name,phone,reason,message:cleanInput(msg,300)||null,status:'new',createdAt:new Date().toISOString(),source:'website'});
-    incrementDailyDeviceQuota('cbh_inquiry_device_daily');
+    commitIpDeviceGuard('inq', inquiryGuard.ip);
     if(okEl){ okEl.textContent='✅ Inquiry mili! Hum call karenge. WhatsApp: 8829822950'; okEl.style.display='block'; }
     [$('inq-name'),$('inq-phone'),$('inq-msg')].forEach(el=>{if(el)el.value='';});
     if($('inq-reason'))$('inq-reason').value='';
@@ -1127,15 +1925,22 @@ window.checkBookingStatus = async function() {
   const phoneInp=$('bk-track-phone');
   if(!inp||!res||!phoneInp) return;
   const normPhone10 = v => String(v||'').replace(/\D/g,'').slice(-10);
-  const phone=cleanInput(phoneInp.value,16);
+  const phoneRaw = cleanInput(phoneInp.value,20);
+  const phone = normPhone10(phoneRaw);
   if(!/^[6-9][0-9]{9}$/.test(phone)){
     res.style.display='block';
-    res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Booking wala valid 10-digit phone number daalo.</div>';
+    res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Booking wala valid 10-digit phone daalo (e.g. 98XXXXXXXX). +91 ho to bhi chalega.</div>';
     return;
   }
   if(!consumeWindowRateLimit('cbh_booking_lookup_rl_'+phone,5,3600000)){
     res.style.display='block';
     res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Too many checks. 1 ghante baad try karo.</div>';
+    return;
+  }
+  const lookupServerGuard = await evaluateServerAbuseGuard('bk_lookup', phone);
+  if(!lookupServerGuard.ok){
+    res.style.display='block';
+    res.innerHTML=`<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ ${abuseReasonText(lookupServerGuard.reason, 'Request limit exceed ho gayi hai. Thodi der baad try karo.')}</div>`;
     return;
   }
   const code=inp.value.trim().toUpperCase();
@@ -1159,10 +1964,16 @@ window.checkBookingStatus = async function() {
       return;
     }
  
-    const enteredPhone10 = normPhone10(phone);
-    let matchedDoc = snap.docs.find(d => normPhone10(d.data()?.phone) === enteredPhone10) || null;
-    const testModePhoneMismatch = !matchedDoc;
-    if(!matchedDoc) matchedDoc = snap.docs[0];
+    const enteredPhone10 = phone;
+    const matchedDoc = snap.docs.find(d => normPhone10(d.data()?.phone) === enteredPhone10) || null;
+    if(!matchedDoc){
+      const expectedMasked = maskPhone(snap.docs[0]?.data()?.phone || '');
+      res.innerHTML=`<div style="color:var(--danger);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px;border:1px solid rgba(255,68,68,0.2)">
+        ❌ Booking details verify nahi hui. Code aur phone match karo.<br>
+        <span style="font-size:0.78rem;color:var(--muted)">Hint: Is code ke saath phone ${escHTML(expectedMasked)} linked hai.</span>
+      </div>`;
+      return;
+    }
     const b=matchedDoc.data();
     const sc={pending:'var(--gold)',confirmed:'var(--green)',rejected:'var(--danger)',pending_payment:'var(--cyan)'};
     const sl={
@@ -1176,7 +1987,6 @@ window.checkBookingStatus = async function() {
  
     res.innerHTML=`<div style="background:var(--card);border:1px solid ${sColor}44;border-radius:var(--r);padding:1.25rem">
       <div style="font-family:var(--font-h);font-size:1rem;color:${sColor};margin-bottom:1rem;padding:0.6rem 1rem;background:${sColor}11;border-radius:8px;border:1px solid ${sColor}33">${sl[b.status]||'⏳ Pending'}</div>
-      ${testModePhoneMismatch?`<div style="margin-bottom:0.9rem;padding:0.65rem 0.8rem;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.25);border-radius:8px;color:var(--gold);font-size:0.78rem;font-family:var(--font-alt)">⚠️ Test mode: code match ho gaya, phone exact match nahi mila. Production me phone match required rakhna.</div>`:''}
       <div style="font-family:var(--font-alt);font-size:0.85rem;line-height:2.2;color:var(--txt2)">
         <b style="color:var(--white)">Customer:</b> ${escHTML(maskName(b.name||''))}<br>
         <b style="color:var(--white)">Date:</b> ${escHTML(b.date||'—')}<br>
