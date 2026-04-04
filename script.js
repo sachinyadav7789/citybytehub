@@ -412,15 +412,12 @@ let _lastLiveSeats = null;
 let _lastLiveAnnouncement = '';
 let _lastBookingAvailabilityVersion = '';
 let _lastBookingAvailabilityUpdatedAt = 0;
-const ANN_DISMISS_KEY = 'cbh_ann_dismissed_message_v1';
-const BOOKING_AVAIL_CACHE_KEY = 'cbh_booking_availability_cache_v1';
-let _announcementDismissedMessage = sessionStorage.getItem(ANN_DISMISS_KEY) || '';
+let _announcementDismissedMessage = '';
 
 window.dismissAnnouncementBar = function() {
   const bar = $('ann-bar');
   if(!bar) return;
   _announcementDismissedMessage = String(_lastLiveAnnouncement || '').trim();
-  try { sessionStorage.setItem(ANN_DISMISS_KEY, _announcementDismissedMessage); } catch(_) {}
   bar.classList.remove('show');
 };
 
@@ -446,11 +443,13 @@ function applyLiveAnnouncement(message) {
 
 function applyLiveSeats(value) {
   const parsed = parseInt(value, 10);
-  const v = Number.isFinite(parsed) ? Math.max(0, parsed) : 5;
+  const v = Number.isFinite(parsed) ? Math.max(0, parsed) : null;
   const el = $('avail-pc');
   if(el) {
-    el.textContent = v + ' seats available';
-    el.style.color = v <= 0 ? 'var(--danger)' : v <= 2 ? 'var(--gold)' : 'var(--green)';
+    el.textContent = Number.isFinite(v) ? `${v} seats available` : '--';
+    el.style.color = Number.isFinite(v)
+      ? (v <= 0 ? 'var(--danger)' : v <= 2 ? 'var(--gold)' : 'var(--green)')
+      : 'var(--muted)';
   }
   _lastLiveSeats = v;
 }
@@ -461,11 +460,11 @@ function normalizeBookingAvailability(raw = {}) {
   const ps5Parsed = parseInt(src.ps5Consoles, 10);
   const internetParsed = parseInt(src.internetBrowsingPcs ?? src.internetStatus ?? src.internetSeats, 10);
   const mobileParsed = parseInt(src.mobileSeats, 10);
-  const gamingPcSeats = Number.isFinite(gamingPcParsed) ? Math.max(0, gamingPcParsed) : 5;
-  const ps5Consoles = Number.isFinite(ps5Parsed) ? Math.max(0, ps5Parsed) : 2;
-  const internetBrowsingPcs = Number.isFinite(internetParsed) ? Math.max(0, internetParsed) : 3;
-  const mobileSeats = Number.isFinite(mobileParsed) ? Math.max(0, mobileParsed) : 3;
-  const openHours = String(src.openHours || '7:00 AM - 9:00 PM').trim() || '7:00 AM - 9:00 PM';
+  const gamingPcSeats = Number.isFinite(gamingPcParsed) ? Math.max(0, gamingPcParsed) : null;
+  const ps5Consoles = Number.isFinite(ps5Parsed) ? Math.max(0, ps5Parsed) : null;
+  const internetBrowsingPcs = Number.isFinite(internetParsed) ? Math.max(0, internetParsed) : null;
+  const mobileSeats = Number.isFinite(mobileParsed) ? Math.max(0, mobileParsed) : null;
+  const openHours = String(src.openHours || '').trim() || '';
   return { gamingPcSeats, ps5Consoles, internetBrowsingPcs, mobileSeats, openHours };
 }
 
@@ -474,61 +473,52 @@ function getAvailabilityUpdatedAt(raw = {}) {
   return Number.isFinite(t) ? t : 0;
 }
 
-function readCachedBookingAvailability() {
-  try {
-    const raw = localStorage.getItem(BOOKING_AVAIL_CACHE_KEY);
-    if(!raw) return null;
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' ? parsed : null;
-  } catch(_) {
-    return null;
-  }
-}
-
-function applyBookingAvailabilitySettings(raw = {}, options = {}) {
-  const fromCache = Boolean(options?.fromCache);
+function applyBookingAvailabilitySettings(raw = {}) {
   if(!raw || typeof raw !== 'object' || !Object.keys(raw).length) return;
   const incomingTs = getAvailabilityUpdatedAt(raw);
-  if(!fromCache && _lastBookingAvailabilityUpdatedAt > 0) {
-    if(incomingTs === 0) return;
-    if(incomingTs < _lastBookingAvailabilityUpdatedAt) return;
+  if(_lastBookingAvailabilityUpdatedAt > 0) {
+    if(incomingTs > 0 && incomingTs < _lastBookingAvailabilityUpdatedAt) return;
   }
 
   const normalized = normalizeBookingAvailability(raw);
 
   const ps5El = $('avail-ps5');
   if (ps5El) {
-    ps5El.textContent = `${normalized.ps5Consoles} consoles`;
-    ps5El.style.color = normalized.ps5Consoles <= 0 ? 'var(--danger)' : normalized.ps5Consoles <= 1 ? 'var(--gold)' : 'var(--green)';
+    ps5El.textContent = Number.isFinite(normalized.ps5Consoles) ? `${normalized.ps5Consoles} consoles` : '--';
+    ps5El.style.color = Number.isFinite(normalized.ps5Consoles)
+      ? (normalized.ps5Consoles <= 0 ? 'var(--danger)' : normalized.ps5Consoles <= 1 ? 'var(--gold)' : 'var(--green)')
+      : 'var(--muted)';
   }
 
   const pcEl = $('avail-pc');
   if (pcEl) {
-    pcEl.textContent = `${normalized.gamingPcSeats} seats available`;
-    pcEl.style.color = normalized.gamingPcSeats <= 0 ? 'var(--danger)' : normalized.gamingPcSeats <= 2 ? 'var(--gold)' : 'var(--green)';
+    pcEl.textContent = Number.isFinite(normalized.gamingPcSeats) ? `${normalized.gamingPcSeats} seats available` : '--';
+    pcEl.style.color = Number.isFinite(normalized.gamingPcSeats)
+      ? (normalized.gamingPcSeats <= 0 ? 'var(--danger)' : normalized.gamingPcSeats <= 2 ? 'var(--gold)' : 'var(--green)')
+      : 'var(--muted)';
   }
 
   const netEl = $('avail-net-pc');
   if (netEl) {
-    netEl.textContent = `${normalized.internetBrowsingPcs} PCs`;
-    netEl.style.color = normalized.internetBrowsingPcs <= 0 ? 'var(--danger)' : normalized.internetBrowsingPcs <= 1 ? 'var(--gold)' : 'var(--green)';
+    netEl.textContent = Number.isFinite(normalized.internetBrowsingPcs) ? `${normalized.internetBrowsingPcs} PCs` : '--';
+    netEl.style.color = Number.isFinite(normalized.internetBrowsingPcs)
+      ? (normalized.internetBrowsingPcs <= 0 ? 'var(--danger)' : normalized.internetBrowsingPcs <= 1 ? 'var(--gold)' : 'var(--green)')
+      : 'var(--muted)';
   }
 
   const mobileEl = $('avail-mobile');
   if (mobileEl) {
-    mobileEl.textContent = `${normalized.mobileSeats} seats`;
-    mobileEl.style.color = normalized.mobileSeats <= 0 ? 'var(--danger)' : normalized.mobileSeats <= 1 ? 'var(--gold)' : 'var(--green)';
+    mobileEl.textContent = Number.isFinite(normalized.mobileSeats) ? `${normalized.mobileSeats} seats` : '--';
+    mobileEl.style.color = Number.isFinite(normalized.mobileSeats)
+      ? (normalized.mobileSeats <= 0 ? 'var(--danger)' : normalized.mobileSeats <= 1 ? 'var(--gold)' : 'var(--green)')
+      : 'var(--muted)';
   }
 
   const hrsEl = $('avail-hours');
-  if (hrsEl) hrsEl.textContent = normalized.openHours;
+  if (hrsEl) hrsEl.textContent = normalized.openHours || '--';
 
   _lastBookingAvailabilityVersion = JSON.stringify(normalized);
-  if(!fromCache && incomingTs > 0) _lastBookingAvailabilityUpdatedAt = incomingTs;
-  try {
-    const cacheUpdatedAt = raw?.updatedAt || (incomingTs > 0 ? new Date(incomingTs).toISOString() : '');
-    localStorage.setItem(BOOKING_AVAIL_CACHE_KEY, JSON.stringify({ ...normalized, updatedAt: cacheUpdatedAt }));
-  } catch(_) {}
+  if(incomingTs > 0) _lastBookingAvailabilityUpdatedAt = incomingTs;
 }
 
 function availabilityLooksLoading() {
@@ -536,14 +526,27 @@ function availabilityLooksLoading() {
   return ids.some((id) => String($(id)?.textContent || '').toLowerCase().includes('loading'));
 }
 
+function setAvailabilityPlaceholderState() {
+  const items = [
+    ['avail-pc', '--'],
+    ['avail-ps5', '--'],
+    ['avail-net-pc', '--'],
+    ['avail-mobile', '--'],
+    ['avail-hours', '--']
+  ];
+  items.forEach(([id, text]) => {
+    const el = $(id);
+    if(el) {
+      el.textContent = text;
+      el.style.color = 'var(--muted)';
+    }
+  });
+}
+
 function applyAvailabilitySafeFallback() {
   if(!availabilityLooksLoading()) return;
-  const cached = readCachedBookingAvailability();
-  if(cached && typeof cached === 'object') {
-    applyBookingAvailabilitySettings(cached, { fromCache: true });
-    return;
-  }
-  // If no cache yet, force one more sync attempt from live sources instead of injecting defaults.
+  // Strict mode: no fake defaults, only placeholders + another live sync attempt.
+  setAvailabilityPlaceholderState();
   syncLiveStateOnce();
 }
 
@@ -556,10 +559,10 @@ async function syncLiveStateOnce() {
       get(ref(rtdb, 'live/bookingAvailability'))
     ]);
 
-    let seatsVal = 5;
+    let seatsVal = null;
     if(seatsRes.status === 'fulfilled') {
       const seatsSnap = seatsRes.value;
-      seatsVal = seatsSnap.exists() ? seatsSnap.val() : 5;
+      seatsVal = seatsSnap.exists() ? seatsSnap.val() : null;
     } else if(RTDB_REST_SEATS_URL) {
       try {
         const res = await fetch(`${RTDB_REST_SEATS_URL}?ts=${Date.now()}`, { cache: 'no-store' });
@@ -604,19 +607,55 @@ async function syncLiveStateOnce() {
       }
     }
 
-    if(!availabilityData) {
-      availabilityData = readCachedBookingAvailability();
-    }
-
     if(availabilityData) {
+      const availabilitySeats = parseInt(availabilityData?.gamingPcSeats ?? availabilityData?.seats, 10);
+      if(Number.isFinite(availabilitySeats)) applyLiveSeats(availabilitySeats);
       const nextVersion = JSON.stringify(normalizeBookingAvailability(availabilityData));
-      if(nextVersion !== _lastBookingAvailabilityVersion) {
-        const fromCache = !availabilityResPrimary?.value?.exists?.() && !availabilityResSecondary?.value?.exists?.();
-        applyBookingAvailabilitySettings(availabilityData, { fromCache });
-      }
+      if(nextVersion !== _lastBookingAvailabilityVersion) applyBookingAvailabilitySettings(availabilityData);
+    } else {
+      setAvailabilityPlaceholderState();
     }
   } catch(err) {
     console.warn('Live state fallback sync failed:', err);
+    setAvailabilityPlaceholderState();
+  }
+}
+
+async function syncLiveStateViaRest() {
+  try {
+    // Seats
+    if(RTDB_REST_SEATS_URL) {
+      const seatsRes = await fetch(`${RTDB_REST_SEATS_URL}?ts=${Date.now()}`, { cache: 'no-store' });
+      if(seatsRes.ok) {
+        const seatsData = await seatsRes.json();
+        applyLiveSeats(seatsData);
+      }
+    }
+
+    // Announcement
+    if(RTDB_REST_ANNOUNCEMENT_URL) {
+      const annRes = await fetch(`${RTDB_REST_ANNOUNCEMENT_URL}?ts=${Date.now()}`, { cache: 'no-store' });
+      if(annRes.ok) {
+        const annData = await annRes.json();
+        applyLiveAnnouncement(String(annData?.message || '').trim());
+      }
+    }
+
+    // Booking availability (primary then fallback path)
+    for (const url of RTDB_REST_BOOKING_AVAILABILITY_URLS) {
+      try {
+        const res = await fetch(`${url}?ts=${Date.now()}`, { cache: 'no-store' });
+        if(res.ok) {
+          const data = await res.json();
+          if(data && typeof data === 'object' && Object.keys(data).length) {
+            applyBookingAvailabilitySettings(data);
+            break;
+          }
+        }
+      } catch(_) {}
+    }
+  } catch(err) {
+    console.warn('REST live sync failed:', err);
   }
 }
 
@@ -657,12 +696,10 @@ onValue(ref(rtdb,'offers/current'), snap => {
  
 // ===== RTDB: LIVE SEATS — admin panel se update hoga, yahan live dikhega =====
 onValue(ref(rtdb,'seats'), snap => {
-  applyLiveSeats(snap.exists() ? snap.val() : 5);
-},()=>{ setEl('avail-pc','5 seats available'); });
+  applyLiveSeats(snap.exists() ? snap.val() : null);
+},()=>{ applyLiveSeats(null); });
 
 // ===== RTDB: BOOKING AVAILABILITY SETTINGS =====
-const _cachedAvailability = readCachedBookingAvailability();
-if(_cachedAvailability) applyBookingAvailabilitySettings(_cachedAvailability, { fromCache: true });
 onValue(ref(rtdb,'booking/availability'), snap => {
   if(snap.exists()) applyBookingAvailabilitySettings(snap.val() || {});
 },()=>{ syncLiveStateOnce(); });
@@ -673,11 +710,19 @@ onValue(ref(rtdb,'live/bookingAvailability'), snap => {
 
 ensureLiveStateFallbackSync();
 syncLiveStateOnce();
+syncLiveStateViaRest();
 setTimeout(applyAvailabilitySafeFallback, 2500);
+setTimeout(syncLiveStateViaRest, 1200);
 document.addEventListener('visibilitychange', () => {
-  if(!document.hidden) syncLiveStateOnce();
+  if(!document.hidden) {
+    syncLiveStateOnce();
+    syncLiveStateViaRest();
+  }
 });
-window.addEventListener('focus', syncLiveStateOnce);
+window.addEventListener('focus', () => {
+  syncLiveStateOnce();
+  syncLiveStateViaRest();
+});
 
 // ===== CARD PREVIEW =====
 window.switchCardPreview = function(plan, btn) {
