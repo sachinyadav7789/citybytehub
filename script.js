@@ -485,10 +485,11 @@ function readCachedBookingAvailability() {
   }
 }
 
-function applyBookingAvailabilitySettings(raw = {}) {
+function applyBookingAvailabilitySettings(raw = {}, options = {}) {
+  const fromCache = Boolean(options?.fromCache);
   if(!raw || typeof raw !== 'object' || !Object.keys(raw).length) return;
   const incomingTs = getAvailabilityUpdatedAt(raw);
-  if(_lastBookingAvailabilityUpdatedAt > 0) {
+  if(!fromCache && _lastBookingAvailabilityUpdatedAt > 0) {
     if(incomingTs === 0) return;
     if(incomingTs < _lastBookingAvailabilityUpdatedAt) return;
   }
@@ -523,9 +524,9 @@ function applyBookingAvailabilitySettings(raw = {}) {
   if (hrsEl) hrsEl.textContent = normalized.openHours;
 
   _lastBookingAvailabilityVersion = JSON.stringify(normalized);
-  if(incomingTs > 0) _lastBookingAvailabilityUpdatedAt = incomingTs;
+  if(!fromCache && incomingTs > 0) _lastBookingAvailabilityUpdatedAt = incomingTs;
   try {
-    const cacheUpdatedAt = raw?.updatedAt || (incomingTs > 0 ? new Date(incomingTs).toISOString() : new Date().toISOString());
+    const cacheUpdatedAt = raw?.updatedAt || (incomingTs > 0 ? new Date(incomingTs).toISOString() : '');
     localStorage.setItem(BOOKING_AVAIL_CACHE_KEY, JSON.stringify({ ...normalized, updatedAt: cacheUpdatedAt }));
   } catch(_) {}
 }
@@ -539,19 +540,11 @@ function applyAvailabilitySafeFallback() {
   if(!availabilityLooksLoading()) return;
   const cached = readCachedBookingAvailability();
   if(cached && typeof cached === 'object') {
-    applyBookingAvailabilitySettings(cached);
+    applyBookingAvailabilitySettings(cached, { fromCache: true });
     return;
   }
-  // Final safety fallback so users never see a permanent loading state.
-  applyLiveSeats(5);
-  applyBookingAvailabilitySettings({
-    gamingPcSeats: 5,
-    ps5Consoles: 2,
-    internetBrowsingPcs: 3,
-    mobileSeats: 3,
-    openHours: '7:00 AM - 9:00 PM',
-    updatedAt: new Date().toISOString()
-  });
+  // If no cache yet, force one more sync attempt from live sources instead of injecting defaults.
+  syncLiveStateOnce();
 }
 
 async function syncLiveStateOnce() {
@@ -617,7 +610,10 @@ async function syncLiveStateOnce() {
 
     if(availabilityData) {
       const nextVersion = JSON.stringify(normalizeBookingAvailability(availabilityData));
-      if(nextVersion !== _lastBookingAvailabilityVersion) applyBookingAvailabilitySettings(availabilityData);
+      if(nextVersion !== _lastBookingAvailabilityVersion) {
+        const fromCache = !availabilityResPrimary?.value?.exists?.() && !availabilityResSecondary?.value?.exists?.();
+        applyBookingAvailabilitySettings(availabilityData, { fromCache });
+      }
     }
   } catch(err) {
     console.warn('Live state fallback sync failed:', err);
@@ -666,7 +662,7 @@ onValue(ref(rtdb,'seats'), snap => {
 
 // ===== RTDB: BOOKING AVAILABILITY SETTINGS =====
 const _cachedAvailability = readCachedBookingAvailability();
-if(_cachedAvailability) applyBookingAvailabilitySettings(_cachedAvailability);
+if(_cachedAvailability) applyBookingAvailabilitySettings(_cachedAvailability, { fromCache: true });
 onValue(ref(rtdb,'booking/availability'), snap => {
   if(snap.exists()) applyBookingAvailabilitySettings(snap.val() || {});
 },()=>{ syncLiveStateOnce(); });
