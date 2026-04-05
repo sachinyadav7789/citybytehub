@@ -274,7 +274,7 @@
         <div class="pricing-master-card reveal" id="pricing-all-card" style="margin-top:1.25rem">
           <div class="pricing-master-head">
             <div class="pricing-master-title">📊 All Live Prices & Offers</div>
-            <div class="pricing-master-sub">Admin panel se jo bhi rates/offers set honge, yahan auto update honge.</div>
+            <div class="pricing-master-sub">Prices/offers set honge, yahan auto update honge.</div>
           </div>
           <div id="pricing-all-card-body" class="pricing-master-grid">
             <div style="color:var(--muted)">Loading live pricing details...</div>
@@ -448,7 +448,7 @@
             </div>
             <div class="form-group">
               <label>Phone Number *</label>
-              <input type="tel" id="prime-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" pattern="[6-9][0-9]{9}" required/>
+              <input type="tel" id="prime-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" required/>
               <span class="field-err" id="prime-phone-err"></span>
             </div>
             <div class="hp-field" aria-hidden="true">
@@ -501,7 +501,7 @@
       <div class="container">
         <div class="sec-tag">Reserve Your Seat</div>
         <h2 class="sec-title">Book a <span class="hl">Time</span></h2>
-        <p class="sec-sub" style="margin-bottom:2rem">Advance booking karo — apni timing aur service choose karo.</p>
+        <p class="sec-sub" style="margin-bottom:2rem">Advance booking karo — apni timing aur service choose karo after call and payment confirmation only for advance booking k liye.</p>
         <div class="booking-grid">
           <!-- Availability Info -->
           <div>
@@ -543,7 +543,7 @@
             </div>
             <div class="form-group">
               <label>Phone Number *</label>
-              <input type="tel" id="bk-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" pattern="[6-9][0-9]{9}" required/>
+              <input type="tel" id="bk-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" required/>
               <span class="field-err" id="bk-phone-err"></span>
             </div>
             <div class="hp-field" aria-hidden="true">
@@ -677,7 +677,7 @@
           <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem">
             <input type="tel" id="bk-track-phone" class="fi"
               style="flex:1;min-width:200px;margin-bottom:0"
-              placeholder="Phone number (booking wala)" maxlength="10"
+              placeholder="Phone number (booking wala)" maxlength="10" inputmode="numeric"
               onkeydown="if(event.key==='Enter') checkBookingStatus()" />
             <input type="text" id="bk-track-input" class="fi"
               style="flex:1;min-width:200px;margin-bottom:0;text-transform:uppercase;letter-spacing:0.1em;font-family:var(--font-h);font-size:1rem"
@@ -699,7 +699,7 @@
               <div>4️⃣ Status teen tarah ka ho sakta hai:</div>
               <div style="padding-left:1.5rem;margin-top:0.25rem">
                 <span style="color:var(--gold);font-weight:600">⏳ Pending</span> — Hum review kar rahe hain, thodi der mein call aayegi<br>
-                <span style="color:var(--green);font-weight:600">✅ Confirmed</span> — Booking pakki! Aao enjoy karo 🎮<br>
+                <span style="color:var(--green);font-weight:600">✅ Confirmed</span> — Booking pakki!   enjoy your gaming🎮<br>
                 <span style="color:var(--danger);font-weight:600">❌ Rejected</span> — Time unavailable tha. Doosra time book karo ya call karo
               </div>
               <div style="margin-top:0.5rem">5️⃣ Koi problem ho toh seedha WhatsApp: <a href="https://wa.me/918829822950" style="color:var(--cyan);font-weight:600">8829822950</a></div>
@@ -747,7 +747,7 @@
             </div>
             <div class="form-group">
               <label>Phone Number * <small style="color:var(--cyan);font-family:var(--font-alt)">(Hum isi pe call karenge)</small></label>
-              <input type="tel" id="inq-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" pattern="[6-9][0-9]{9}" required/>
+              <input type="tel" id="inq-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" required/>
               <span class="field-err" id="inq-phone-err"></span>
             </div>
             <div class="hp-field" aria-hidden="true">

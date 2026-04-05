@@ -94,6 +94,102 @@ function syncAmPmFromTime(inputId, ampmId){
   const h = Number(t.split(':')[0]);
   ampm.value = h >= 12 ? 'pm' : 'am';
 }
+
+const BOOKING_AUTO_ADVANCE_SELECTOR = [
+  'input:not([type="hidden"]):not([disabled]):not([readonly]):not([tabindex="-1"])',
+  'select:not([disabled]):not([tabindex="-1"])',
+  'textarea:not([disabled]):not([readonly]):not([tabindex="-1"])'
+].join(',');
+const BOOKING_AUTO_ADVANCE_SKIP_IDS = new Set([
+  'card-check-input',
+  'bk-track-phone',
+  'bk-track-input'
+]);
+const BOOKING_AUTO_ADVANCE_RULES = {
+  'prime-phone': { type: 'digits', minLength: 10 },
+  'bk-phone': { type: 'digits', minLength: 10 },
+  'inq-phone': { type: 'digits', minLength: 10 },
+  'bk-time': { type: 'time' },
+  'bk-end-time': { type: 'time' }
+};
+
+function isBookingFieldVisible(el){
+  if(!el || !(el instanceof HTMLElement)) return false;
+  if(el.hidden || el.getAttribute('aria-hidden') === 'true') return false;
+  const style = window.getComputedStyle(el);
+  if(style.display === 'none' || style.visibility === 'hidden') return false;
+  const rect = el.getBoundingClientRect();
+  return rect.width > 0 && rect.height > 0;
+}
+
+function getBookingAutoScope(el){
+  return el.closest('.form-wrap, .booking-info, .page-section, .container, body') || document.body;
+}
+
+function focusNextBookingField(current){
+  if(!current || !(current instanceof HTMLElement)) return false;
+  const scope = getBookingAutoScope(current);
+  const fields = Array.from(scope.querySelectorAll(BOOKING_AUTO_ADVANCE_SELECTOR)).filter(isBookingFieldVisible);
+  const idx = fields.indexOf(current);
+  if(idx < 0 || idx >= fields.length - 1) return false;
+  const next = fields[idx + 1];
+  if(!(next instanceof HTMLElement)) return false;
+  next.focus();
+  if(next instanceof HTMLInputElement && ['text','search','tel','email','number','password','url'].includes(next.type)) {
+    next.select();
+  }
+  return true;
+}
+
+function initBookingAutoAdvance(){
+  document.addEventListener('keydown', (e)=>{
+    if(e.key !== 'Enter' || e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) return;
+    const target = e.target;
+    if(!(target instanceof HTMLElement)) return;
+    if(!(target.matches('input, select, textarea'))) return;
+    if(target.tagName === 'TEXTAREA') return;
+    if(target.dataset.noAutoAdvance === '1') return;
+    if(BOOKING_AUTO_ADVANCE_SKIP_IDS.has(target.id || '')) return;
+    if(focusNextBookingField(target)) e.preventDefault();
+  });
+
+  document.addEventListener('change', (e)=>{
+    const target = e.target;
+    if(!(target instanceof HTMLElement)) return;
+    if(!(target instanceof HTMLSelectElement || target instanceof HTMLInputElement)) return;
+    if(target.dataset.noAutoAdvance === '1') return;
+    if(BOOKING_AUTO_ADVANCE_SKIP_IDS.has(target.id || '')) return;
+    if(!String(target.value || '').trim()) return;
+    if(target instanceof HTMLInputElement && target.type !== 'time') return;
+    setTimeout(()=>{ focusNextBookingField(target); }, 0);
+  });
+
+  document.addEventListener('input', (e)=>{
+    const target = e.target;
+    if(!(target instanceof HTMLInputElement)) return;
+    if(target.dataset.noAutoAdvance === '1') return;
+    if(BOOKING_AUTO_ADVANCE_SKIP_IDS.has(target.id || '')) return;
+    const rule = BOOKING_AUTO_ADVANCE_RULES[target.id || ''];
+    if(!rule) return;
+
+    if(rule.type === 'time') {
+      if(/^\d{2}:\d{2}$/.test(String(target.value || '').trim())) {
+        setTimeout(()=>{ focusNextBookingField(target); }, 0);
+      }
+      return;
+    }
+
+    if(rule.type === 'digits') {
+      const digits = String(target.value || '').replace(/\D/g, '');
+      if(digits.length >= (rule.minLength || 1)) {
+        setTimeout(()=>{ focusNextBookingField(target); }, 0);
+      }
+    }
+  });
+}
+
+initBookingAutoAdvance();
+
 function todayYmd(){ return new Date().toISOString().split('T')[0]; }
 function getDailyDeviceBucket(key){
   const day = todayYmd();
@@ -376,28 +472,154 @@ const TITLE_MAP = {
 (function() {
   const canvas = $('particle-canvas');
   if(!canvas) return;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+  if(!ctx) return;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  const isSmallScreen = () => window.innerWidth <= 768;
+  const targetFrameMs = prefersReducedMotion ? 1000 / 24 : 1000 / 55;
+  const maxParticles = prefersReducedMotion ? 26 : (isSmallScreen() ? 34 : 56);
+  const linkDist = prefersReducedMotion ? 68 : (isSmallScreen() ? 84 : 108);
+
   let particles = [], W, H;
-  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-  function rnd(a,b) { return a + Math.random()*(b-a); }
-  function mkP() { return {x:rnd(0,W),y:rnd(0,H),vx:rnd(-0.3,0.3),vy:rnd(-0.4,-0.1),size:rnd(1,2.5),opacity:rnd(0.2,0.7),color:Math.random()>0.5?'0,220,255':'124,58,237',life:0,maxLife:rnd(200,500)}; }
-  function init() { particles=[]; const n=Math.min(Math.floor(W/8),80); for(let i=0;i<n;i++){const p=mkP();p.life=Math.random()*p.maxLife;particles.push(p);} }
-  function draw() {
-    ctx.clearRect(0,0,W,H);
-    for(let i=0;i<particles.length;i++) for(let j=i+1;j<particles.length;j++) {
-      const a=particles[i],b=particles[j],d=Math.hypot(a.x-b.x,a.y-b.y);
-      if(d<120){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(0,220,255,${(1-d/120)*0.06})`;ctx.lineWidth=0.5;ctx.stroke();}
-    }
-    particles.forEach((p,i)=>{
-      p.x+=p.vx;p.y+=p.vy;p.life++;
-      const a=p.opacity*Math.sin(p.life/p.maxLife*Math.PI);
-      ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle=`rgba(${p.color},${a})`;ctx.fill();
-      if(p.life>=p.maxLife||p.x<0||p.x>W||p.y<0) particles[i]=mkP();
-    });
-    requestAnimationFrame(draw);
+  let rafId = 0;
+  let lastTs = 0;
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.max(1, Math.floor(W * dpr));
+    canvas.height = Math.max(1, Math.floor(H * dpr));
+    canvas.style.width = `${W}px`;
+    canvas.style.height = `${H}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
-  resize(); init(); draw();
-  let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{resize();init();},200);});
+  function rnd(a,b) { return a + Math.random()*(b-a); }
+  function mkP() {
+    return {
+      x: rnd(0, W),
+      y: rnd(0, H),
+      vx: rnd(-0.24, 0.24),
+      vy: rnd(-0.34, -0.08),
+      size: rnd(0.9, 2.1),
+      opacity: rnd(0.16, 0.5),
+      color: Math.random() > 0.5 ? '0,220,255' : '124,58,237',
+      life: 0,
+      maxLife: rnd(170, 430)
+    };
+  }
+  function init() {
+    particles = [];
+    const n = Math.min(Math.floor(W / 18), maxParticles);
+    for(let i = 0; i < n; i++) {
+      const p = mkP();
+      p.life = Math.random() * p.maxLife;
+      particles.push(p);
+    }
+  }
+
+  function draw(ts) {
+    if(document.hidden) {
+      rafId = requestAnimationFrame(draw);
+      return;
+    }
+    if(lastTs && ts - lastTs < targetFrameMs) {
+      rafId = requestAnimationFrame(draw);
+      return;
+    }
+
+    const dt = lastTs ? Math.min(2.2, (ts - lastTs) / 16.67) : 1;
+    lastTs = ts;
+
+    ctx.clearRect(0,0,W,H);
+
+    const cell = linkDist;
+    const grid = new Map();
+    for(let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      const gx = Math.floor(p.x / cell);
+      const gy = Math.floor(p.y / cell);
+      const key = `${gx}|${gy}`;
+      const arr = grid.get(key);
+      if(arr) arr.push(i);
+      else grid.set(key, [i]);
+    }
+
+    const neighbors = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,0],[0,1],[1,-1],[1,0],[1,1]];
+    const distSq = linkDist * linkDist;
+    for(let i = 0; i < particles.length; i++) {
+      const a = particles[i];
+      const gx = Math.floor(a.x / cell);
+      const gy = Math.floor(a.y / cell);
+      for(let n = 0; n < neighbors.length; n++) {
+        const nx = gx + neighbors[n][0];
+        const ny = gy + neighbors[n][1];
+        const bucket = grid.get(`${nx}|${ny}`);
+        if(!bucket) continue;
+        for(let bi = 0; bi < bucket.length; bi++) {
+          const j = bucket[bi];
+          if(j <= i) continue;
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const d2 = dx * dx + dy * dy;
+          if(d2 >= distSq) continue;
+          const alpha = (1 - (d2 / distSq)) * 0.055;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = `rgba(0,220,255,${alpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    for(let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.life += dt;
+      const a = p.opacity * Math.sin((p.life / p.maxLife) * Math.PI);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${p.color},${a})`;
+      ctx.fill();
+      if(p.life >= p.maxLife || p.x < -8 || p.x > W + 8 || p.y < -8) particles[i] = mkP();
+    }
+
+    rafId = requestAnimationFrame(draw);
+  }
+
+  function restartParticles() {
+    resize();
+    init();
+    lastTs = 0;
+  }
+
+  restartParticles();
+  rafId = requestAnimationFrame(draw);
+
+  let rt;
+  window.addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(restartParticles, 180);
+  }, { passive: true });
+
+  document.addEventListener('visibilitychange', () => {
+    if(!document.hidden && !rafId) {
+      lastTs = 0;
+      rafId = requestAnimationFrame(draw);
+    }
+  });
+
+  window.addEventListener('pagehide', () => {
+    if(rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+  });
 })();
  
 // ===== REVEAL =====
