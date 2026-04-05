@@ -82,10 +82,10 @@ function normalizeTimeWithAmPm(timeValue, ampmValue){
   return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
 }
 function getBookingStartTime24(){
-  return normalizeTimeWithAmPm($('bk-time')?.value || '', $('bk-time-ampm')?.value || '');
+  return String($('bk-time')?.value || '');
 }
 function getBookingEndTime24(){
-  return normalizeTimeWithAmPm($('bk-end-time')?.value || '', $('bk-end-time-ampm')?.value || '');
+  return String($('bk-end-time')?.value || '');
 }
 function syncAmPmFromTime(inputId, ampmId){
   const t = $(inputId)?.value || '';
@@ -189,6 +189,107 @@ function initBookingAutoAdvance(){
 }
 
 initBookingAutoAdvance();
+
+const FORM_DRAFT_KEY = 'cbh_booking_form_draft_v1';
+const FORM_DRAFT_IDS = [
+  'prime-name', 'prime-phone', 'selected-plan', 'prime-college', 'prime-note',
+  'bk-name', 'bk-phone', 'bk-service', 'bk-date', 'bk-time',
+  'bk-end-time', 'bk-duration', 'bk-card', 'bk-note',
+  'bk-print-single', 'bk-print-double', 'bk-form-kind', 'bk-form-extra', 'bk-custom-qty',
+  'inq-name', 'inq-phone', 'inq-reason', 'inq-msg',
+  'bk-track-phone', 'bk-track-input'
+];
+let _draftPersistTimer = 0;
+
+function readFormDraft() {
+  try {
+    const raw = localStorage.getItem(FORM_DRAFT_KEY);
+    if(!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch(_) {
+    return {};
+  }
+}
+
+function writeFormDraft(nextDraft) {
+  try {
+    localStorage.setItem(FORM_DRAFT_KEY, JSON.stringify(nextDraft || {}));
+  } catch(_) {}
+}
+
+function persistFormDraftNow() {
+  const out = {};
+  for(let i = 0; i < FORM_DRAFT_IDS.length; i++) {
+    const id = FORM_DRAFT_IDS[i];
+    const el = $(id);
+    if(!el) continue;
+    if(el instanceof HTMLInputElement && el.type === 'checkbox') out[id] = !!el.checked;
+    else out[id] = String(el.value ?? '');
+  }
+  writeFormDraft(out);
+}
+
+function queueFormDraftPersist() {
+  clearTimeout(_draftPersistTimer);
+  _draftPersistTimer = setTimeout(persistFormDraftNow, 120);
+}
+
+function clearFormDraftFields(ids = []) {
+  if(!ids || !ids.length) return;
+  const draft = readFormDraft();
+  for(let i = 0; i < ids.length; i++) delete draft[ids[i]];
+  writeFormDraft(draft);
+}
+
+function restoreFormDraft() {
+  const draft = readFormDraft();
+  const keys = Object.keys(draft);
+  if(!keys.length) return;
+
+  for(let i = 0; i < keys.length; i++) {
+    const id = keys[i];
+    if(!FORM_DRAFT_IDS.includes(id)) continue;
+    const el = $(id);
+    if(!el) continue;
+    const v = draft[id];
+    if(el instanceof HTMLInputElement && el.type === 'checkbox') {
+      el.checked = !!v;
+      continue;
+    }
+    el.value = v == null ? '' : String(v);
+  }
+
+  const selectedPlan = String($('selected-plan')?.value || '').toLowerCase();
+  if((selectedPlan === 'weekly' || selectedPlan === 'monthly') && typeof window.setFormPlan === 'function') {
+    window.setFormPlan(selectedPlan);
+  }
+
+  const dateInput = $('bk-date');
+  if(dateInput) {
+    const v = String(dateInput.value || '');
+    if(v && dateInput.min && v < dateInput.min) dateInput.value = dateInput.min;
+    if(v && dateInput.max && v > dateInput.max) dateInput.value = dateInput.max;
+  }
+}
+
+function initFormDraftPersistence() {
+  document.addEventListener('input', (e) => {
+    const t = e.target;
+    if(!(t instanceof HTMLInputElement || t instanceof HTMLSelectElement || t instanceof HTMLTextAreaElement)) return;
+    if(!t.id || !FORM_DRAFT_IDS.includes(t.id)) return;
+    queueFormDraftPersist();
+  });
+  document.addEventListener('change', (e) => {
+    const t = e.target;
+    if(!(t instanceof HTMLInputElement || t instanceof HTMLSelectElement || t instanceof HTMLTextAreaElement)) return;
+    if(!t.id || !FORM_DRAFT_IDS.includes(t.id)) return;
+    queueFormDraftPersist();
+  });
+  window.addEventListener('beforeunload', persistFormDraftNow);
+}
+
+initFormDraftPersistence();
 
 function todayYmd(){ return new Date().toISOString().split('T')[0]; }
 function getDailyDeviceBucket(key){
@@ -1035,6 +1136,8 @@ window.submitPrimeApplication = async function() {
     incrementDailyDeviceQuota('cbh_prime_device_daily');
     if(okEl){ okEl.textContent='✅ Application bhej di! Piprali Road pe aakar payment karke card activate karwao. Hum call karenge!'; okEl.style.display='block'; }
     [$('prime-name'),$('prime-phone'),$('prime-college'),$('prime-note')].forEach(el=>{if(el)el.value='';});
+    clearFormDraftFields(['prime-name','prime-phone','prime-college','prime-note']);
+    queueFormDraftPersist();
     updateCardPreview();
   } catch(err) {
     console.error('Prime application failed:', err);
@@ -1698,6 +1801,8 @@ function updateBookingBillPreview() {
   const mainTxt = $('bk-bill-main-txt');
   const amtEl = $('bk-bill-amt');
   const noteEl = $('bk-bill-note');
+  const durInput = $('bk-duration');
+  const durLockNote = $('bk-duration-lock-note');
   if(!box || !mainTxt || !amtEl || !noteEl) return;
 
   const service = $('bk-service')?.value;
@@ -1705,9 +1810,24 @@ function updateBookingBillPreview() {
   const endTime = getBookingEndTime24();
   const detailPayload = getBookingServiceDetailPayload();
   updateBookingServiceDetailUi();
-  const manualDur = parseInt($('bk-duration')?.value || '0', 10);
+  const manualDur = parseInt(durInput?.value || '0', 10);
   const rangeDur = endTime ? durationFromTimeRange(startTime, endTime) : null;
   const dur = rangeDur || manualDur;
+
+  if(durInput) {
+    if(rangeDur && startTime && endTime) {
+      durInput.value = String(rangeDur);
+      durInput.readOnly = true;
+      durInput.setAttribute('aria-readonly', 'true');
+      durInput.title = 'Duration start/end time se auto-calc ho rahi hai.';
+      if(durLockNote) durLockNote.style.display = 'block';
+    } else {
+      durInput.readOnly = false;
+      durInput.removeAttribute('aria-readonly');
+      durInput.title = '';
+      if(durLockNote) durLockNote.style.display = 'none';
+    }
+  }
 
   if(endTime && startTime && rangeDur === null) {
     mainTxt.textContent = 'Start/End time check karo';
@@ -1725,8 +1845,6 @@ function updateBookingBillPreview() {
       return;
     }
   }
-
-  if(rangeDur && $('bk-duration')) $('bk-duration').value = String(rangeDur);
 
   const charge = computeBookingCharge(service, dur, detailPayload);
   mainTxt.textContent = charge.mainText;
@@ -1854,14 +1972,18 @@ async function checkSlotAvail() {
 }
  
 setTimeout(()=>{
+  restoreFormDraft();
+  updateCardPreview();
+  updateBookingServiceDetailUi();
+  updateBookingBillPreview();
+  checkAdvanceBooking($('bk-date')?.value || '');
+
   $('bk-service')?.addEventListener('change',()=>{ updateBookingServiceDetailUi(); checkSlotAvail(); updateBookingBillPreview(); });
   $('bk-date')?.addEventListener('change',()=>{ checkSlotAvail(); checkAdvanceBooking($('bk-date')?.value); });
-  $('bk-time')?.addEventListener('change',()=>{ syncAmPmFromTime('bk-time','bk-time-ampm'); checkSlotAvail(); checkAdvanceBooking($('bk-date')?.value); });
+  $('bk-time')?.addEventListener('change',()=>{ checkSlotAvail(); checkAdvanceBooking($('bk-date')?.value); });
   $('bk-time')?.addEventListener('input',updateBookingBillPreview);
-  $('bk-end-time')?.addEventListener('change',()=>{ syncAmPmFromTime('bk-end-time','bk-end-time-ampm'); updateBookingBillPreview(); checkSlotAvail(); });
+  $('bk-end-time')?.addEventListener('change',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
   $('bk-end-time')?.addEventListener('input',updateBookingBillPreview);
-  $('bk-time-ampm')?.addEventListener('change',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
-  $('bk-end-time-ampm')?.addEventListener('change',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
   $('bk-duration')?.addEventListener('input',()=>{ updateBookingBillPreview(); checkSlotAvail(); });
   $('bk-print-single')?.addEventListener('input',updateBookingBillPreview);
   $('bk-print-double')?.addEventListener('input',updateBookingBillPreview);
@@ -1870,6 +1992,7 @@ setTimeout(()=>{
   $('bk-custom-qty')?.addEventListener('input',updateBookingBillPreview);
   updateBookingServiceDetailUi();
   updateBookingBillPreview();
+  queueFormDraftPersist();
 },500);
  
 window.submitBooking = async function() {
@@ -2093,13 +2216,23 @@ window.submitBooking = async function() {
     if($('bk-service'))$('bk-service').value='';
     if($('bk-time'))$('bk-time').value='';
     if($('bk-end-time'))$('bk-end-time').value='';
-    if($('bk-time-ampm'))$('bk-time-ampm').value='am';
-    if($('bk-end-time-ampm'))$('bk-end-time-ampm').value='am';
-    if($('bk-duration'))$('bk-duration').value='60';
+    if($('bk-duration')) {
+      $('bk-duration').value='60';
+      $('bk-duration').readOnly = false;
+      $('bk-duration').removeAttribute('aria-readonly');
+      $('bk-duration').title = '';
+    }
+    if($('bk-duration-lock-note')) $('bk-duration-lock-note').style.display = 'none';
     if($('bk-human-verify'))$('bk-human-verify').checked=false;
     const sab=$('slot-availability'); if(sab) sab.innerHTML='';
     const payBox=$('bk-payment-box'); if(payBox) payBox.style.display='none';
     const billBox=$('bk-bill-preview'); if(billBox) billBox.style.display='none';
+    clearFormDraftFields([
+      'bk-name','bk-phone','bk-service','bk-date','bk-time','bk-end-time',
+      'bk-duration','bk-card','bk-note','bk-print-single','bk-print-double','bk-form-kind','bk-form-extra','bk-custom-qty',
+      'bk-track-phone','bk-track-input'
+    ]);
+    queueFormDraftPersist();
  
   } catch(err) {
     console.error('Booking submit failed:', err);
@@ -2179,6 +2312,8 @@ window.submitInquiry = async function() {
     if(okEl){ okEl.textContent='✅ Inquiry mili! Hum call karenge. WhatsApp: 8829822950'; okEl.style.display='block'; }
     [$('inq-name'),$('inq-phone'),$('inq-msg')].forEach(el=>{if(el)el.value='';});
     if($('inq-reason'))$('inq-reason').value='';
+    clearFormDraftFields(['inq-name','inq-phone','inq-reason','inq-msg']);
+    queueFormDraftPersist();
   } catch(err) {
     console.error('Inquiry submit failed:', err);
     if(errEl){ errEl.textContent='❌ Inquiry abhi submit nahi hui. Thodi der baad dobara try karo.'; errEl.style.display='block'; }

@@ -81,7 +81,8 @@
       <span class="topbar-title" id="topbar-title">Home</span>
     </div>
     <div class="topbar-right">
-      <a href="#booking" onclick="navTo(null,'booking')" class="btn btn-primary btn-sm">📅 Book Now</a>
+      <a href="#booking" onclick="navTo(null,'booking')" class="btn btn-primary btn-sm btn-topbar-compact">📅 Book Now</a>
+      <a href="https://maps.google.com/?q=CityByteHub+Sikar+Piprali+Road" target="_blank" rel="noopener" class="btn btn-topbar-location btn-sm btn-topbar-compact">📍 Location</a>
       <a href="https://wa.me/918829822950?text=Hi%20CityByteHub!" target="_blank" class="btn btn-green btn-sm" style="display:none" id="wa-topbar">💬 WhatsApp</a>
     </div>
   </div>
@@ -602,10 +603,6 @@
               <label>Start Time *</label>
               <div class="time-ampm-row">
                 <input type="time" id="bk-time" class="fi" step="60" placeholder="10:20" required/>
-                <select id="bk-time-ampm" class="fi" aria-label="Start time AM/PM">
-                  <option value="am" selected>AM</option>
-                  <option value="pm">PM</option>
-                </select>
               </div>
               <div class="time-note">Cafe open window: 7:00 AM to 9:00 PM</div>
               <span class="field-err" id="bk-time-err"></span>
@@ -614,16 +611,13 @@
               <label>End Time (Optional)</label>
               <div class="time-ampm-row">
                 <input type="time" id="bk-end-time" class="fi" step="60" placeholder="11:20"/>
-                <select id="bk-end-time-ampm" class="fi" aria-label="End time AM/PM">
-                  <option value="am" selected>AM</option>
-                  <option value="pm">PM</option>
-                </select>
               </div>
               <span class="field-err" id="bk-end-time-err"></span>
             </div>
             <div class="form-group">
               <label>Duration (Minutes)</label>
               <input type="number" id="bk-duration" class="fi" min="15" max="480" step="15" value="60" placeholder="e.g. 90"/>
+              <div class="time-note" id="bk-duration-lock-note" style="display:none">Duration auto-locked by Start/End time range.</div>
             </div>
             <div id="bk-bill-preview" class="billing-preview" style="display:none">
               <div class="bill-main">
@@ -674,7 +668,7 @@
           <p style="font-size:0.82rem;color:var(--txt2);font-family:var(--font-alt);margin-bottom:1.25rem;line-height:1.7">
             Booking ke baad jo <strong style="color:var(--cyan)">8-character booking code</strong> mila tha woh daalo, saath me booking wala phone number daalo, tabhi status dikhega.
           </p>
-          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem">
+          <div class="booking-track-row" style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem">
             <input type="tel" id="bk-track-phone" class="fi"
               style="flex:1;min-width:200px;margin-bottom:0"
               placeholder="Phone number (booking wala)" maxlength="10" inputmode="numeric"
@@ -794,9 +788,9 @@
         <div>
           <p style="font-size:0.95rem;color:var(--txt2);line-height:1.8;margin-bottom:1rem">CityByteHub was founded by two passionate partners — one with deep technical expertise and the other handling operations — with a shared dream: to bring a truly premium gaming and internet experience to Sikar.</p>
           <p style="font-size:0.95rem;color:var(--txt2);line-height:1.8;margin-bottom:1.5rem">Located on Piprali Road, we offer the best gaming hardware, fastest internet, and a welcoming environment for students, gamers, and professionals alike.</p>
-          <div style="display:flex;gap:1rem;flex-wrap:wrap">
-            <div class="info-card reveal" style="flex:1;min-width:180px"><span class="info-icon">👨‍💻</span><div><h4>Technical Partner</h4><p>Hardware & Tech Support</p></div></div>
-            <div class="info-card reveal" style="flex:1;min-width:180px"><span class="info-icon">👨‍💼</span><div><h4>Operations Partner</h4><p>Customer Experience & Management</p></div></div>
+          <div class="about-partners" style="display:flex;gap:1rem;flex-wrap:wrap">
+            <div class="info-card reveal" style="flex:1;min-width:180px"><span class="info-icon">👨‍💼</span><div><h4>Karan Yadav</h4><p>Operations Partner · Customer experience, bookings, and daily management.</p></div></div>
+            <div class="info-card reveal" style="flex:1;min-width:180px"><span class="info-icon">👨‍💻</span><div><h4>Sachin Yadav</h4><p>Technical Partner · Hardware, tech support, and system setup.</p></div></div>
           </div>
         </div>
         <div>
@@ -916,30 +910,58 @@ const _TMAP = {
   booking:'Book a Slot',inquiry:'Contact & Inquiry',about:'About Us',
   faq:'FAQ',reviews:'Reviews'
 };
-window.navTo = function(el, page) {
+const _ROUTE_KEY = 'cbh_booking_last_page_v1';
+
+window.navTo = function(el, page, opts) {
+  opts = opts || {};
+  const resolvedPage = _SMAP[page] ? page : 'home';
+  const behavior = opts.behavior || 'smooth';
+  const persist = opts.persist !== false;
+
   if(window.event && typeof window.event.preventDefault === 'function') window.event.preventDefault();
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const navEl = el || document.querySelector('.nav-item[href="#'+page+'"]');
+  const navEl = el || document.querySelector('.nav-item[href="#'+resolvedPage+'"]');
   if(navEl) navEl.classList.add('active');
   document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
-  const sec = document.getElementById(_SMAP[page]||'sec-home');
+  const sec = document.getElementById(_SMAP[resolvedPage]||'sec-home');
   if(sec) { sec.classList.add('active'); sec.querySelectorAll('.reveal').forEach(e=>e.classList.add('visible')); }
   const titleEl = document.getElementById('topbar-title');
-  if(titleEl) titleEl.textContent = _TMAP[page]||'CityByteHub';
+  if(titleEl) titleEl.textContent = _TMAP[resolvedPage]||'CityByteHub';
 
-  const target = document.getElementById(page);
+  const target = document.getElementById(resolvedPage);
   const topbar = document.querySelector('.topbar');
   const topOffset = (topbar ? topbar.offsetHeight : 0) + 12;
   if(target) {
     const y = Math.max(0, target.getBoundingClientRect().top + window.scrollY - topOffset);
-    window.scrollTo({top:y,behavior:'smooth'});
+    window.scrollTo({top:y,behavior:behavior});
   } else {
-    window.scrollTo({top:0,behavior:'smooth'});
+    window.scrollTo({top:0,behavior:behavior});
   }
 
-  if(history && history.replaceState) history.replaceState(null,'','#'+page);
+  if(history && history.replaceState) history.replaceState(null,'','#'+resolvedPage);
+  if(persist) {
+    try { localStorage.setItem(_ROUTE_KEY, resolvedPage); } catch(_) {}
+  }
   if(window.innerWidth<=1024){ document.getElementById('sidebar')?.classList.remove('open'); document.getElementById('sidebar-overlay')?.classList.remove('show'); }
 };
+
+(function initInitialRoute(){
+  const fromHash = (location.hash || '').replace(/^#/, '');
+  let startPage = _SMAP[fromHash] ? fromHash : '';
+  if(!startPage) {
+    try {
+      const savedPage = localStorage.getItem(_ROUTE_KEY) || '';
+      if(_SMAP[savedPage]) startPage = savedPage;
+    } catch(_) {}
+  }
+  if(!startPage) startPage = 'home';
+  window.navTo(null, startPage, { behavior: 'auto', persist: false });
+})();
+
+window.addEventListener('hashchange', function(){
+  const nextPage = (location.hash || '').replace(/^#/, '');
+  if(_SMAP[nextPage]) window.navTo(null, nextPage, { behavior: 'auto' });
+});
 window.toggleSidebar = function() {
   document.getElementById('sidebar')?.classList.toggle('open');
   document.getElementById('sidebar-overlay')?.classList.toggle('show');
