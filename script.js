@@ -733,14 +733,14 @@ const TITLE_MAP = {
 let _liveStateSyncTimer = null;
 let _lastLiveSeats = null;
 let _lastLiveAnnouncement = '';
+let _announcementDismissed = false;
 let _lastBookingAvailabilityVersion = '';
 let _lastBookingAvailabilityUpdatedAt = 0;
-let _announcementDismissedMessage = '';
-
 window.dismissAnnouncementBar = function() {
   const bar = $('ann-bar');
   if(!bar) return;
-  _announcementDismissedMessage = String(_lastLiveAnnouncement || '').trim();
+  _announcementDismissed = true;
+  bar.style.display = 'none';
   bar.classList.remove('show');
 };
 
@@ -756,8 +756,9 @@ function applyLiveAnnouncement(message) {
   }
   _lastLiveAnnouncement = cleanMsg;
   txt.textContent = cleanMsg;
-  if(_announcementDismissedMessage && _announcementDismissedMessage === cleanMsg) {
+  if(_announcementDismissed) {
     bar.classList.remove('show');
+    bar.style.display = 'none';
     return;
   }
   bar.style.display = 'flex';
@@ -984,7 +985,10 @@ async function syncLiveStateViaRest() {
 
 function ensureLiveStateFallbackSync() {
   if(_liveStateSyncTimer) return;
-  _liveStateSyncTimer = setInterval(syncLiveStateOnce, 5000);
+  _liveStateSyncTimer = setInterval(() => {
+    syncLiveStateOnce();
+    syncLiveStateViaRest();
+  }, 3000);
 }
 
 onValue(ref(rtdb,'announcements/latest'), snap => {
@@ -1717,7 +1721,10 @@ async function syncBookingPricingViaRest() {
 
 function ensurePricingFallbackSync() {
   if(_pricingSyncTimer) return;
-  _pricingSyncTimer = setInterval(syncBookingPricingOnce, 15000);
+  _pricingSyncTimer = setInterval(() => {
+    syncBookingPricingOnce();
+    syncBookingPricingViaRest();
+  }, 5000);
 }
 
 // Render defaults only after the rate constants exist, so startup cannot trip on TDZ errors.

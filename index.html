@@ -911,6 +911,32 @@ const _TMAP = {
   faq:'FAQ',reviews:'Reviews'
 };
 const _ROUTE_KEY = 'cbh_booking_last_page_v1';
+const _ROUTE_TTL_MS = 7 * 60 * 1000; // 7 minutes
+
+function saveLastRoute(page) {
+  try {
+    localStorage.setItem(_ROUTE_KEY, JSON.stringify({ page: page, ts: Date.now() }));
+  } catch(_) {}
+}
+
+function readLastRoute() {
+  try {
+    const raw = localStorage.getItem(_ROUTE_KEY);
+    if(!raw) return '';
+    const parsed = JSON.parse(raw);
+    if(!parsed || typeof parsed !== 'object') return '';
+    const page = String(parsed.page || '');
+    const ts = Number(parsed.ts || 0);
+    if(!page || !ts) return '';
+    if(Date.now() - ts > _ROUTE_TTL_MS) {
+      localStorage.removeItem(_ROUTE_KEY);
+      return '';
+    }
+    return page;
+  } catch(_) {
+    return '';
+  }
+}
 
 window.navTo = function(el, page, opts) {
   opts = opts || {};
@@ -939,9 +965,7 @@ window.navTo = function(el, page, opts) {
   }
 
   if(history && history.replaceState) history.replaceState(null,'','#'+resolvedPage);
-  if(persist) {
-    try { localStorage.setItem(_ROUTE_KEY, resolvedPage); } catch(_) {}
-  }
+  if(persist) saveLastRoute(resolvedPage);
   if(window.innerWidth<=1024){ document.getElementById('sidebar')?.classList.remove('open'); document.getElementById('sidebar-overlay')?.classList.remove('show'); }
 };
 
@@ -949,10 +973,8 @@ window.navTo = function(el, page, opts) {
   const fromHash = (location.hash || '').replace(/^#/, '');
   let startPage = _SMAP[fromHash] ? fromHash : '';
   if(!startPage) {
-    try {
-      const savedPage = localStorage.getItem(_ROUTE_KEY) || '';
-      if(_SMAP[savedPage]) startPage = savedPage;
-    } catch(_) {}
+    const savedPage = readLastRoute();
+    if(_SMAP[savedPage]) startPage = savedPage;
   }
   if(!startPage) startPage = 'home';
   window.navTo(null, startPage, { behavior: 'auto', persist: false });
