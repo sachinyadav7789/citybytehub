@@ -57,7 +57,17 @@ function maskName(v){ const s=String(v||'').trim(); if(!s) return 'User'; if(s.l
 function maskPhone(v){ const s=String(v||'').replace(/\D/g,''); return s.length===10 ? `${s.slice(0,2)}******${s.slice(-2)}` : 'hidden'; }
 function isLikelyName(v){ const s=cleanInput(v,80); return s.length>=2 && /[A-Za-z\u0900-\u097F]/.test(s); }
 function isValidTimeHHMM(v){ return typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v); }
-function isWithinBookingHours(v){ return v >= '07:00' && v <= '21:00'; }
+let BOOKING_OPEN_WINDOW = { openMin: 7 * 60, closeMin: 21 * 60, label: '7:00 AM - 9:00 PM' };
+function isWithinBookingHours(v){
+  const mins = hhmmToMinutes(v);
+  if(mins === null) return false;
+  const openMin = Number.isFinite(BOOKING_OPEN_WINDOW?.openMin) ? BOOKING_OPEN_WINDOW.openMin : 7 * 60;
+  const closeMin = Number.isFinite(BOOKING_OPEN_WINDOW?.closeMin) ? BOOKING_OPEN_WINDOW.closeMin : 21 * 60;
+  return mins >= openMin && mins <= closeMin;
+}
+function bookingHoursLabel(){
+  return String(BOOKING_OPEN_WINDOW?.label || '7:00 AM - 9:00 PM');
+}
 function hhmmToMinutes(v){ if(!isValidTimeHHMM(v)) return null; const [h,m]=v.split(':').map(Number); return (h*60)+m; }
 function formatTime12(v){
   if(!isValidTimeHHMM(v)) return String(v || '—');
@@ -397,9 +407,16 @@ async function evaluateServerAbuseGuard(scope, phone){
     if(res.status === 404 || res.status === 405) {
       return { ok: true, reason: null };
     }
+    if(res.status === 429) {
+      return { ok: true, reason: null };
+    }
     if(!res.ok) {
       const data = await res.json().catch(()=>({}));
-      return { ok: false, reason: String(data?.reason || 'server_rate_limit') };
+      const reason = String(data?.reason || 'server_rate_limit');
+      if(/rate[_-]?limit|too[_-]?many/i.test(reason)) {
+        return { ok: true, reason: null };
+      }
+      return { ok: false, reason };
     }
     const data = await res.json().catch(()=>({ ok: true }));
     return { ok: !!data?.ok, reason: String(data?.reason || '') || null };
@@ -797,6 +814,67 @@ function normalizeBookingAvailability(raw = {}) {
   return { gamingPcSeats, ps5Consoles, internetBrowsingPcs, mobileSeats, openHours };
 }
 
+const SLOT_STEP_MIN = 30;
+const BOOKING_SUGGESTION_CACHE_TTL_MS = 25 * 1000;
+let _bookingCache = { date: '', ts: 0, rows: [] };
+
+function minutesToHHMM(mins) {
+  const h = Math.floor(mins / 60);
+  const m = Math.max(0, mins % 60);
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+function parseTimeTokenToMinutes(raw) {
+  const txt = String(raw || '').trim();
+  if(!txt) return null;
+  const ampmMatch = txt.match(/(am|pm)/i);
+  const timeMatch = txt.match(/(\d{1,2})(?::(\d{2}))?/);
+  if(!timeMatch) return null;
+  let h = parseInt(timeMatch[1], 10);
+  let m = parseInt(timeMatch[2] || '0', 10);
+  if(!Number.isFinite(h) || !Number.isFinite(m)) return null;
+  if(ampmMatch) {
+    const mer = ampmMatch[1].toLowerCase();
+    if(h === 12) h = mer === 'am' ? 0 : 12;
+    else if(mer === 'pm') h += 12;
+  }
+  if(h < 0 || h > 23 || m < 0 || m > 59) return null;
+  return h * 60 + m;
+}
+
+function parseOpenHoursRange(raw) {
+  const text = String(raw || '').trim();
+  if(!text) return null;
+  const parts = text.split(/\s*(?:-|to)\s*/i);
+  if(parts.length < 2) return null;
+  const startMin = parseTimeTokenToMinutes(parts[0]);
+  const endMin = parseTimeTokenToMinutes(parts[1]);
+  if(startMin === null || endMin === null) return null;
+  if(endMin <= startMin) return null;
+  return { openMin: startMin, closeMin: endMin, label: text };
+}
+
+function applyBookingTimeConstraints() {
+  const openMin = Number.isFinite(BOOKING_OPEN_WINDOW?.openMin) ? BOOKING_OPEN_WINDOW.openMin : 7 * 60;
+  const closeMin = Number.isFinite(BOOKING_OPEN_WINDOW?.closeMin) ? BOOKING_OPEN_WINDOW.closeMin : 21 * 60;
+  const minVal = minutesToHHMM(openMin);
+  const maxVal = minutesToHHMM(closeMin);
+  const stepSec = SLOT_STEP_MIN * 60;
+  ['bk-time','bk-end-time'].forEach(id => {
+    const el = $(id);
+    if(!el) return;
+    el.min = minVal;
+    el.max = maxVal;
+    el.step = String(stepSec);
+  });
+}
+
+function updateBookingOpenWindow(openHoursText) {
+  const parsed = parseOpenHoursRange(openHoursText);
+  if(parsed) BOOKING_OPEN_WINDOW = parsed;
+  applyBookingTimeConstraints();
+}
+
 function getAvailabilityUpdatedAt(raw = {}) {
   const t = Date.parse(String(raw?.updatedAt || ''));
   return Number.isFinite(t) ? t : 0;
@@ -845,6 +923,7 @@ function applyBookingAvailabilitySettings(raw = {}) {
 
   const hrsEl = $('avail-hours');
   if (hrsEl) hrsEl.textContent = normalized.openHours || '--';
+  if(normalized.openHours) updateBookingOpenWindow(normalized.openHours);
 
   _lastBookingAvailabilityVersion = JSON.stringify(normalized);
   if(incomingTs > 0) _lastBookingAvailabilityUpdatedAt = incomingTs;
@@ -1917,6 +1996,152 @@ async function checkSlotCapacityBeforeSave(service, date, time, endTime, duratio
 
   return { ok: used < limit, used, limit, reason: null };
 }
+
+function isActiveBookingStatus(status) {
+  const st = String(status || '').toLowerCase();
+  return st === 'pending' || st === 'confirmed' || st === 'pending_payment';
+}
+
+async function loadActiveBookingsForDate(date) {
+  if(!date) return [];
+  const now = Date.now();
+  if(_bookingCache.date === date && (now - _bookingCache.ts) < BOOKING_SUGGESTION_CACHE_TTL_MS) {
+    return _bookingCache.rows;
+  }
+  const snap = await getDocs(query(collection(db, 'bookings'), where('date', '==', date)));
+  const rows = [];
+  snap.forEach(d => {
+    const b = d.data() || {};
+    if(isActiveBookingStatus(b.status)) rows.push(b);
+  });
+  _bookingCache = { date, ts: now, rows };
+  return rows;
+}
+
+function countUsedSlots(bookings, service, window) {
+  let used = 0;
+  for(let i = 0; i < bookings.length; i++) {
+    const b = bookings[i];
+    if(b.service !== service) continue;
+    const bookedWindow = deriveWindowFromBookingDoc(b);
+    if(windowsOverlap(window, bookedWindow)) used++;
+  }
+  return used;
+}
+
+function getServiceSeatLimit(service) {
+  return SEAT_LIMITS[service] || 5;
+}
+
+function listAvailableSlots(bookings, service, date, durationMin) {
+  const openMin = Number.isFinite(BOOKING_OPEN_WINDOW?.openMin) ? BOOKING_OPEN_WINDOW.openMin : 7 * 60;
+  const closeMin = Number.isFinite(BOOKING_OPEN_WINDOW?.closeMin) ? BOOKING_OPEN_WINDOW.closeMin : 21 * 60;
+  const dur = Math.max(1, parseInt(durationMin || 0, 10) || 0);
+  if(!dur) return [];
+
+  const today = todayYmd();
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+
+  const out = [];
+  for(let startMin = openMin; startMin + dur <= closeMin; startMin += SLOT_STEP_MIN) {
+    if(date === today && startMin <= nowMin) continue;
+    const window = { startMin, endMin: startMin + dur };
+    const used = countUsedSlots(bookings, service, window);
+    const limit = getServiceSeatLimit(service);
+    if(used < limit) out.push(window);
+  }
+  return out;
+}
+
+function getRequestedDurationMin() {
+  const startTime = getBookingStartTime24();
+  const endTime = getBookingEndTime24();
+  const rangeDur = endTime ? durationFromTimeRange(startTime, endTime) : null;
+  if(rangeDur) return rangeDur;
+  return parseInt($('bk-duration')?.value || '0', 10) || 60;
+}
+
+function formatWindowLabel(window) {
+  const start = minutesToHHMM(window.startMin);
+  const end = minutesToHHMM(window.endMin);
+  return `${formatTime12(start)} - ${formatTime12(end)}`;
+}
+
+window.applySuggestedSlot = function(serviceKey, startMin, endMin) {
+  const start = minutesToHHMM(startMin);
+  const end = minutesToHHMM(endMin);
+  if($('bk-service')) $('bk-service').value = serviceKey;
+  if($('bk-time')) $('bk-time').value = start;
+  if($('bk-end-time')) $('bk-end-time').value = end;
+  const dur = endMin - startMin;
+  if($('bk-duration')) $('bk-duration').value = String(Math.max(1, dur));
+  updateBookingServiceDetailUi();
+  updateBookingBillPreview();
+  checkSlotAvail();
+};
+
+function renderSlotSuggestions(service, date, bookings) {
+  const host = $('slot-suggestions');
+  if(!host) return;
+  host.innerHTML = '';
+  if(!service || !date) return;
+
+  const durationMin = getRequestedDurationMin();
+  const slots = listAvailableSlots(bookings, service, date, durationMin);
+  if(!slots.length) {
+    host.innerHTML = `<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:10px;padding:10px 12px;font-size:0.78rem;color:var(--danger);font-family:var(--font-alt)">❌ No available slots for ${escHTML(priceServiceLabel(service))} in the selected window.</div>`;
+    return;
+  }
+
+  const btns = slots.map(window => {
+    const label = formatWindowLabel(window);
+    return `<button type="button" class="btn btn-outline btn-sm" style="padding:0.4rem 0.65rem" onclick="applySuggestedSlot('${service}',${window.startMin},${window.endMin})">${escHTML(label)}</button>`;
+  }).join('');
+
+  host.innerHTML = `
+    <div style="background:rgba(0,220,255,0.06);border:1px solid rgba(0,220,255,0.2);border-radius:10px;padding:10px 12px;font-size:0.78rem;color:var(--cyan);font-family:var(--font-alt)">
+      <div style="font-family:var(--font-h);font-size:0.74rem;letter-spacing:0.06em;color:var(--cyan);margin-bottom:0.5rem">AVAILABLE ${escHTML(priceServiceLabel(service)).toUpperCase()} SLOTS</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem">${btns}</div>
+    </div>
+  `;
+}
+
+function renderAlternateServiceSuggestions(selectedService, date, bookings) {
+  const host = $('alt-service-suggestions');
+  if(!host) return;
+  host.innerHTML = '';
+  if(!selectedService || !date) return;
+
+  const durationMin = getRequestedDurationMin();
+  const services = [
+    ...Object.keys(BOOKING_SERVICE_LABELS),
+    ...Object.keys(CUSTOM_BOOKING_SERVICES)
+  ].filter(key => key && key !== selectedService);
+
+  const rows = services.map((service) => {
+    const slots = listAvailableSlots(bookings, service, date, durationMin);
+    if(!slots.length) return '';
+    const btns = slots.map(window => {
+      const label = formatWindowLabel(window);
+      return `<button type="button" class="btn btn-outline btn-sm" style="padding:0.35rem 0.6rem" onclick="applySuggestedSlot('${service}',${window.startMin},${window.endMin})">${escHTML(label)}</button>`;
+    }).join('');
+    return `
+      <div style="margin-top:0.6rem">
+        <div style="font-size:0.78rem;color:var(--gold);font-family:var(--font-alt);margin-bottom:0.35rem">${escHTML(priceServiceLabel(service))}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.35rem">${btns}</div>
+      </div>
+    `;
+  }).filter(Boolean).join('');
+
+  if(!rows) return;
+  host.innerHTML = `
+    <div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:10px;padding:10px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">
+      <div style="font-family:var(--font-h);font-size:0.74rem;letter-spacing:0.06em;color:var(--gold);margin-bottom:0.45rem">ALTERNATE SERVICES AVAILABLE</div>
+      ${rows}
+    </div>
+  `;
+}
  
 async function checkSlotAvail() {
   const service=$('bk-service')?.value;
@@ -1929,21 +2154,30 @@ async function checkSlotAvail() {
 
   if(!service){
     box.innerHTML='';
+    renderSlotSuggestions('', '', []);
+    renderAlternateServiceSuggestions('', '', []);
     return;
   }
 
   if(!date || !startTime){
     box.innerHTML=`<div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.18);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--green);font-family:var(--font-alt)">✅ Max ${SEAT_LIMITS[service]||5} seats per slot</div>`;
+    const bookings = date ? await loadActiveBookingsForDate(date) : [];
+    renderSlotSuggestions(service, date, bookings);
+    renderAlternateServiceSuggestions(service, date, bookings);
     return;
   }
 
   if(!isValidTimeHHMM(startTime)) {
     box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Select a valid start time.</div>';
+    renderSlotSuggestions(service, date, await loadActiveBookingsForDate(date));
+    renderAlternateServiceSuggestions(service, date, await loadActiveBookingsForDate(date));
     return;
   }
 
   if(!isWithinBookingHours(startTime)) {
-    box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Select a time between 7:00 AM and 9:00 PM.</div>';
+    box.innerHTML=`<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Select a time between ${escHTML(bookingHoursLabel())}.</div>`;
+    renderSlotSuggestions(service, date, await loadActiveBookingsForDate(date));
+    renderAlternateServiceSuggestions(service, date, await loadActiveBookingsForDate(date));
     return;
   }
 
@@ -1953,18 +2187,32 @@ async function checkSlotAvail() {
       return;
     }
     if(!isWithinBookingHours(endTime)) {
-      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time must be between 7:00 AM and 9:00 PM.</div>';
+      box.innerHTML=`<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time must be within ${escHTML(bookingHoursLabel())}.</div>`;
+      renderSlotSuggestions(service, date, await loadActiveBookingsForDate(date));
+      renderAlternateServiceSuggestions(service, date, await loadActiveBookingsForDate(date));
       return;
     }
     if(durationFromTimeRange(startTime, endTime) === null) {
       box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time must be after start time.</div>';
+      renderSlotSuggestions(service, date, await loadActiveBookingsForDate(date));
+      renderAlternateServiceSuggestions(service, date, await loadActiveBookingsForDate(date));
       return;
     }
   }
 
   box.innerHTML='<div style="background:rgba(0,220,255,0.06);border:1px solid rgba(0,220,255,0.2);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--cyan);font-family:var(--font-alt)">⏳ Checking live slot availability...</div>';
   try {
-    const state = await checkSlotCapacityBeforeSave(service, date, startTime, endTime, duration || 60);
+    const bookings = await loadActiveBookingsForDate(date);
+    const requestedWindow = deriveBookingWindow(startTime, endTime, duration || 60);
+    if(!requestedWindow) {
+      box.innerHTML='<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--danger);font-family:var(--font-alt)">❌ Invalid time window. Check start/end time.</div>';
+      renderSlotSuggestions(service, date, bookings);
+      renderAlternateServiceSuggestions(service, date, bookings);
+      return;
+    }
+    const used = countUsedSlots(bookings, service, requestedWindow);
+    const limit = getServiceSeatLimit(service);
+    const state = { ok: used < limit, used, limit, reason: null };
     if(state.reason === 'invalid_window') {
       box.innerHTML='<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--danger);font-family:var(--font-alt)">❌ Invalid time window. Check start/end time.</div>';
       return;
@@ -1973,6 +2221,8 @@ async function checkSlotAvail() {
     const color = left <= 0 ? 'var(--danger)' : left <= 1 ? 'var(--gold)' : 'var(--green)';
     const status = left <= 0 ? 'Slot currently full' : `${left} seats left`;
     box.innerHTML=`<div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.18);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:${color};font-family:var(--font-alt)">📊 ${status} (used ${state.used}/${state.limit})</div>`;
+    renderSlotSuggestions(service, date, bookings);
+    renderAlternateServiceSuggestions(service, date, bookings);
   } catch (e) {
     const code = String(e?.code || '');
     if(code.includes('permission-denied')) {
@@ -1988,6 +2238,7 @@ setTimeout(()=>{
   updateCardPreview();
   updateBookingServiceDetailUi();
   updateBookingBillPreview();
+  applyBookingTimeConstraints();
   checkAdvanceBooking($('bk-date')?.value || '');
 
   $('bk-service')?.addEventListener('change',()=>{ updateBookingServiceDetailUi(); checkSlotAvail(); updateBookingBillPreview(); });
@@ -2035,7 +2286,7 @@ window.submitBooking = async function() {
   // Check "I'm not a robot" checkbox
   const humanVerify = $('bk-human-verify');
   if(!humanVerify || !humanVerify.checked){
-    if(bkErr){bkErr.textContent='❌ Please tick the checkbox: "I am human, not a bot"'; bkErr.style.display='block';}
+    if(bkErr){bkErr.textContent='❌ Please confirm you are human to continue.'; bkErr.style.display='block';}
     return;
   }
   
@@ -2054,14 +2305,14 @@ window.submitBooking = async function() {
   if(!date)  { showErr('bk-date-err','Select a date.');       valid=false; }
   if(!time)  { showErr('bk-time-err','Enter a start time.');  valid=false; }
   else if(!isValidTimeHHMM(time)){ showErr('bk-time-err','Enter a valid time (e.g., 10:20).'); valid=false; }
-  else if(!isWithinBookingHours(time)){ showErr('bk-time-err','Select a time between 7:00 AM and 9:00 PM.'); valid=false; }
+  else if(!isWithinBookingHours(time)){ showErr('bk-time-err',`Select a time between ${bookingHoursLabel()}.`); valid=false; }
 
   if(endTime) {
     if(!isValidTimeHHMM(endTime)) {
       showErr('bk-end-time-err','Enter a valid end time (e.g., 11:20).');
       valid = false;
     } else if(!isWithinBookingHours(endTime)) {
-      showErr('bk-end-time-err','End time must be between 7:00 AM and 9:00 PM.');
+      showErr('bk-end-time-err',`End time must be within ${bookingHoursLabel()}.`);
       valid = false;
     } else {
       const rangeDur = durationFromTimeRange(time, endTime);
