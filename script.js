@@ -6,13 +6,14 @@ import { getDatabase, ref, onValue, get }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
  
 const firebaseConfig = {
-  apiKey: "AIzaSyAGfzMX4vrLR_yYPDi0FRYTjpEY_8RCRRE",
-  authDomain: "citybytehub-dde05.firebaseapp.com",
-  databaseURL: "https://citybytehub-dde05-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "citybytehub-dde05",
-  storageBucket: "citybytehub-dde05.firebasestorage.app",
-  messagingSenderId: "1022508813132",
-  appId: "1:1022508813132:web:8782022cf65ff28c7bdde9"
+  apiKey: "AIzaSyB7YPyOX4C-UwrzGXz13n_FREKHQdJw82k",
+  authDomain: "citybytehub-clothes.firebaseapp.com",
+  databaseURL: "https://citybytehub-clothes-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "citybytehub-clothes",
+  storageBucket: "citybytehub-clothes.firebasestorage.app",
+  messagingSenderId: "209730359699",
+  appId: "1:209730359699:web:23ceff264fbf32b693d866",
+  measurementId: "G-DV4QHKQSVB"
 };
 const app  = initializeApp(firebaseConfig);
 const db   = getFirestore(app);
@@ -405,10 +406,10 @@ async function evaluateServerAbuseGuard(scope, phone){
   }
 }
 function abuseReasonText(reason, fallback){
-  if(reason === 'ip_window') return '⚠️ Is network se bahut requests aa rahi hain. Thodi der baad try karo.';
-  if(reason === 'ip_daily') return '⚠️ Is network ki aaj ki limit ho gayi hai.';
-  if(reason === 'device_daily') return '⚠️ Is device ki aaj ki limit ho gayi hai.';
-  if(reason === 'phone_window') return '⚠️ Is phone number se bahut tez requests aa rahi hain. Thoda rukke try karo.';
+  if(reason === 'ip_window') return '⚠️ Too many requests from this network. Please try again later.';
+  if(reason === 'ip_daily') return '⚠️ Daily limit reached for this network.';
+  if(reason === 'device_daily') return '⚠️ Daily limit reached for this device.';
+  if(reason === 'phone_window') return '⚠️ Too many requests from this phone number. Please wait and try again.';
   return fallback;
 }
 function rateLimitCheck(key, maxAttempts, windowMs){
@@ -622,7 +623,8 @@ const TITLE_MAP = {
 
   function draw(ts) {
     if(document.hidden) {
-      rafId = requestAnimationFrame(draw);
+      if(rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
       return;
     }
     if(lastTs && ts - lastTs < targetFrameMs) {
@@ -1108,22 +1110,22 @@ window.submitPrimeApplication = async function() {
   if(RECAPTCHA_VERIFY_ENDPOINT){
     const serverOk = await verifyCaptchaServer('prime', primeCaptchaToken);
     if(!serverOk){
-      if(errEl){ errEl.textContent='❌ reCAPTCHA verification failed. Dobara try karo.'; errEl.style.display='block'; }
+      if(errEl){ errEl.textContent='❌ reCAPTCHA verification failed. Please try again.'; errEl.style.display='block'; }
       return;
     }
   }
   if(looksLikeBot('prime-website','prime-apply-btn')){
-    if(errEl){ errEl.textContent='❌ Suspicious request blocked. Thoda ruk ke dobara try karo.'; errEl.style.display='block'; }
+    if(errEl){ errEl.textContent='❌ Suspicious request blocked. Please wait and try again.'; errEl.style.display='block'; }
     return;
   }
   let valid=true;
-  if(!name){ showErr('prime-name-err','Naam required hai.'); valid=false; }
-  else if(!isLikelyName(name)){ showErr('prime-name-err','Valid naam daalo.'); valid=false; }
-  if(!phone){ showErr('prime-phone-err','Phone required hai.'); valid=false; }
-  else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('prime-phone-err','Valid 10-digit phone daalo.'); valid=false; }
+  if(!name){ showErr('prime-name-err','Name is required.'); valid=false; }
+  else if(!isLikelyName(name)){ showErr('prime-name-err','Enter a valid name.'); valid=false; }
+  if(!phone){ showErr('prime-phone-err','Phone is required.'); valid=false; }
+  else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('prime-phone-err','Enter a valid 10-digit phone.'); valid=false; }
   if(!valid) return;
   if(!canUseDailyDeviceQuota('cbh_prime_device_daily', 4)){
-    if(errEl){ errEl.textContent='⚠️ Is device se aaj prime request limit ho gayi hai. Kal ya call pe try karo.'; errEl.style.display='block'; }
+    if(errEl){ errEl.textContent='⚠️ Daily prime request limit reached for this device. Try again tomorrow or call us.'; errEl.style.display='block'; }
     return;
   }
   const btn=$('prime-apply-btn'); if(btn) btn.disabled=true;
@@ -1138,14 +1140,14 @@ window.submitPrimeApplication = async function() {
       requestedAt:new Date().toISOString(), source:'website'
     });
     incrementDailyDeviceQuota('cbh_prime_device_daily');
-    if(okEl){ okEl.textContent='✅ Application bhej di! Piprali Road pe aakar payment karke card activate karwao. Hum call karenge!'; okEl.style.display='block'; }
+    if(okEl){ okEl.textContent='✅ Application sent! Visit Piprali Road to pay and activate your card. We will call you.'; okEl.style.display='block'; }
     [$('prime-name'),$('prime-phone'),$('prime-college'),$('prime-note')].forEach(el=>{if(el)el.value='';});
     clearFormDraftFields(['prime-name','prime-phone','prime-college','prime-note']);
     queueFormDraftPersist();
     updateCardPreview();
   } catch(err) {
     console.error('Prime application failed:', err);
-    if(errEl){ errEl.textContent='❌ Request submit nahi hui. Thodi der baad dobara try karo.'; errEl.style.display='block'; }
+    if(errEl){ errEl.textContent='❌ Request could not be submitted. Please try again later.'; errEl.style.display='block'; }
   } finally {
     captchaReset('prime');
     if(btn) btn.disabled=false;
@@ -1161,12 +1163,12 @@ window.checkCardStatus = async function() {
   if(!val||!res) return;
   if(!rateLimitCheck('cbh_card_lookup_rl',20,3600000)){
     res.style.display='block';
-    res.innerHTML='<span style="color:var(--danger)">❌ Too many checks. 1 ghante baad try karo.</span>';
+    res.innerHTML='<span style="color:var(--danger)">❌ Too many checks. Please try again after 1 hour.</span>';
     return;
   }
   if(!/^CBH-[A-Z0-9-]{6,}$/.test(val)){
     res.style.display='block';
-    res.innerHTML='<span style="color:var(--danger)">❌ Sirf valid card number se check hoga (phone lookup disabled).</span>';
+    res.innerHTML='<span style="color:var(--danger)">❌ Only a valid card number can be checked (phone lookup disabled).</span>';
     return;
   }
   res.style.display='block';
@@ -1175,7 +1177,7 @@ window.checkCardStatus = async function() {
     let cards=[];
     const s1=await getDocs(query(collection(db,'primeCards'),where('cardNumber','==',val)));
     s1.forEach(d=>cards.push({id:d.id,...d.data()}));
-    if(!cards.length){ res.innerHTML='<span style="color:var(--danger)">❌ Card nahi mila.</span>'; return; }
+    if(!cards.length){ res.innerHTML='<span style="color:var(--danger)">❌ Card not found.</span>'; return; }
     const c=cards[0];
     const sc=c.status==='active'?'var(--green)':c.status==='expired'?'var(--danger)':'var(--gold)';
     const sl=c.status==='active'?'✅ Active':c.status==='expired'?'❌ Expired':'⏳ Pending';
@@ -1187,12 +1189,12 @@ window.checkCardStatus = async function() {
         <b>Plan:</b> ${c.plan==='weekly'?'📅 Weekly':'📆 Monthly'}<br>
         <b>Balance:</b> <span style="color:var(--gold)">${escHTML(c.balance||'—')}</span><br>
         <b>Valid Till:</b> ${escHTML(c.expiry||'—')}<br>
-        ${c.status!=='active'?'<span style="color:var(--danger);font-size:0.78rem">Card active nahi — staff se milein.</span>':''}
+        ${c.status!=='active'?'<span style="color:var(--danger);font-size:0.78rem">Card is not active — please contact staff.</span>':''}
       </div>
     </div>`;
   } catch(e){
     console.error('Card status lookup failed:', e);
-    res.innerHTML='<span style="color:var(--danger)">❌ Status abhi fetch nahi ho paya. Thodi der baad try karo.</span>';
+    res.innerHTML='<span style="color:var(--danger)">❌ Status could not be fetched. Please try again later.</span>';
   }
 };
  
@@ -1473,7 +1475,7 @@ function updateBookingServiceDetailUi() {
 
 function computeBookingCharge(service, durationMin, details = {}) {
   const key = String(service || '').trim().toLowerCase();
-  if(!key) return { amount: 0, mainText: 'Service select karo', noteText: 'Service choose karo.', raw: { baseAmount: 0, discount: 0, offerTag: '' } };
+  if(!key) return { amount: 0, mainText: 'Select a service', noteText: 'Please choose a service.', raw: { baseAmount: 0, discount: 0, offerTag: '' } };
 
   if(key === 'other') {
     const contact = bookingOtherContactLine();
@@ -1826,7 +1828,7 @@ function updateBookingBillPreview() {
       durInput.value = String(rangeDur);
       durInput.readOnly = true;
       durInput.setAttribute('aria-readonly', 'true');
-      durInput.title = 'Duration start/end time se auto-calc ho rahi hai.';
+      durInput.title = 'Duration is auto-calculated from start/end time.';
       if(durLockNote) durLockNote.style.display = 'block';
     } else {
       durInput.readOnly = false;
@@ -1837,9 +1839,9 @@ function updateBookingBillPreview() {
   }
 
   if(endTime && startTime && rangeDur === null) {
-    mainTxt.textContent = 'Start/End time check karo';
+    mainTxt.textContent = 'Check start/end time';
     amtEl.textContent = 'Rs.0';
-    noteEl.textContent = 'End time start time se aage hona chahiye.';
+    noteEl.textContent = 'End time must be after start time.';
     box.style.display = 'block';
     return;
   }
@@ -1856,12 +1858,12 @@ function updateBookingBillPreview() {
   const charge = computeBookingCharge(service, dur, detailPayload);
   mainTxt.textContent = charge.mainText;
   amtEl.textContent = `Rs.${charge.amount}`;
-  noteEl.textContent = charge.noteText || (rangeDur ? 'Duration start/end time se auto-calc hui hai.' : 'Rounded amount direct billed hoga.');
+  noteEl.textContent = charge.noteText || (rangeDur ? 'Duration is auto-calculated from start/end time.' : 'Rounded amount will be billed.');
   box.style.display = 'block';
 }
  
 function checkRateLimit(phone) {
-  try { const k='cbh_bk_'+new Date().toDateString(); return (JSON.parse(localStorage.getItem(k)||'{}')[phone]||0)<3; }
+  try { const k='cbh_bk_'+new Date().toDateString(); return (JSON.parse(localStorage.getItem(k)||'{}')[phone]||0)<20; }
   catch(e){ return true; }
 }
 function incrementRateLimit(phone) {
@@ -1875,7 +1877,7 @@ function incrementRateLimit(phone) {
   const today=new Date().toISOString().split('T')[0];
   const tm=new Date(); tm.setDate(tm.getDate()+1);
   di.min=today; di.max=tm.toISOString().split('T')[0]; di.value=today;
-  const hint=$('bk-date-hint'); if(hint) hint.textContent='(sirf aaj ya kal)';
+  const hint=$('bk-date-hint'); if(hint) hint.textContent='(today or tomorrow only)';
   di.addEventListener('change',function(){
     const box=$('bk-payment-box');
     if(box) box.style.display=(this.value>today)?'block':'none';
@@ -1933,26 +1935,26 @@ async function checkSlotAvail() {
   }
 
   if(!isValidTimeHHMM(startTime)) {
-    box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Start time valid format me select karo.</div>';
+    box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Select a valid start time.</div>';
     return;
   }
 
   if(!isWithinBookingHours(startTime)) {
-    box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Gaming cafe off-time me entry ho rahi hai. Time 7:00 AM se 9:00 PM ke beech rakho.</div>';
+    box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Select a time between 7:00 AM and 9:00 PM.</div>';
     return;
   }
 
   if(endTime) {
     if(!isValidTimeHHMM(endTime)) {
-      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time valid format me select karo.</div>';
+      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Select a valid end time.</div>';
       return;
     }
     if(!isWithinBookingHours(endTime)) {
-      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time off-time me ja raha hai. Time 7:00 AM se 9:00 PM ke beech rakho.</div>';
+      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time must be between 7:00 AM and 9:00 PM.</div>';
       return;
     }
     if(durationFromTimeRange(startTime, endTime) === null) {
-      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time start time se aage hona chahiye.</div>';
+      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ End time must be after start time.</div>';
       return;
     }
   }
@@ -1961,7 +1963,7 @@ async function checkSlotAvail() {
   try {
     const state = await checkSlotCapacityBeforeSave(service, date, startTime, endTime, duration || 60);
     if(state.reason === 'invalid_window') {
-      box.innerHTML='<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--danger);font-family:var(--font-alt)">❌ Time window invalid hai. Start/End time check karo.</div>';
+      box.innerHTML='<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--danger);font-family:var(--font-alt)">❌ Invalid time window. Check start/end time.</div>';
       return;
     }
     const left = Math.max(0, state.limit - state.used);
@@ -1971,10 +1973,10 @@ async function checkSlotAvail() {
   } catch (e) {
     const code = String(e?.code || '');
     if(code.includes('permission-denied')) {
-      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Live availability check temporary unavailable hai. Submit ke time final validation hoga.</div>';
+      box.innerHTML='<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.24);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--gold);font-family:var(--font-alt)">⚠️ Live availability check is temporarily unavailable. Final validation happens on submit.</div>';
       return;
     }
-    box.innerHTML='<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--danger);font-family:var(--font-alt)">⚠️ Availability fetch nahi ho payi. Submit ke time re-check hoga.</div>';
+    box.innerHTML='<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--danger);font-family:var(--font-alt)">⚠️ Could not fetch availability. We will re-check on submit.</div>';
   }
 }
  
@@ -2030,38 +2032,38 @@ window.submitBooking = async function() {
   // Check "I'm not a robot" checkbox
   const humanVerify = $('bk-human-verify');
   if(!humanVerify || !humanVerify.checked){
-    if(bkErr){bkErr.textContent='❌ Pehle checkbox tick karo: "Main human hun, bot nahi"'; bkErr.style.display='block';}
+    if(bkErr){bkErr.textContent='❌ Please tick the checkbox: "I am human, not a bot"'; bkErr.style.display='block';}
     return;
   }
   
   // Strong bot protection - honeypot field + form timing check
   if(looksLikeBot('bk-website','bk-btn')){
-    if(bkErr){bkErr.textContent='❌ Suspicious request blocked. Thoda ruk ke dobara try karo.'; bkErr.style.display='block';}
+    if(bkErr){bkErr.textContent='❌ Suspicious request blocked. Please wait and try again.'; bkErr.style.display='block';}
     return;
   }
  
   let valid=true;
-  if(!name)  { showErr('bk-name-err','Naam required hai.');      valid=false; }
-  else if(!isLikelyName(name)){ showErr('bk-name-err','Valid naam daalo.'); valid=false; }
-  if(!phone) { showErr('bk-phone-err','Phone required hai.');    valid=false; }
-  else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('bk-phone-err','Valid 10-digit phone daalo.'); valid=false; }
-  if(!service){ showErr('bk-service-err','Service select karo.'); valid=false; }
-  if(!date)  { showErr('bk-date-err','Date select karo.');       valid=false; }
-  if(!time)  { showErr('bk-time-err','Start time daalo.');  valid=false; }
-  else if(!isValidTimeHHMM(time)){ showErr('bk-time-err','Valid time daalo (jaise 10:20).'); valid=false; }
-  else if(!isWithinBookingHours(time)){ showErr('bk-time-err','Gaming cafe off-time me entry ho rahi hai. Time 7:00 AM se 9:00 PM ke beech rakho.'); valid=false; }
+  if(!name)  { showErr('bk-name-err','Name is required.');      valid=false; }
+  else if(!isLikelyName(name)){ showErr('bk-name-err','Enter a valid name.'); valid=false; }
+  if(!phone) { showErr('bk-phone-err','Phone is required.');    valid=false; }
+  else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('bk-phone-err','Enter a valid 10-digit phone.'); valid=false; }
+  if(!service){ showErr('bk-service-err','Select a service.'); valid=false; }
+  if(!date)  { showErr('bk-date-err','Select a date.');       valid=false; }
+  if(!time)  { showErr('bk-time-err','Enter a start time.');  valid=false; }
+  else if(!isValidTimeHHMM(time)){ showErr('bk-time-err','Enter a valid time (e.g., 10:20).'); valid=false; }
+  else if(!isWithinBookingHours(time)){ showErr('bk-time-err','Select a time between 7:00 AM and 9:00 PM.'); valid=false; }
 
   if(endTime) {
     if(!isValidTimeHHMM(endTime)) {
-      showErr('bk-end-time-err','End time valid format me daalo (jaise 11:20).');
+      showErr('bk-end-time-err','Enter a valid end time (e.g., 11:20).');
       valid = false;
     } else if(!isWithinBookingHours(endTime)) {
-      showErr('bk-end-time-err','End time off-time me ja raha hai. Time 7:00 AM se 9:00 PM ke beech rakho.');
+      showErr('bk-end-time-err','End time must be between 7:00 AM and 9:00 PM.');
       valid = false;
     } else {
       const rangeDur = durationFromTimeRange(time, endTime);
       if(!rangeDur) {
-        showErr('bk-end-time-err','End time start time se aage hona chahiye.');
+        showErr('bk-end-time-err','End time must be after start time.');
         valid = false;
       } else {
         dur = rangeDur;
@@ -2071,12 +2073,12 @@ window.submitBooking = async function() {
 
   if(!isNonHourlyService) {
     if(!dur || dur<15 || dur>480){
-      if(bkErr){bkErr.textContent='⚠️ Duration 15 se 480 minutes ke beech honi chahiye.'; bkErr.style.display='block';}
+      if(bkErr){bkErr.textContent='⚠️ Duration must be between 15 and 480 minutes.'; bkErr.style.display='block';}
       valid=false;
     }
   } else if(service === 'printing') {
     if((detailPayload.printSingle + detailPayload.printDouble) < 1) {
-      if(bkErr){bkErr.textContent='⚠️ Printing ke liye pages/sheets daalo.'; bkErr.style.display='block';}
+      if(bkErr){bkErr.textContent='⚠️ Enter pages/sheets for printing.'; bkErr.style.display='block';}
       valid = false;
     }
   }
@@ -2091,35 +2093,35 @@ window.submitBooking = async function() {
  
   const today=new Date(); today.setHours(0,0,0,0);
   const selDate=new Date(date+'T00:00:00');
-  if(selDate>new Date(today.getTime()+86400000)){ showErr('bk-date-err','Sirf aaj ya kal ki booking allowed hai.'); return; }
+  if(selDate>new Date(today.getTime()+86400000)){ showErr('bk-date-err','Only today or tomorrow bookings are allowed.'); return; }
 
   const now = new Date();
   const selectedStartMin = hhmmToMinutes(time);
   if(date===todayYmd() && selectedStartMin!==null){
     const nowMin = now.getHours()*60 + now.getMinutes();
     if(selectedStartMin <= nowMin){
-      showErr('bk-time-err','Aaj ke liye future time choose karo. Past time allowed nahi hai.');
+      showErr('bk-time-err','Choose a future time for today. Past time is not allowed.');
       return;
     }
   }
  
   if(!checkRateLimit(phone)){
-    if(bkErr){bkErr.textContent='⚠️ Is phone se aaj 3 bookings ho chuki hain. WhatsApp: '+PAYMENT_PHONE; bkErr.style.display='block';}
+    if(bkErr){bkErr.textContent='⚠️ Daily booking limit reached for this phone. WhatsApp: '+PAYMENT_PHONE; bkErr.style.display='block';}
     return;
   }
   const abuseGuard = await evaluateIpDeviceGuard('bk', {
-    windowLimit: 3,
+    windowLimit: 6,
     windowMs: 10 * 60 * 1000,
-    dailyIpLimit: 20,
-    dailyDeviceLimit: 8
+    dailyIpLimit: 60,
+    dailyDeviceLimit: 20
   });
   if(!abuseGuard.ok){
     if(bkErr){
       bkErr.textContent = abuseGuard.reason === 'ip_window'
-        ? '⚠️ Is network se bahut requests aa rahi hain. 10 min baad try karo.'
+        ? '⚠️ Too many requests from this network. Try again after 10 minutes.'
         : abuseGuard.reason === 'ip_daily'
-          ? '⚠️ Is network ki aaj ki booking limit ho gayi hai.'
-          : '⚠️ Is device se aaj booking attempts limit ho gayi hai. Kal try karo ya contact karo.';
+          ? '⚠️ Daily booking limit reached for this network.'
+          : '⚠️ Daily booking limit reached for this device. Try again tomorrow or contact us.';
       bkErr.style.display='block';
     }
     return;
@@ -2127,13 +2129,13 @@ window.submitBooking = async function() {
   const serverGuard = await evaluateServerAbuseGuard('bk_submit', phone);
   if(!serverGuard.ok){
     if(bkErr){
-      bkErr.textContent = abuseReasonText(serverGuard.reason, '⚠️ Request limit exceed ho gayi hai. Thodi der baad try karo.');
+      bkErr.textContent = abuseReasonText(serverGuard.reason, '⚠️ Request limit exceeded. Please try again later.');
       bkErr.style.display='block';
     }
     return;
   }
   if(!consumeWindowRateLimit('cbh_bk_submit_min_'+phone,1,60000)){
-    if(bkErr){bkErr.textContent='⚠️ 1 minute me sirf 1 booking allowed hai. Thoda rukke dobara try karo.'; bkErr.style.display='block';}
+    if(bkErr){bkErr.textContent='⚠️ Only 1 booking per minute is allowed. Please wait and try again.'; bkErr.style.display='block';}
     return;
   }
  
@@ -2150,7 +2152,7 @@ window.submitBooking = async function() {
       const code = String(slotErr?.code || '');
       if(code.includes('permission-denied')) {
         if(bkErr){
-          bkErr.textContent='⚠️ Live seat check temporarily unavailable hai. Booking request save ki ja rahi hai, final confirmation call se hoga.';
+          bkErr.textContent='⚠️ Live seat check is temporarily unavailable. We saved your request and will confirm by call.';
           bkErr.style.display='block';
         }
         slotState = { ok: true, reason: 'live_check_unavailable' };
@@ -2160,11 +2162,11 @@ window.submitBooking = async function() {
     }
 
     if(slotState.reason === 'invalid_window'){
-      showErr('bk-end-time-err','Time window invalid hai. Start/End dobara set karo.');
+      showErr('bk-end-time-err','Invalid time window. Please set start/end again.');
       return;
     }
     if(!slotState.ok){
-      if(bkErr){ bkErr.textContent='⚠️ Is slot ke liye seats full ho chuki hain. Dusra time choose karo.'; bkErr.style.display='block'; }
+      if(bkErr){ bkErr.textContent='⚠️ This slot is full. Please choose another time.'; bkErr.style.display='block'; }
       return;
     }
 
@@ -2203,17 +2205,17 @@ window.submitBooking = async function() {
 
     if(bkOk){
       bkOk.innerHTML=`<div style="text-align:center;padding:0.5rem 0 1rem;max-width:100%;overflow:hidden">
-        <div style="font-size:0.75rem;color:var(--green);font-family:var(--font-alt);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.08em">✅ Booking Request Mili!</div>
-        <div style="font-size:0.72rem;color:var(--txt2);font-family:var(--font-alt);margin-bottom:0.75rem">Apna booking code note karo:</div>
+        <div style="font-size:0.75rem;color:var(--green);font-family:var(--font-alt);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.08em">✅ Booking Request Received!</div>
+        <div style="font-size:0.72rem;color:var(--txt2);font-family:var(--font-alt);margin-bottom:0.75rem">Save your booking code:</div>
         <div style="font-family:var(--font-h);font-size:clamp(1.9rem,10vw,2.5rem);font-weight:900;color:var(--cyan);letter-spacing:0.08em;text-shadow:0 0 20px rgba(0,220,255,0.4);margin-bottom:0.5rem;line-height:1.05;word-break:break-all;overflow-wrap:anywhere">${trackCode}</div>
-        <div style="font-size:0.68rem;color:var(--muted);font-family:var(--font-alt);margin-bottom:1rem">Ye 8-character code save karo — status check karne ke kaam aayega</div>
+        <div style="font-size:0.68rem;color:var(--muted);font-family:var(--font-alt);margin-bottom:1rem">Save this 8-character code to check status later</div>
         <div style="font-size:0.8rem;color:var(--gold);font-family:var(--font-h);margin-bottom:0.4rem;overflow-wrap:anywhere">${escHTML(estimatedText)}</div>
         <div style="font-size:0.75rem;color:var(--txt2);font-family:var(--font-alt);margin-bottom:0.8rem;overflow-wrap:anywhere">Time: ${prettyStart}${prettyEnd?` - ${prettyEnd}`:''}</div>
         ${isAdv?`<div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:8px;padding:0.75rem;font-size:0.8rem;color:var(--gold);font-family:var(--font-alt)">
-          💳 Kal ki booking ke liye payment karni hogi<br>
-          📞 Call karo: <a href="tel:+91${PAYMENT_PHONE}" style="color:var(--cyan);font-weight:700">${PAYMENT_PHONE}</a>
+          💳 Payment is required for tomorrow bookings<br>
+          📞 Call: <a href="tel:+91${PAYMENT_PHONE}" style="color:var(--cyan);font-weight:700">${PAYMENT_PHONE}</a>
         </div>`:`<div style="font-size:0.8rem;color:var(--txt2);font-family:var(--font-alt)">
-          📞 Hum <strong style="color:var(--white)">${maskPhone(phone)}</strong> pe call karenge confirm karne ke liye
+          📞 We will call <strong style="color:var(--white)">${maskPhone(phone)}</strong> to confirm
         </div>`}
       </div>`;
       bkOk.style.display='block';
@@ -2243,7 +2245,7 @@ window.submitBooking = async function() {
  
   } catch(err) {
     console.error('Booking submit failed:', err);
-    if(bkErr){ bkErr.textContent='❌ Booking abhi submit nahi hui. Thodi der baad dobara try karo.'; bkErr.style.display='block'; }
+    if(bkErr){ bkErr.textContent='❌ Booking could not be submitted. Please try again later.'; bkErr.style.display='block'; }
   } finally {
     if(btn) btn.disabled=false;
     if(btxt) btxt.style.display='inline';
@@ -2269,20 +2271,20 @@ window.submitInquiry = async function() {
   if(RECAPTCHA_VERIFY_ENDPOINT){
     const serverOk = await verifyCaptchaServer('inquiry', inquiryCaptchaToken);
     if(!serverOk){
-      if(errEl){ errEl.textContent='❌ reCAPTCHA verification failed. Dobara try karo.'; errEl.style.display='block'; }
+      if(errEl){ errEl.textContent='❌ reCAPTCHA verification failed. Please try again.'; errEl.style.display='block'; }
       return;
     }
   }
   if(looksLikeBot('inq-website','inq-btn')){
-    if(errEl){ errEl.textContent='❌ Suspicious request blocked. Thoda ruk ke dobara try karo.'; errEl.style.display='block'; }
+    if(errEl){ errEl.textContent='❌ Suspicious request blocked. Please wait and try again.'; errEl.style.display='block'; }
     return;
   }
   let valid=true;
-  if(!name){ showErr('inq-name-err','Naam required hai.'); valid=false; }
-  else if(!isLikelyName(name)){ showErr('inq-name-err','Valid naam daalo.'); valid=false; }
-  if(!phone){ showErr('inq-phone-err','Phone required hai.'); valid=false; }
-  else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('inq-phone-err','Valid 10-digit phone daalo.'); valid=false; }
-  if(!reason){ showErr('inq-reason-err','Reason select karo.'); valid=false; }
+  if(!name){ showErr('inq-name-err','Name is required.'); valid=false; }
+  else if(!isLikelyName(name)){ showErr('inq-name-err','Enter a valid name.'); valid=false; }
+  if(!phone){ showErr('inq-phone-err','Phone is required.'); valid=false; }
+  else if(!/^[6-9][0-9]{9}$/.test(phone)){ showErr('inq-phone-err','Enter a valid 10-digit phone.'); valid=false; }
+  if(!reason){ showErr('inq-reason-err','Select a reason.'); valid=false; }
   if(!valid) return;
   const inquiryGuard = await evaluateIpDeviceGuard('inq', {
     windowLimit: 4,
@@ -2293,10 +2295,10 @@ window.submitInquiry = async function() {
   if(!inquiryGuard.ok){
     if(errEl){
       errEl.textContent = inquiryGuard.reason === 'ip_window'
-        ? '⚠️ Is network se bahut inquiry requests aa rahi hain. 10 min baad try karo.'
+        ? '⚠️ Too many inquiries from this network. Try again after 10 minutes.'
         : inquiryGuard.reason === 'ip_daily'
-          ? '⚠️ Is network ki aaj ki inquiry limit ho gayi hai.'
-          : '⚠️ Is device se aaj inquiry limit ho gayi hai. Kal try karo.';
+          ? '⚠️ Daily inquiry limit reached for this network.'
+          : '⚠️ Daily inquiry limit reached for this device. Try again tomorrow.';
       errEl.style.display='block';
     }
     return;
@@ -2304,7 +2306,7 @@ window.submitInquiry = async function() {
   const inquiryServerGuard = await evaluateServerAbuseGuard('inq_submit', phone);
   if(!inquiryServerGuard.ok){
     if(errEl){
-      errEl.textContent = abuseReasonText(inquiryServerGuard.reason, '⚠️ Inquiry request limit exceed ho gayi hai. Thodi der baad try karo.');
+      errEl.textContent = abuseReasonText(inquiryServerGuard.reason, '⚠️ Inquiry limit exceeded. Please try again later.');
       errEl.style.display='block';
     }
     return;
@@ -2316,14 +2318,14 @@ window.submitInquiry = async function() {
   try {
     await addDoc(collection(db,'inquiries'),{name,phone,reason,message:cleanInput(msg,300)||null,status:'new',createdAt:new Date().toISOString(),source:'website'});
     commitIpDeviceGuard('inq', inquiryGuard.ip);
-    if(okEl){ okEl.textContent='✅ Inquiry mili! Hum call karenge. WhatsApp: 8829822950'; okEl.style.display='block'; }
+    if(okEl){ okEl.textContent='✅ Inquiry received! We will call you. WhatsApp: 8829822950'; okEl.style.display='block'; }
     [$('inq-name'),$('inq-phone'),$('inq-msg')].forEach(el=>{if(el)el.value='';});
     if($('inq-reason'))$('inq-reason').value='';
     clearFormDraftFields(['inq-name','inq-phone','inq-reason','inq-msg']);
     queueFormDraftPersist();
   } catch(err) {
     console.error('Inquiry submit failed:', err);
-    if(errEl){ errEl.textContent='❌ Inquiry abhi submit nahi hui. Thodi der baad dobara try karo.'; errEl.style.display='block'; }
+    if(errEl){ errEl.textContent='❌ Inquiry could not be submitted. Please try again later.'; errEl.style.display='block'; }
   } finally {
     captchaReset('inquiry');
     if(btn) btn.disabled=false;
@@ -2359,24 +2361,24 @@ window.checkBookingStatus = async function() {
   const phone = normPhone10(phoneRaw);
   if(!/^[6-9][0-9]{9}$/.test(phone)){
     res.style.display='block';
-    res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Booking wala valid 10-digit phone daalo (e.g. 98XXXXXXXX). +91 ho to bhi chalega.</div>';
+    res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Enter a valid 10-digit booking phone (e.g., 98XXXXXXXX). +91 is OK.</div>';
     return;
   }
   if(!consumeWindowRateLimit('cbh_booking_lookup_rl_'+phone,5,3600000)){
     res.style.display='block';
-    res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Too many checks. 1 ghante baad try karo.</div>';
+    res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Too many checks. Please try again after 1 hour.</div>';
     return;
   }
   const lookupServerGuard = await evaluateServerAbuseGuard('bk_lookup', phone);
   if(!lookupServerGuard.ok){
     res.style.display='block';
-    res.innerHTML=`<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ ${abuseReasonText(lookupServerGuard.reason, 'Request limit exceed ho gayi hai. Thodi der baad try karo.')}</div>`;
+    res.innerHTML=`<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ ${abuseReasonText(lookupServerGuard.reason, 'Request limit exceeded. Please try again later.')}</div>`;
     return;
   }
   const code=inp.value.trim().toUpperCase();
   if(!code || !(/^[A-Z0-9]{8}$/.test(code) || /^[0-9]{5}$/.test(code))){
     res.style.display='block';
-    res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Valid booking code daalo (jaise: A1B2C3D4)</div>';
+    res.innerHTML='<div style="color:var(--danger);font-family:var(--font-alt);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px">❌ Enter a valid booking code (e.g., A1B2C3D4)</div>';
     return;
   }
   res.style.display='block';
@@ -2388,7 +2390,7 @@ window.checkBookingStatus = async function() {
  
     if(snap.empty){
       res.innerHTML=`<div style="color:var(--danger);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px;border:1px solid rgba(255,68,68,0.2)">
-        ❌ Booking details verify nahi hui.<br>
+        ❌ Booking details could not be verified.<br>
         <span style="font-size:0.78rem;color:var(--muted)">WhatsApp: <a href="https://wa.me/918829822950" style="color:var(--cyan)">8829822950</a></span>
       </div>`;
       return;
@@ -2399,18 +2401,18 @@ window.checkBookingStatus = async function() {
     if(!matchedDoc){
       const expectedMasked = maskPhone(snap.docs[0]?.data()?.phone || '');
       res.innerHTML=`<div style="color:var(--danger);font-size:0.85rem;padding:0.75rem;background:rgba(255,68,68,0.08);border-radius:8px;border:1px solid rgba(255,68,68,0.2)">
-        ❌ Booking details verify nahi hui. Code aur phone match karo.<br>
-        <span style="font-size:0.78rem;color:var(--muted)">Hint: Is code ke saath phone ${escHTML(expectedMasked)} linked hai.</span>
+        ❌ Booking details could not be verified. Match the code and phone.<br>
+        <span style="font-size:0.78rem;color:var(--muted)">Hint: This code is linked with phone ${escHTML(expectedMasked)}.</span>
       </div>`;
       return;
     }
     const b=matchedDoc.data();
     const sc={pending:'var(--gold)',confirmed:'var(--green)',rejected:'var(--danger)',pending_payment:'var(--cyan)'};
     const sl={
-      pending:'⏳ Pending — Review ho rahi hai, call aayegi',
-      confirmed:'✅ Confirmed! Booking pakki hai 🎮',
-      rejected:'❌ Rejected — Doosra time book karo',
-      pending_payment:'💳 Payment Pending — Call karo: '+PAYMENT_PHONE
+      pending:'⏳ Pending — We are reviewing, you will get a call',
+      confirmed:'✅ Confirmed! Booking is confirmed 🎮',
+      rejected:'❌ Rejected — Please book another time',
+      pending_payment:'💳 Payment Pending — Call: '+PAYMENT_PHONE
     };
     const svcL={'gaming-pc':'🖥️ Gaming PC','ps5':'🎮 PS5 Gaming','internet':'🌐 Internet','printing':'🖨️ Printing','form-filling':'📋 Form Filling','other':'📌 Other'};
     const sColor=sc[b.status]||'var(--gold)';
@@ -2423,18 +2425,18 @@ window.checkBookingStatus = async function() {
         <b style="color:var(--white)">Code:</b> <span style="color:var(--cyan);font-family:var(--font-h);letter-spacing:0.1em">${escHTML(code)}</span>
       </div>
       ${b.status==='rejected'?`<div style="margin-top:1rem;padding:0.75rem;background:rgba(0,220,255,0.05);border-radius:8px;font-size:0.8rem;color:var(--txt2)">
-        📞 Naya slot: <a href="https://wa.me/918829822950" style="color:var(--cyan);font-weight:600">WhatsApp 8829822950</a>
+        📞 New slot: <a href="https://wa.me/918829822950" style="color:var(--cyan);font-weight:600">WhatsApp 8829822950</a>
       </div>`:''}
     </div>`;
   } catch(err) {
     console.error('Booking status lookup failed:', err);
     const errMsg = String(err?.code || err?.message || '');
-    let displayMsg = 'Status abhi fetch nahi ho paya. Thodi der baad try karo.';
+    let displayMsg = 'Status could not be fetched. Please try again later.';
     
     if(errMsg.includes('permission-denied')) {
-      displayMsg = '⚠️ Server permission issue. WhatsApp karo: 8829822950';
+      displayMsg = '⚠️ Server permission issue. WhatsApp: 8829822950';
     } else if(errMsg.includes('network') || errMsg.includes('offline')) {
-      displayMsg = '⚠️ Internet connection check karo.';
+      displayMsg = '⚠️ Check your internet connection.';
     }
     
     res.innerHTML=`<div style="color:var(--danger);font-size:0.82rem;padding:0.75rem">❌ ${displayMsg}</div>`;

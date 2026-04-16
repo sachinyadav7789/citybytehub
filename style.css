@@ -37,6 +37,7 @@
   --glow-c:    0 0 20px rgba(92,188,255,0.28);
   --glow-g:    0 0 20px rgba(243,201,109,0.28);
   --glow-p:    0 0 20px rgba(111,122,214,0.25);
+  --topbar-h:  56px;
 }
  
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -66,9 +67,6 @@ input,select,textarea,button{font-family:var(--font-alt)}
 .hero-core,
 .float-wa,
 .float-book,
-.svc-card,
-.price-card,
-.why-card,
 .prime-card-visual.weekly,
 .prime-card-visual.monthly{
   transform:translateZ(0);
@@ -181,7 +179,7 @@ input,select,textarea,button{font-family:var(--font-alt)}
   display:flex;align-items:center;gap:0.75rem;
   font-size:0.82rem;font-family:var(--font-alt);color:var(--txt2);
   position:sticky;
-  top:56px;
+  top:var(--topbar-h, 56px);
   z-index:95;
   backdrop-filter:blur(8px);
   display:none;
@@ -724,6 +722,12 @@ input[type="checkbox"]:focus{
 @keyframes floatBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .float-book{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--cyan2),var(--purple));color:#fff;font-family:var(--font-h);font-size:0.75rem;font-weight:700;letter-spacing:0.08em;padding:0.8rem 1.75rem;border-radius:100px;box-shadow:0 4px 25px rgba(0,220,255,0.35);z-index:998;display:none;text-decoration:none;transition:all var(--trans)}
 .float-book:hover{box-shadow:0 8px 35px rgba(0,220,255,0.5);color:#fff}
+
+@media (max-width: 768px){
+  .page-section{padding-bottom:calc(6rem + env(safe-area-inset-bottom))}
+  .float-wa{bottom:calc(5.25rem + env(safe-area-inset-bottom))}
+  .float-book{bottom:calc(0.75rem + env(safe-area-inset-bottom))}
+}
 
 /* ── COLOR DENSITY BOOST (Buttons + Cards) ── */
 .btn-primary{

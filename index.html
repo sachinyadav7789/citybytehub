@@ -16,7 +16,7 @@
   <meta property="og:description" content="Sikar's premium gaming zone on Piprali Road. High-end PCs, PS5, fast internet, printing & more. Open 7AM–9PM."/>
   <meta property="og:url" content="https://citybytehub.in/"/>
   <meta property="og:image" content="https://citybytehub.in/assets/og-image.jpg"/>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com https://www.google.com https://citybytehub-dde05-default-rtdb.asia-southeast1.firebasedatabase.app; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; frame-src https://www.google.com; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://*.firebasestorage.app https://citybytehub-dde05-default-rtdb.asia-southeast1.firebasedatabase.app wss://citybytehub-dde05-default-rtdb.asia-southeast1.firebasedatabase.app https://api64.ipify.org;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com https://www.google.com https://citybytehub-clothes-default-rtdb.asia-southeast1.firebasedatabase.app; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; frame-src https://www.google.com; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://*.firebasestorage.app https://citybytehub-clothes-default-rtdb.asia-southeast1.firebasedatabase.app wss://citybytehub-clothes-default-rtdb.asia-southeast1.firebasedatabase.app https://api64.ipify.org;">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="recaptcha-site-key" content="6Lc_RqUsAAAAACCx3OyP-haGx_9liAXQ0tRaWBNS"/>
@@ -275,7 +275,7 @@
         <div class="pricing-master-card reveal" id="pricing-all-card" style="margin-top:1.25rem">
           <div class="pricing-master-head">
             <div class="pricing-master-title">📊 All Live Prices & Offers</div>
-            <div class="pricing-master-sub">Prices/offers set honge, yahan auto update honge.</div>
+            <div class="pricing-master-sub">Prices and offers update automatically here.</div>
           </div>
           <div id="pricing-all-card-body" class="pricing-master-grid">
             <div style="color:var(--muted)">Loading live pricing details...</div>
@@ -444,7 +444,7 @@
           <div class="form-wrap">
             <div class="form-group">
               <label>Full Name *</label>
-              <input type="text" id="prime-name" class="fi" placeholder="Apna poora naam daalo" oninput="updateCardPreview()" maxlength="80" autocomplete="name" required/>
+              <input type="text" id="prime-name" class="fi" placeholder="Enter your full name" oninput="updateCardPreview()" maxlength="80" autocomplete="name" required/>
               <span class="field-err" id="prime-name-err"></span>
             </div>
             <div class="form-group">
@@ -462,7 +462,7 @@
             </div>
             <div class="form-group">
               <label>Note / Special Request (Optional)</label>
-              <textarea id="prime-note" class="fi" rows="2" placeholder="Koi special request ho to batao..." maxlength="300"></textarea>
+              <textarea id="prime-note" class="fi" rows="2" placeholder="Any special request? Let us know..." maxlength="300"></textarea>
             </div>
  
             <!-- Offer section -->
@@ -502,7 +502,7 @@
       <div class="container">
         <div class="sec-tag">Reserve Your Seat</div>
         <h2 class="sec-title">Book a <span class="hl">Time</span></h2>
-        <p class="sec-sub" style="margin-bottom:2rem">Advance booking karo — apni timing aur service choose karo after call and payment confirmation only for advance booking k liye.</p>
+        <p class="sec-sub" style="margin-bottom:2rem">Book in advance — choose your time and service. Advance bookings are confirmed after a call and payment.</p>
         <div class="booking-grid">
           <!-- Availability Info -->
           <div>
@@ -518,13 +518,13 @@
             <div class="booking-info reveal" style="background:var(--card2)">
               <div style="font-family:var(--font-h);font-size:0.8rem;color:var(--gold);margin-bottom:0.9rem;letter-spacing:0.06em">💡 BOOKING TIPS</div>
               <div style="font-size:0.82rem;color:var(--txt2);font-family:var(--font-alt);line-height:1.8">
-                • Sirf <strong style="color:var(--cyan)">aaj ya kal</strong> ki booking allowed hai<br>
-                • Kal ki booking ke liye <strong style="color:var(--gold)">payment call zaruri</strong> hai<br>
-                • Peak hours: 4PM – 8PM — jaldi book karo!<br>
+                • Only <strong style="color:var(--cyan)">today or tomorrow</strong> bookings are allowed<br>
+                • Tomorrow bookings require a <strong style="color:var(--gold)">payment confirmation call</strong><br>
+                • Peak hours: 4PM – 8PM — book early<br>
                 • PC: max 5 per time window &nbsp;·&nbsp; PS5: max 2 per time window<br>
                 • Mobile / Browsing seat: <strong style="color:var(--gold)" id="mobile-tip-price">Loading live rate...</strong><br>
-                • Booking ke baad confirmation call aayegi<br>
-                • Walk-in bhi welcome hai anytime
+                • We will call to confirm after booking<br>
+                • Walk-ins are welcome anytime
               </div>
             </div>
             <div class="booking-info reveal" style="margin-top:1rem">
@@ -562,7 +562,7 @@
                 <option value="form-filling">📋 Online Form Filling</option>
                 <option value="other">🔧 Other</option>
               </select>
-              <div style="font-size:0.72rem;color:var(--muted);font-family:var(--font-alt);margin-top:0.35rem">Owner-added custom services automatically yahin show hongi.</div>
+              <div style="font-size:0.72rem;color:var(--muted);font-family:var(--font-alt);margin-top:0.35rem">Owner-added custom services will appear here automatically.</div>
               <span class="field-err" id="bk-service-err"></span>
             </div>
             <div id="bk-service-detail-box" style="display:none;background:rgba(0,220,255,0.06);border:1px solid rgba(0,220,255,0.2);border-radius:var(--r2);padding:0.8rem 0.85rem;margin-bottom:1rem">
@@ -624,7 +624,7 @@
                 <span id="bk-bill-main-txt">Estimated charge</span>
                 <span class="bill-amt" id="bk-bill-amt">₹0</span>
               </div>
-              <div class="bill-note" id="bk-bill-note">Service aur duration choose karo.</div>
+              <div class="bill-note" id="bk-bill-note">Select service and duration to see the estimate.</div>
             </div>
             <div class="form-group">
               <label>Prime Card Number (Optional)</label>
@@ -632,23 +632,23 @@
             </div>
             <div class="form-group">
               <label>Special Request</label>
-              <textarea id="bk-note" class="fi" rows="2" placeholder="Koi special request ho to batao..." maxlength="300"></textarea>
+              <textarea id="bk-note" class="fi" rows="2" placeholder="Any special request? Let us know..." maxlength="300"></textarea>
             </div>
             <!-- Payment box — shows for advance bookings -->
             <div id="bk-payment-box" style="display:none;background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:var(--r);padding:1rem;margin-bottom:1rem">
               <div style="font-family:var(--font-h);font-size:0.75rem;color:var(--gold);margin-bottom:0.5rem;letter-spacing:0.05em">💳 ADVANCE BOOKING — PAYMENT REQUIRED</div>
               <p style="font-size:0.82rem;color:var(--txt2);font-family:var(--font-alt);line-height:1.7">
-                Kal ki booking ke liye <strong style="color:var(--gold)">advance payment</strong> karni hogi.<br>
-                Booking ke baad is number pe call karo:<br>
+                Tomorrow bookings require <strong style="color:var(--gold)">advance payment</strong>.<br>
+                After booking, call this number:<br>
                 <a href="tel:+918829822950" style="color:var(--cyan);font-family:var(--font-h);font-size:1rem;font-weight:700">📞 8829822950</a><br>
-                <span style="font-size:0.75rem;color:var(--muted)">Payment ke baad hum booking confirm karenge.</span>
+                <span style="font-size:0.75rem;color:var(--muted)">We will confirm your booking after payment.</span>
               </p>
             </div>
             <!-- Human Verification -->
             <div class="form-group" style="margin-bottom:1rem">
               <label style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;font-weight:500">
                 <input type="checkbox" id="bk-human-verify" style="width:18px;height:18px;cursor:pointer" required/>
-                <span style="font-size:0.9rem">Main human hun, bot nahi ✅</span>
+                <span style="font-size:0.9rem">I am human, not a bot ✅</span>
               </label>
               <span class="field-err" id="bk-human-err" style="display:block;margin-top:0.35rem"></span>
             </div>
@@ -663,15 +663,15 @@
  
         <!-- ── BOOKING STATUS CHECKER ── -->
         <div style="margin-top:2.5rem;background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:1.75rem">
-          <div class="sec-tag" style="margin-bottom:0.5rem">Booking Track Karo</div>
-          <h3 style="font-family:var(--font-h);font-size:1.1rem;color:var(--white);margin-bottom:0.4rem">🔍 Apni Booking Check Karo</h3>
+          <div class="sec-tag" style="margin-bottom:0.5rem">Track Booking</div>
+          <h3 style="font-family:var(--font-h);font-size:1.1rem;color:var(--white);margin-bottom:0.4rem">🔍 Check Your Booking</h3>
           <p style="font-size:0.82rem;color:var(--txt2);font-family:var(--font-alt);margin-bottom:1.25rem;line-height:1.7">
-            Booking ke baad jo <strong style="color:var(--cyan)">8-character booking code</strong> mila tha woh daalo, saath me booking wala phone number daalo, tabhi status dikhega.
+            Enter your <strong style="color:var(--cyan)">8-character booking code</strong> and the booking phone number to see status.
           </p>
           <div class="booking-track-row" style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem">
             <input type="tel" id="bk-track-phone" class="fi"
               style="flex:1;min-width:200px;margin-bottom:0"
-              placeholder="Phone number (booking wala)" maxlength="10" inputmode="numeric"
+              placeholder="Booking phone number" maxlength="10" inputmode="numeric"
               onkeydown="if(event.key==='Enter') checkBookingStatus()" />
             <input type="text" id="bk-track-input" class="fi"
               style="flex:1;min-width:200px;margin-bottom:0;text-transform:uppercase;letter-spacing:0.1em;font-family:var(--font-h);font-size:1rem"
@@ -685,18 +685,18 @@
  
           <!-- Instructions -->
           <div style="background:var(--bg3);border-radius:var(--r2);padding:1rem;margin-top:1rem;border:1px solid var(--border)">
-            <div style="font-family:var(--font-h);font-size:0.7rem;color:var(--cyan);letter-spacing:0.08em;margin-bottom:0.75rem">📋 CODE KAISE USE KARO</div>
+            <div style="font-family:var(--font-h);font-size:0.7rem;color:var(--cyan);letter-spacing:0.08em;margin-bottom:0.75rem">📋 HOW TO USE THE CODE</div>
             <div style="font-family:var(--font-alt);font-size:0.8rem;color:var(--txt2);line-height:2">
-              <div>1️⃣ Booking submit karne ke baad screen pe <strong style="color:var(--white)">8-character code</strong> dikhega</div>
-              <div>2️⃣ Ye code <strong style="color:var(--white)">note karo ya screenshot lo</strong> — ye aapka booking reference hai</div>
-              <div>3️⃣ Is box mein booking code ke saath booking wala <strong style="color:var(--white)">phone number</strong> bhi daalo</div>
-              <div>4️⃣ Status teen tarah ka ho sakta hai:</div>
+              <div>1️⃣ After booking, you will see an <strong style="color:var(--white)">8-character code</strong> on screen</div>
+              <div>2️⃣ Save it or take a screenshot — this is your booking reference</div>
+              <div>3️⃣ Enter the code and the booking <strong style="color:var(--white)">phone number</strong> here</div>
+              <div>4️⃣ Status can be:</div>
               <div style="padding-left:1.5rem;margin-top:0.25rem">
-                <span style="color:var(--gold);font-weight:600">⏳ Pending</span> — Hum review kar rahe hain, thodi der mein call aayegi<br>
-                <span style="color:var(--green);font-weight:600">✅ Confirmed</span> — Booking pakki!   enjoy your gaming🎮<br>
-                <span style="color:var(--danger);font-weight:600">❌ Rejected</span> — Time unavailable tha. Doosra time book karo ya call karo
+                <span style="color:var(--gold);font-weight:600">⏳ Pending</span> — We are reviewing, you will get a call soon<br>
+                <span style="color:var(--green);font-weight:600">✅ Confirmed</span> — Booking confirmed, enjoy your gaming 🎮<br>
+                <span style="color:var(--danger);font-weight:600">❌ Rejected</span> — Time was unavailable. Book another slot or call us
               </div>
-              <div style="margin-top:0.5rem">5️⃣ Koi problem ho toh seedha WhatsApp: <a href="https://wa.me/918829822950" style="color:var(--cyan);font-weight:600">8829822950</a></div>
+              <div style="margin-top:0.5rem">5️⃣ Any problem? WhatsApp: <a href="https://wa.me/918829822950" style="color:var(--cyan);font-weight:600">8829822950</a></div>
             </div>
           </div>
         </div>
@@ -711,7 +711,7 @@
       <div class="container">
         <div class="sec-tag">Get In Touch</div>
         <h2 class="sec-title">Contact & <span class="hl">Inquiry</span></h2>
-        <p class="sec-sub" style="margin-bottom:2rem">Koi bhi sawaal ho — naam, number aur reason bhejo. Hum call karke sab manage kar lenge.</p>
+        <p class="sec-sub" style="margin-bottom:2rem">Have a question? Send your name, number, and reason. We will call you back.</p>
         <div class="contact-grid">
           <div>
             <div class="info-cards">
@@ -733,14 +733,14 @@
           </div>
           <div class="form-wrap reveal">
             <div class="form-title">📞 Send Inquiry</div>
-            <p style="font-size:0.82rem;color:var(--muted);font-family:var(--font-alt);margin-bottom:1.25rem">Apna naam, number aur reason daalo — hum aapko call karenge.</p>
+            <p style="font-size:0.82rem;color:var(--muted);font-family:var(--font-alt);margin-bottom:1.25rem">Enter your name, number, and reason — we will call you.</p>
             <div class="form-group">
               <label>Full Name *</label>
               <input type="text" id="inq-name" class="fi" placeholder="Your full name" maxlength="80" autocomplete="name" required/>
               <span class="field-err" id="inq-name-err"></span>
             </div>
             <div class="form-group">
-              <label>Phone Number * <small style="color:var(--cyan);font-family:var(--font-alt)">(Hum isi pe call karenge)</small></label>
+              <label>Phone Number * <small style="color:var(--cyan);font-family:var(--font-alt)">(We will call on this)</small></label>
               <input type="tel" id="inq-phone" class="fi" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" required/>
               <span class="field-err" id="inq-phone-err"></span>
             </div>
@@ -764,7 +764,7 @@
             </div>
             <div class="form-group">
               <label>Message</label>
-              <textarea id="inq-msg" class="fi" rows="3" placeholder="Aur koi detail ya sawaal ho to batao..." maxlength="300"></textarea>
+              <textarea id="inq-msg" class="fi" rows="3" placeholder="Any extra details or questions?" maxlength="300"></textarea>
             </div>
             <button class="btn btn-primary btn-block" id="inq-btn" onclick="submitInquiry()">
               <span id="inq-txt">📞 Send & Request Call Back</span>
@@ -818,10 +818,10 @@
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>What are your opening hours?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>We are open every day — Monday to Sunday — from <strong>7:00 AM to 9:00 PM</strong>, including holidays.</p></div></div>
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Where exactly is CityByteHub located?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>We are located on <strong>Piprali Road, Sikar, Rajasthan</strong>. Just search "CityByteHub Sikar" on Google Maps.</p></div></div>
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Do you offer student discounts?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Yes! We have special student-friendly pricing. Get our <a href="#prime" style="color:var(--gold)" onclick="navTo(null,'prime')">Student Prime Card</a> for exclusive monthly/weekly benefits!</p></div></div>
-          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Can I book in advance?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Haan! <a href="#booking" style="color:var(--cyan)" onclick="navTo(null,'booking')">Booking section</a> mein jaao aur advance time book karo. Ya WhatsApp karo.</p></div></div>
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Can I book in advance?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Yes! Go to the <a href="#booking" style="color:var(--cyan)" onclick="navTo(null,'booking')">booking section</a> and pick a time. Or message us on WhatsApp.</p></div></div>
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>What printing services do you offer?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Black & white printing, color printing, photocopying, and document scanning. Ask us for current rates per page.</p></div></div>
           <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>What is the Student Prime Card?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>The <strong>CityByteHub Student Prime Card</strong> is an exclusive membership for students — weekly or monthly plans with extra hours, priority seat booking, and member-only discounts. Each card has a unique QR code and ID. <a href="#prime" style="color:var(--gold)" onclick="navTo(null,'prime')">Learn more →</a></p></div></div>
-          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>How does the Prime Card work?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Apply online ya directly aakar apply karo. Payment ke baad staff aapka card activate karega. Card pe unique QR hoga — staff scan karke aapki saari details aur balance dekh sakta hai.</p></div></div>
+          <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>How does the Prime Card work?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Apply online or visit us directly. After payment, staff will activate your card. The card has a unique QR code so staff can scan and view your details and balance.</p></div></div>
         </div>
       </div>
     </div>
@@ -912,6 +912,15 @@ const _TMAP = {
 };
 const _ROUTE_KEY = 'cbh_booking_last_page_v1';
 const _ROUTE_TTL_MS = 7 * 60 * 1000; // 7 minutes
+
+function syncTopbarHeight(){
+  const topbar = document.querySelector('.topbar');
+  const h = topbar ? Math.ceil(topbar.getBoundingClientRect().height) : 56;
+  document.documentElement.style.setProperty('--topbar-h', h + 'px');
+}
+window.addEventListener('resize', syncTopbarHeight, { passive: true });
+window.addEventListener('orientationchange', syncTopbarHeight, { passive: true });
+setTimeout(syncTopbarHeight, 0);
 
 function saveLastRoute(page) {
   try {
@@ -1027,9 +1036,7 @@ window.setFormPlan = function(plan) {
 };
 window.updateCardPreview = function() {};
 </script>
-<script type="module">
-  import('./script.js?v=' + Date.now());
-</script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
  
