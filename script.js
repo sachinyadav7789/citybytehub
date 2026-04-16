@@ -394,6 +394,9 @@ async function evaluateServerAbuseGuard(scope, phone){
         deviceId: getOrCreateDeviceId()
       })
     });
+    if(res.status === 404 || res.status === 405) {
+      return { ok: true, reason: null };
+    }
     if(!res.ok) {
       const data = await res.json().catch(()=>({}));
       return { ok: false, reason: String(data?.reason || 'server_rate_limit') };
