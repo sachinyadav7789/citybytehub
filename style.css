@@ -46,6 +46,25 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font-b);line-height
 .pricing-loading #pricing-grid .price-num{opacity:0.5;filter:grayscale(0.35)}
 .pricing-loading #bk-live-rate-list{opacity:0.7}
 .pricing-ready #pricing-grid .price-num,.pricing-ready #bk-live-rate-list{opacity:1;filter:none}
+
+@keyframes skeletonShimmer{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+
+.availability-loading .avail-val,
+.pricing-loading #pricing-grid .price-num.ask{
+  color:transparent !important;
+  background:linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 100%);
+  background-size:200% 100%;
+  animation:skeletonShimmer 1.2s ease-in-out infinite;
+  border-radius:6px;
+  display:inline-block;
+  min-width:72px;
+  min-height:0.9em;
+}
+
+.availability-loading #avail-hours{min-width:120px}
 img{max-width:100%;height:auto;display:block}
 a{color:var(--cyan);text-decoration:none;transition:color var(--trans)}
 a:hover{color:var(--white)}

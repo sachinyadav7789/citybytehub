@@ -43,6 +43,12 @@ const DEVICE_ID_KEY = 'cbh_device_id_v1';
 if (IS_LOCAL_DEV) {
   console.warn('reCAPTCHA bypassed in local development (localhost).');
 }
+
+function setAvailabilityLoading(isLoading) {
+  document.body?.classList.toggle('availability-loading', !!isLoading);
+}
+
+setAvailabilityLoading(true);
  
 // ===== HELPERS =====
 const $  = id => document.getElementById(id);
@@ -882,6 +888,7 @@ function getAvailabilityUpdatedAt(raw = {}) {
 
 function applyBookingAvailabilitySettings(raw = {}) {
   if(!raw || typeof raw !== 'object' || !Object.keys(raw).length) return;
+  setAvailabilityLoading(false);
   const incomingTs = getAvailabilityUpdatedAt(raw);
   if(_lastBookingAvailabilityUpdatedAt > 0) {
     if(incomingTs > 0 && incomingTs < _lastBookingAvailabilityUpdatedAt) return;
@@ -949,6 +956,7 @@ function setAvailabilityPlaceholderState() {
       el.style.color = 'var(--muted)';
     }
   });
+  setAvailabilityLoading(false);
 }
 
 function applyAvailabilitySafeFallback() {
