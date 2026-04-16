@@ -35,7 +35,7 @@ const ABUSE_CHECK_ENDPOINT = document.querySelector('meta[name="abuse-check-endp
 const RECAPTCHA_MODE = (document.querySelector('meta[name="recaptcha-mode"]')?.getAttribute('content') || 'v3').toLowerCase();
 const IS_LOCAL_DEV = /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname);
 const IP_LOOKUP_URL = 'https://api64.ipify.org?format=json';
-let CAPTCHA_ENABLED = Boolean(RECAPTCHA_SITE_KEY) && !IS_LOCAL_DEV;
+let CAPTCHA_ENABLED = false;
 const rcWidgets = { prime: null, booking: null, inquiry: null };
 let _cachedPublicIpPromise = null;
 const DEVICE_ID_KEY = 'cbh_device_id_v1';
