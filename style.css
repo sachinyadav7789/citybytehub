@@ -1,3 +1,11 @@
+/* CBH Logo Image Styling */
+.cbh-logo-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 0.5rem auto;
+}
 /* ============================================================
    CityByteHub — style.css v4.0
    Cyberpunk Premium Gaming · Sikar
