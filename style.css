@@ -586,6 +586,64 @@ input,select,textarea,button{font-family:var(--font-alt)}
 .author-av{width:40px;height:40px;background:rgba(255,111,178,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
 .testi-author strong{display:block;font-family:var(--font-h);font-size:0.78rem;color:var(--white);letter-spacing:0.04em}
 .testi-author span{font-size:0.72rem;color:#ff6fb2;font-family:var(--font-alt)}
+
+.reviews-slider{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:0.75rem;
+}
+.reviews-viewport{
+  overflow:hidden;
+}
+.reviews-track{
+  display:flex;
+  gap:1rem;
+  transition:transform 0.35s ease;
+  will-change:transform;
+}
+.review-card{
+  flex:0 0 calc((100% - 2rem) / 3);
+  min-width:0;
+}
+.review-nav{
+  width:38px;
+  height:38px;
+  border-radius:999px;
+  border:1px solid var(--border2);
+  background:var(--card);
+  color:var(--cyan);
+  font-size:1.3rem;
+  line-height:1;
+  cursor:pointer;
+}
+.review-dots{
+  display:flex;
+  justify-content:center;
+  gap:0.45rem;
+  margin-top:0.8rem;
+}
+.review-dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  border:0;
+  background:rgba(255,255,255,0.24);
+  cursor:pointer;
+}
+.review-dot.active{
+  width:20px;
+  background:var(--cyan);
+}
+
+@media (max-width: 1080px){
+  .review-card{flex-basis:calc((100% - 1rem) / 2)}
+}
+@media (max-width: 700px){
+  .reviews-slider{grid-template-columns:1fr;gap:0.6rem}
+  .review-nav{display:none}
+  .review-card{flex-basis:100%}
+}
  
 /* ── FAQ ── */
 .faq-wrap{max-width:760px}
@@ -1184,3 +1242,737 @@ input[type="checkbox"]:focus{
   }
 }
  
+/* ============================================================
+   PERMANENT RESPONSIVE FIXES — CityByteHub
+   Fixes: mobile overflow, topbar, booking cards, live rates,
+   partners/contact sections, fixed buttons overlap.
+   ============================================================ */
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+body {
+  min-width: 0;
+}
+
+.main-content,
+.page-section,
+.container,
+.section-pad,
+.hero,
+.stats-strip,
+.footer,
+.pricing-master-card,
+.booking-info,
+.form-wrap,
+.info-card,
+.testi-card,
+.svc-card,
+.price-card,
+.why-card,
+.prime-banner,
+.map-box {
+  max-width: 100%;
+  min-width: 0;
+}
+
+* {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+button,
+a,
+.btn,
+.fi,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+/* Better tap/click behavior */
+button,
+.btn,
+.nav-item,
+.float-book,
+.float-wa {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Topbar should not break layout on mobile */
+.topbar {
+  min-height: var(--topbar-h);
+}
+
+.topbar-right .btn {
+  flex: 0 0 auto;
+}
+
+/* Live rates/pricing rows: no horizontal overflow */
+.pricing-master-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)) !important;
+  width: 100%;
+  min-width: 0;
+}
+
+.pricing-master-row {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pricing-master-label,
+.pricing-master-val,
+.pricing-master-final,
+.pricing-master-base,
+.pricing-master-tag {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pricing-master-label {
+  overflow-wrap: anywhere;
+}
+
+.pricing-master-val {
+  text-align: right;
+}
+
+/* Availability and info rows should fit small screens */
+.booking-info {
+  overflow: hidden;
+}
+
+.avail-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avail-label,
+.avail-val {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.avail-val {
+  text-align: right;
+  white-space: normal;
+}
+
+/* Booking date buttons real button style */
+.booking-date-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+  margin: 0.25rem 0 0.65rem;
+}
+
+.booking-date-btn {
+  width: 100%;
+  border: 1px solid rgba(94,200,255,0.38);
+  background: rgba(94,200,255,0.08);
+  color: var(--txt);
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+  font-family: var(--font-h);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--trans);
+}
+
+.booking-date-btn:hover,
+.booking-date-btn.active {
+  background: linear-gradient(135deg, rgba(22,199,154,0.34), rgba(95,103,255,0.36));
+  border-color: rgba(94,200,255,0.88);
+  color: #fff;
+}
+
+/* Locked duration input like calculated price box */
+#bk-duration[readonly] {
+  cursor: not-allowed;
+  background: rgba(139,123,255,0.08) !important;
+  border-color: rgba(139,123,255,0.32) !important;
+  color: var(--gold) !important;
+  font-weight: 700;
+}
+
+#bk-duration[readonly]:focus {
+  box-shadow: none !important;
+}
+
+/* Partners / about blocks */
+.about-partners {
+  max-width: 100%;
+}
+
+.about-partners .info-card {
+  min-width: 0 !important;
+  max-width: 100%;
+}
+
+/* Contact/map safe layout */
+.contact-grid,
+.info-cards,
+.map-box,
+.map-inner {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.map-inner .btn {
+  white-space: normal;
+}
+
+/* Inputs and forms never exceed screen */
+.form-wrap,
+.form-group,
+.billing-preview,
+.billing-preview .bill-main,
+.billing-preview .bill-note {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.fi {
+  min-width: 0;
+}
+
+textarea.fi {
+  max-width: 100%;
+}
+
+/* Floating buttons: desktop safe */
+.float-wa {
+  width: 52px;
+  height: 52px;
+  right: 1.15rem;
+  bottom: 5.2rem;
+}
+
+.float-book {
+  max-width: calc(100vw - 2rem);
+  text-align: center;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+/* Tablet layout */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .sidebar {
+    width: min(320px, 86vw) !important;
+  }
+
+  .container {
+    width: 100%;
+  }
+
+  .booking-grid,
+  .contact-grid,
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Mobile permanent responsive system */
+@media (max-width: 768px) {
+  :root {
+    --topbar-h: 84px;
+  }
+
+  body {
+    padding-bottom: calc(5.7rem + env(safe-area-inset-bottom));
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.75rem !important;
+  }
+
+  .topbar-left {
+    min-width: 0;
+    gap: 0.55rem;
+  }
+
+  .topbar-title {
+    font-size: 0.78rem !important;
+    line-height: 1.25;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .topbar-right {
+    justify-self: end;
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 0.38rem !important;
+    width: min(136px, 42vw);
+  }
+
+  .topbar-right .btn,
+  .btn-topbar-compact {
+    width: 100%;
+    min-height: 30px !important;
+    padding: 0.42rem 0.5rem !important;
+    font-size: 0.58rem !important;
+    line-height: 1.1;
+    white-space: normal !important;
+    border-radius: 9px !important;
+  }
+
+  .ann-bar {
+    top: var(--topbar-h) !important;
+    padding: 0.55rem 0.75rem !important;
+    font-size: 0.74rem !important;
+  }
+
+  .container {
+    padding-left: max(0.85rem, env(safe-area-inset-left));
+    padding-right: max(0.85rem, env(safe-area-inset-right));
+  }
+
+  .section-pad {
+    padding: 2.25rem 0 !important;
+  }
+
+  .hero {
+    padding: 3rem 0.85rem 2rem !important;
+    min-height: auto !important;
+  }
+
+  .hero-content {
+    width: 100%;
+  }
+
+  .hero-title {
+    font-size: clamp(1.9rem, 11vw, 2.7rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  .hero-sub {
+    font-size: 0.92rem !important;
+  }
+
+  .hero-btns {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  .hero-btns .btn,
+  .prime-banner .btn,
+  .form-wrap .btn,
+  .map-inner .btn {
+    width: 100%;
+    white-space: normal !important;
+  }
+
+  .hero-side {
+    width: min(70vw, 240px) !important;
+    margin-top: 1.25rem !important;
+  }
+
+  .stats-row {
+    justify-content: flex-start !important;
+    gap: 0.65rem !important;
+  }
+
+  .stat-i {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .services-grid,
+  .pricing-grid,
+  .why-grid,
+  .testi-grid,
+  .booking-grid,
+  .contact-grid,
+  .pricing-master-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .price-card.popular,
+  .price-card.popular:hover {
+    transform: none !important;
+  }
+
+  .pricing-master-card,
+  .booking-info,
+  .form-wrap,
+  .svc-card,
+  .price-card,
+  .why-card,
+  .info-card,
+  .testi-card,
+  .prime-banner,
+  .map-box {
+    border-left-width: 3px !important;
+    border-right-width: 3px !important;
+    border-radius: 12px !important;
+  }
+
+  .pricing-master-card,
+  .booking-info,
+  .form-wrap {
+    padding: 1rem !important;
+  }
+
+  .pricing-master-head {
+    align-items: flex-start !important;
+    gap: 0.35rem !important;
+  }
+
+  .pricing-master-title {
+    font-size: 0.74rem !important;
+    line-height: 1.45;
+  }
+
+  .pricing-master-sub {
+    font-size: 0.7rem !important;
+  }
+
+  .pricing-master-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.72rem 0.75rem !important;
+  }
+
+  .pricing-master-label {
+    font-size: 0.82rem !important;
+    line-height: 1.45;
+  }
+
+  .pricing-master-val {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.22rem !important;
+  }
+
+  .pricing-master-final {
+    font-size: 0.86rem !important;
+    white-space: nowrap;
+  }
+
+  .pricing-master-base {
+    font-size: 0.62rem !important;
+  }
+
+  .pricing-master-tag {
+    font-size: 0.58rem !important;
+    white-space: nowrap;
+  }
+
+  .avail-row {
+    grid-template-columns: minmax(0, 1fr) minmax(88px, auto) !important;
+    gap: 0.6rem !important;
+  }
+
+  .avail-label {
+    font-size: 0.8rem !important;
+  }
+
+  .avail-val {
+    font-size: 0.78rem !important;
+    line-height: 1.35;
+  }
+
+  .form-title {
+    font-size: 0.9rem !important;
+  }
+
+  .form-group label {
+    font-size: 0.68rem !important;
+  }
+
+  .fi {
+    padding: 0.76rem 0.85rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  .booking-date-toggle {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .billing-preview {
+    padding: 0.78rem !important;
+  }
+
+  .billing-preview .bill-main {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.45rem;
+    align-items: center;
+  }
+
+  .billing-preview .bill-amt {
+    white-space: nowrap;
+  }
+
+  .contact-grid .btn-whatsapp,
+  .info-cards .btn-whatsapp {
+    width: 100%;
+  }
+
+  .info-card {
+    padding: 1rem !important;
+  }
+
+  .info-card p,
+  .info-card a {
+    font-size: 0.84rem !important;
+  }
+
+  .about-partners {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .about-partners .info-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .map-inner {
+    padding: 1.25rem 0.85rem !important;
+  }
+
+  .footer-grid {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Floating buttons: keep visible but stop blocking content too much */
+  .float-wa {
+    width: 46px !important;
+    height: 46px !important;
+    right: 0.8rem !important;
+    bottom: calc(4.35rem + env(safe-area-inset-bottom)) !important;
+    font-size: 1.15rem !important;
+    z-index: 120 !important;
+  }
+
+  .float-book {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(0.65rem + env(safe-area-inset-bottom)) !important;
+    width: min(190px, calc(100vw - 7.5rem)) !important;
+    min-height: 48px !important;
+    padding: 0.58rem 1rem !important;
+    font-size: 0.66rem !important;
+    line-height: 1.25 !important;
+    z-index: 119 !important;
+  }
+
+  .page-section {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Very small phones: 320px–380px */
+@media (max-width: 430px) {
+  :root {
+    --topbar-h: 92px;
+  }
+
+  .sidebar {
+    width: min(300px, 88vw) !important;
+  }
+
+  .sidebar-logo {
+    padding: 1.1rem 1rem 0.85rem !important;
+  }
+
+  .cbh-logo-img {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .logo-txt {
+    font-size: 0.9rem !important;
+  }
+
+  .nav-item {
+    padding: 0.62rem 1rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .topbar {
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+  }
+
+  .menu-toggle {
+    width: 42px;
+    height: 42px;
+    justify-content: center;
+  }
+
+  .topbar-left {
+    display: contents !important;
+  }
+
+  .topbar-title {
+    font-size: 0.76rem !important;
+  }
+
+  .topbar-right {
+    grid-column: 2;
+    justify-self: start;
+    width: min(130px, 54vw) !important;
+    margin-left: 0;
+  }
+
+  .hero {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  .container {
+    padding-left: 0.72rem !important;
+    padding-right: 0.72rem !important;
+  }
+
+  .sec-tag {
+    font-size: 0.62rem !important;
+    letter-spacing: 0.24em !important;
+  }
+
+  .sec-title {
+    font-size: clamp(1.35rem, 9vw, 1.9rem) !important;
+  }
+
+  .prime-banner {
+    padding: 1rem !important;
+    gap: 0.75rem !important;
+  }
+
+  .prime-banner-badge {
+    font-size: 0.56rem !important;
+  }
+
+  .prime-banner-txt h3 {
+    font-size: 0.82rem !important;
+  }
+
+  .prime-banner-txt p {
+    font-size: 0.74rem !important;
+  }
+
+  .svc-card,
+  .price-card,
+  .why-card,
+  .testi-card {
+    padding: 1.1rem !important;
+  }
+
+  .price-num {
+    font-size: 1.8rem !important;
+  }
+
+  .pricing-master-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.45rem !important;
+  }
+
+  .pricing-master-val {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+
+  .avail-row {
+    grid-template-columns: 1fr !important;
+    align-items: start !important;
+  }
+
+  .avail-val {
+    text-align: left !important;
+    color: var(--gold) !important;
+  }
+
+  .booking-date-toggle {
+    gap: 0.45rem !important;
+  }
+
+  .booking-date-btn {
+    font-size: 0.62rem !important;
+    padding: 0.58rem 0.45rem !important;
+  }
+
+  .billing-preview .bill-main {
+    grid-template-columns: 1fr !important;
+  }
+
+  .billing-preview .bill-amt {
+    justify-self: start;
+  }
+
+  .recaptcha-wrap > div {
+    transform: scale(0.82) !important;
+    transform-origin: 0 0;
+  }
+
+  .float-wa {
+    width: 42px !important;
+    height: 42px !important;
+    right: 0.7rem !important;
+    bottom: calc(4.1rem + env(safe-area-inset-bottom)) !important;
+  }
+
+  .float-book {
+    width: min(178px, calc(100vw - 6.6rem)) !important;
+    min-height: 46px !important;
+    font-size: 0.62rem !important;
+    padding: 0.52rem 0.8rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .topbar-right {
+    width: min(118px, 52vw) !important;
+  }
+
+  .btn-topbar-compact,
+  .topbar-right .btn {
+    font-size: 0.52rem !important;
+    padding: 0.38rem 0.42rem !important;
+  }
+
+  .float-book {
+    width: min(160px, calc(100vw - 6.2rem)) !important;
+    font-size: 0.58rem !important;
+  }
+
+  .float-wa {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
