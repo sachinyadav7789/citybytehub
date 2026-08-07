@@ -16,7 +16,7 @@ A Gaming Cafe Management System built to manage gaming slot bookings and cafe op
 - HTML
 - CSS
 - JavaScript
-- Firebase Firestore
+- Firebase  Firestore
 
 ## Live Demo
 https://citybytehub.me
