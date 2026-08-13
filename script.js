@@ -181,6 +181,7 @@ function initBookingAutoAdvance(){
     setTimeout(()=>{ focusNextBookingField(target); }, 0);
   });
 
+  
   document.addEventListener('input', (e)=>{
     const target = e.target;
     if(!(target instanceof HTMLInputElement)) return;
