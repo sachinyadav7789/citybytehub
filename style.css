@@ -481,6 +481,7 @@ input,select,textarea,button{font-family:var(--font-alt)}
   background:radial-gradient(circle at 20% 20%, rgba(66,245,255,0.22), transparent 48%),radial-gradient(circle at 78% 80%, rgba(0,173,255,0.2), transparent 46%);
   animation:masterBubbleFloat 8s ease-in-out infinite;
 }
+
 .pricing-master-row::after{
   background:repeating-linear-gradient(45deg, rgba(145,228,255,0.08) 0 1px, transparent 1px 12px),repeating-linear-gradient(-45deg, rgba(145,228,255,0.08) 0 1px, transparent 1px 12px);
   mix-blend-mode:screen;
