@@ -75,11 +75,9 @@ body {
     opacity: 0.5;
     filter: grayscale(0.35)
 }
-
 .pricing-loading #bk-live-rate-list {
     opacity: 0.7
 }
-
 .pricing-ready #pricing-grid .price-num,
 .pricing-ready #bk-live-rate-list {
     opacity: 1;
