@@ -1,0 +1,51 @@
+name: Deploy static site to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy-3.outputs.page_url || steps.deploy-2.outputs.page_url || steps.deploy-1.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages (attempt 1)
+        id: deploy-1
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+
+      - name: Deploy to GitHub Pages (attempt 2)
+        id: deploy-2
+        if: steps.deploy-1.outcome == 'failure'
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+
+      - name: Deploy to GitHub Pages (attempt 3)
+        id: deploy-3
+        if: steps.deploy-1.outcome == 'failure' && steps.deploy-2.outcome == 'failure'
+        uses: actions/deploy-pages@v5
