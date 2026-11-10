@@ -7,8 +7,185 @@
   <meta name="description" content="Web Development & Data Analyst Internships at CITYBYTEHUB, Sikar, Rajasthan.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- CSS LINK -->
-  <link rel="stylesheet" href="style.css">
+  
+  <!-- ================= CSS ================= -->
+  <style>
+    :root {
+      --navy: #0a1a3c;
+      --navy-light: #132a5c;
+      --blue: #1e6fff;
+      --blue-light: #4d8dff;
+      --bg: #f5f8ff;
+      --white: #ffffff;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --danger: #ef4444;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(10, 26, 60, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    /* Navbar */
+    .navbar {
+      background: var(--white);
+      box-shadow: 0 1px 12px rgba(10,26,60,0.06);
+      position: sticky; top: 0; z-index: 1000;
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; max-width: 1200px; margin: 0 auto; }
+    .logo { font-size: 1.4rem; font-weight: 800; color: var(--navy); text-decoration: none; letter-spacing: -0.5px; }
+    .logo span { color: var(--blue); }
+    .nav-links { display: flex; gap: 28px; list-style: none; align-items: center; }
+    .nav-links a { color: var(--text); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--blue); }
+    .nav-cta { background: var(--blue); color: #fff !important; padding: 10px 22px; border-radius: 8px; }
+    .nav-cta:hover { background: var(--navy); }
+    .hamburger { display: none; background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--navy); }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 60%, #1e3a8a 100%);
+      color: #fff; padding: 90px 20px; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(30,111,255,0.25), transparent 70%);
+      top: -200px; right: -100px;
+    }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; position: relative; }
+    .hero h1 span { color: var(--blue-light); }
+    .hero p { font-size: 1.15rem; max-width: 680px; margin: 0 auto 32px; opacity: 0.9; position: relative; }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; position: relative; }
+
+    /* Buttons */
+    .btn {
+      display: inline-block; padding: 13px 28px; border-radius: 8px; font-weight: 600;
+      text-decoration: none; cursor: pointer; border: none; font-size: 1rem; transition: all 0.25s;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-light); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(30,111,255,0.35); }
+    .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.6); }
+    .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+    .btn-google {
+      display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;
+      background: #fff; color: var(--text); border: 1.5px solid var(--border);
+      padding: 13px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .btn-google:hover { background: #f8fafc; border-color: var(--blue); }
+    .btn-google img { width: 20px; height: 20px; }
+
+    /* Cards */
+    .section { padding: 70px 20px; max-width: 1200px; margin: 0 auto; }
+    .section-title { text-align: center; font-size: 2.2rem; font-weight: 800; color: var(--navy); margin-bottom: 12px; letter-spacing: -0.5px; }
+    .section-sub { text-align: center; color: var(--muted); max-width: 620px; margin: 0 auto 50px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; }
+    .card {
+      background: var(--white); border-radius: var(--radius); padding: 32px;
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(10,26,60,0.12); }
+    .card-icon {
+      width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; margin-bottom: 18px; background: linear-gradient(135deg, var(--blue), var(--navy));
+    }
+    .card h3 { font-size: 1.3rem; color: var(--navy); margin-bottom: 10px; }
+    .card p { color: var(--muted); margin-bottom: 18px; }
+    .card .tag { display: inline-block; background: #eef4ff; color: var(--blue); font-size: 0.8rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 14px; }
+    .card ul { list-style: none; margin-bottom: 20px; }
+    .card ul li { padding: 6px 0 6px 24px; position: relative; color: var(--text); font-size: 0.93rem; }
+    .card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--success); font-weight: 700; }
+
+    /* Forms */
+    .auth-wrap { min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .auth-box { background: var(--white); border-radius: 16px; box-shadow: var(--shadow); padding: 40px; width: 100%; max-width: 440px; }
+    .auth-box h2 { color: var(--navy); font-size: 1.7rem; margin-bottom: 6px; text-align: center; }
+    .auth-box .sub { text-align: center; color: var(--muted); margin-bottom: 28px; font-size: 0.92rem; }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 0.85rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .field input, .field select {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.95rem; font-family: inherit; transition: border 0.2s; background: #fff;
+    }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,111,255,0.1); }
+    .field .err { color: var(--danger); font-size: 0.8rem; margin-top: 4px; display: none; }
+    .field .err.show { display: block; }
+    .auth-box .btn-primary { width: 100%; margin-top: 8px; }
+    .auth-foot { text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--muted); }
+    .auth-foot a { color: var(--blue); text-decoration: none; font-weight: 600; }
+    .alert { padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 16px; display: none; }
+    .alert.show { display: block; }
+    .alert-error { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; }
+    .alert-success { background: #f0fdf4; color: var(--success); border: 1px solid #bbf7d0; }
+
+    /* Dashboard */
+    .dash-header { background: linear-gradient(135deg, var(--navy), var(--navy-light)); color: #fff; padding: 40px 20px; }
+    .dash-header h1 { font-size: 1.9rem; }
+    .dash-header p { opacity: 0.85; margin-top: 6px; }
+    .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+    .dash-card { background: #fff; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+    .dash-card h3 { color: var(--navy); margin-bottom: 12px; font-size: 1.1rem; }
+    .status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .status.active { background: #dcfce7; color: #15803d; }
+    .status.pending { background: #fef9c3; color: #a16207; }
+    .progress-bar { height: 8px; background: var(--border); border-radius: 20px; overflow: hidden; margin-top: 8px; }
+    .progress-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue-light)); border-radius: 20px; transition: width 0.6s; }
+
+    /* Footer */
+    .footer { background: var(--navy); color: #cbd5e1; padding: 60px 20px 30px; margin-top: 60px; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }
+    .footer h4 { color: #fff; margin-bottom: 16px; font-size: 1rem; }
+    .footer a { color: #cbd5e1; text-decoration: none; display: block; padding: 4px 0; font-size: 0.9rem; transition: color 0.2s; }
+    .footer a:hover { color: var(--blue-light); }
+    .footer p { font-size: 0.9rem; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px; padding-top: 24px; text-align: center; font-size: 0.85rem; }
+
+    /* Content pages */
+    .content-page { max-width: 820px; margin: 0 auto; padding: 60px 20px; }
+    .content-page h1 { color: var(--navy); font-size: 2.2rem; margin-bottom: 24px; }
+    .content-page h2 { color: var(--navy); font-size: 1.4rem; margin: 32px 0 12px; }
+    .content-page p { margin-bottom: 14px; color: var(--text); }
+    .content-page ul { margin: 12px 0 20px 24px; }
+    .content-page li { margin-bottom: 8px; }
+    .content-page a { color: var(--blue); }
+
+    /* Utility */
+    .text-center { text-align: center; }
+    .mt-2 { margin-top: 16px; }
+    .mt-4 { margin-top: 32px; }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .nav-links {
+        display: none; flex-direction: column; position: absolute; top: 70px; left: 0; right: 0;
+        background: #fff; padding: 20px; gap: 16px; box-shadow: var(--shadow);
+      }
+      .nav-links.open { display: flex; }
+      .hamburger { display: block; }
+      .hero { padding: 60px 20px; }
+      .section { padding: 50px 20px; }
+      .section-title { font-size: 1.7rem; }
+    }
+    @media (max-width: 480px) {
+      .auth-box { padding: 28px 20px; }
+      .hero-btns .btn { width: 100%; }
+      .dash-header h1 { font-size: 1.4rem; }
+    }
+  </style>
 </head>
 <body>
 
@@ -418,7 +595,264 @@
   <div class="footer-bottom">© 2025 CITYBYTEHUB. All rights reserved.</div>
 </footer>
 
-<!-- SCRIPT LINK (Renamed to script.js) -->
-<script type="module" src="script.js"></script>
+<!-- ================= JAVASCRIPT ================= -->
+<script type="module">
+  /* ============================================================
+     CITYBYTEHUB Internship Portal – script.js
+     ============================================================ */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup,
+    createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    onAuthStateChanged, signOut, updateProfile
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, doc, setDoc, getDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  /* ================== YOUR FIREBASE CONFIG ================== */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCZEpzgZKVLV82CmqjXz1A6Thu9q4iCEJo",
+    authDomain: "chat-app-e53ed.firebaseapp.com",
+    databaseURL: "https://chat-app-e53ed-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "chat-app-e53ed",
+    storageBucket: "chat-app-e53ed.firebasestorage.app",
+    messagingSenderId: "301011173766",
+    appId: "1:301011173766:web:ac755f2946cb033837ec07",
+    measurementId: "G-WM5SE8ESDV"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  // Optional analytics import
+  import("https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js")
+    .then(({ getAnalytics, isSupported }) => {
+      isSupported().then(yes => { if (yes) getAnalytics(app); });
+    })
+    .catch(() => {});
+
+  /* ================== SPA ROUTER ================== */
+  const pages = [
+    'home', 'about', 'internships', 'web-development', 'data-analyst',
+    'contact', 'login', 'register', 'dashboard', 'faq', 'terms', 'privacy'
+  ];
+
+  function showPage(name) {
+    if (!pages.includes(name)) name = 'home';
+    pages.forEach(p => {
+      const el = document.getElementById('page-' + p);
+      if (el) el.style.display = (p === name) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.nav-links a[data-nav]').forEach(a => {
+      a.classList.toggle('active', a.dataset.nav === name);
+    });
+    document.getElementById('navLinks').classList.remove('open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleHash() {
+    const hash = (location.hash || '#home').replace('#', '');
+    showPage(hash);
+  }
+  window.addEventListener('hashchange', handleHash);
+
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-nav]');
+    if (link) {
+      const target = link.dataset.nav;
+      if (location.hash === '#' + target) {
+        e.preventDefault();
+        showPage(target);
+      }
+    }
+  });
+
+  /* ================== MOBILE MENU ================== */
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+
+  /* ================== HELPERS ================== */
+  function setErr(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('show', show);
+  }
+  function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function showAlert(id, msg, type = 'error') {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'alert show ' + (type === 'success' ? 'alert-success' : 'alert-error');
+    setTimeout(() => el.classList.remove('show'), 7000);
+  }
+
+  /* ================== REGISTER (Email) ================== */
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const track = document.getElementById('regTrack').value;
+
+    let ok = true;
+    if (!name) { setErr('regNameErr', true); ok = false; } else setErr('regNameErr', false);
+    if (!isEmail(email)) { setErr('regEmailErr', true); ok = false; } else setErr('regEmailErr', false);
+    if (password.length < 6) { setErr('regPasswordErr', true); ok = false; } else setErr('regPasswordErr', false);
+    if (!track) { setErr('regTrackErr', true); ok = false; } else setErr('regTrackErr', false);
+    if (!ok) return;
+
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Creating...';
+
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(cred.user, { displayName: name });
+      await setDoc(doc(db, 'students', cred.user.uid), {
+        name, email, track,
+        status: 'pending',
+        progress: 0,
+        createdAt: serverTimestamp()
+      });
+      location.hash = '#dashboard';
+    } catch (err) {
+      showAlert('registerAlert', err.message);
+      btn.disabled = false; btn.textContent = 'Create Account';
+    }
+  });
+
+  /* ================== LOGIN (Email) ================== */
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    let ok = true;
+    if (!isEmail(email)) { setErr('loginEmailErr', true); ok = false; } else setErr('loginEmailErr', false);
+    if (password.length < 6) { setErr('loginPasswordErr', true); ok = false; } else setErr('loginPasswordErr', false);
+    if (!ok) return;
+
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Logging in...';
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      location.hash = '#dashboard';
+    } catch (err) {
+      showAlert('loginAlert', err.message);
+      btn.disabled = false; btn.textContent = 'Login';
+    }
+  });
+
+  /* ================== GOOGLE AUTH ================== */
+  async function googleAuth(alertId) {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const ref = doc(db, 'students', user.uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          name: user.displayName || 'Student',
+          email: user.email,
+          track: '',
+          status: 'pending',
+          progress: 0,
+          createdAt: serverTimestamp()
+        });
+      }
+      location.hash = '#dashboard';
+    } catch (err) {
+      showAlert(alertId, err.message);
+    }
+  }
+  document.getElementById('googleLoginBtn').addEventListener('click', () => googleAuth('loginAlert'));
+  document.getElementById('googleRegisterBtn').addEventListener('click', () => googleAuth('registerAlert'));
+
+  /* ================== LOGOUT ================== */
+  document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    await signOut(auth);
+    location.hash = '#home';
+  });
+
+  /* ================== CONTACT FORM ================== */
+  document.getElementById('contactForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('cName').value.trim();
+    const email = document.getElementById('cEmail').value.trim();
+    const msg = document.getElementById('cMsg').value.trim();
+    let ok = true;
+    if (!name) { setErr('cNameErr', true); ok = false; } else setErr('cNameErr', false);
+    if (!isEmail(email)) { setErr('cEmailErr', true); ok = false; } else setErr('cEmailErr', false);
+    if (!msg) { setErr('cMsgErr', true); ok = false; } else setErr('cMsgErr', false);
+    if (!ok) return;
+    showAlert('contactAlert', 'Message received! We will contact you soon.', 'success');
+    e.target.reset();
+  });
+
+  /* ================== AUTH STATE → DASHBOARD ================== */
+  onAuthStateChanged(auth, async (user) => {
+    const loggedOut1 = document.getElementById('navAuthLoggedOut');
+    const loggedOut2 = document.getElementById('navAuthLoggedOut2');
+    const loggedIn = document.getElementById('navAuthLoggedIn');
+    const logout = document.getElementById('navAuthLogout');
+
+    if (user) {
+      loggedOut1.style.display = 'none';
+      loggedOut2.style.display = 'none';
+      loggedIn.style.display = 'block';
+      logout.style.display = 'block';
+
+      document.getElementById('dashName').textContent = user.displayName || 'Student';
+      document.getElementById('dashEmail').textContent = user.email;
+
+      try {
+        const snap = await getDoc(doc(db, 'students', user.uid));
+        if (snap.exists()) {
+          const d = snap.data();
+          document.getElementById('dashTrack').textContent =
+            d.track === 'web-development' ? 'Web Development Internship'
+            : d.track === 'data-analyst' ? 'Data Analyst Internship'
+            : 'No track selected';
+          const statusEl = document.getElementById('dashStatus');
+          statusEl.textContent = d.status === 'active' ? 'Active' : 'Pending';
+          statusEl.className = 'status ' + (d.status === 'active' ? 'active' : 'pending');
+          const prog = d.progress || 0;
+          document.getElementById('dashProgress').style.width = prog + '%';
+          document.getElementById('dashProgressText').textContent = prog + '%';
+          document.getElementById('dashCert').textContent =
+            d.status === 'active' && prog >= 100 ? 'Certificate available ✓' : 'Not available yet';
+        } else {
+          await setDoc(doc(db, 'students', user.uid), {
+            name: user.displayName || 'Student',
+            email: user.email,
+            track: '',
+            status: 'pending',
+            progress: 0,
+            createdAt: serverTimestamp()
+          });
+        }
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+      }
+
+      if (location.hash === '#login' || location.hash === '#register' || !location.hash) {
+        location.hash = '#dashboard';
+      }
+    } else {
+      loggedOut1.style.display = 'block';
+      loggedOut2.style.display = 'block';
+      loggedIn.style.display = 'none';
+      logout.style.display = 'none';
+      if (location.hash === '#dashboard') location.hash = '#login';
+    }
+  });
+
+  /* ================== INIT ================== */
+  handleHash();
+</script>
 </body>
 </html>
