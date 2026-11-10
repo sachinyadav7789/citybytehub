@@ -1,1229 +1,422 @@
 <!DOCTYPE html>
-<html lang="en-IN">
+<html lang="en">
 <head>
-    <link href="manifest.json" rel="manifest" />
-    <link href="favicon.png" rel="icon" sizes="32x32" type="image/png" />
-    <meta charset="utf-8" />
-    <meta content="width=device-width,initial-scale=1.0" name="viewport" />
-    <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control" />
-    <meta content="no-cache" http-equiv="Pragma" />
-    <meta content="0" http-equiv="Expires" />
-    <title>CityByteHub — Best Gaming Zone &amp; Cyber Cafe in Sikar | Book Now</title>
-    <meta
-        content="CityByteHub is Sikar's premium gaming zone &amp; cyber cafe on Piprali Road. Gaming PCs, PS5, high-speed internet, printing &amp; more. Open 7AM–9PM."
-        name="description" />
-    <meta
-        content="gaming zone in Sikar, cyber cafe Sikar, PS5 gaming cafe Sikar, best gaming cafe Sikar, gaming PC on rent Sikar"
-        name="keywords" />
-    <meta content="index,follow" name="robots" />
-    <link href="https://citybytehub.me/" rel="canonical" />
-    <meta content="website" property="og:type" />
-    <meta content="CityByteHub — Best Gaming Zone &amp; Cyber Cafe in Sikar" property="og:title" />
-    <meta
-        content="Sikar's premium gaming zone on Piprali Road. High-end PCs, PS5, fast internet, printing &amp; more. Open 7AM–9PM."
-        property="og:description" />
-    <meta content="https://citybytehub.me/" property="og:url" />
-    <meta content="https://citybytehub.me/assets/og-image.jpg" property="og:image" />
-    <meta
-        content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com https://www.google.com https://citybytehub-clothes-default-rtdb.asia-southeast1.firebasedatabase.app; script-src 'self' https://www.google.com https://www.gstatic.com https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; frame-src https://www.google.com; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://*.firebasestorage.app https://citybytehub-clothes-default-rtdb.asia-southeast1.firebasedatabase.app wss://citybytehub-clothes-default-rtdb.asia-southeast1.firebasedatabase.app https://api64.ipify.org;"
-        http-equiv="Content-Security-Policy" />
-    <meta content="DENY" http-equiv="X-Frame-Options" />
-    <meta content="nosniff" http-equiv="X-Content-Type-Options" />
-    <meta content="6Lc_RqUsAAAAACCx3OyP-haGx_9liAXQ0tRaWBNS" name="recaptcha-site-key" />
-    <meta content="v3" name="recaptcha-mode" />
-    <meta content="/api/recaptcha/verify" name="recaptcha-verify-endpoint" />
-    <meta content="/api/abuse-check" name="abuse-check-endpoint">
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&amp;family=Rajdhani:wght@300;400;500;600;700&amp;family=Exo+2:wght@300;400;600&amp;display=swap"
-        rel="stylesheet" />
-    <link href="style.css" rel="stylesheet" />
-    <script
-        type="application/ld+json">{"@context":"https://schema.org","@type":["LocalBusiness","EntertainmentBusiness"],"name":"CityByteHub","description":"Premium Gaming Zone & Cyber Cafe in Sikar on Piprali Road","url":"https://citybytehub.me","email":"citybytehub@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Piprali Road","addressLocality":"Sikar","addressRegion":"Rajasthan","addressCountry":"IN"},"openingHours":"Mo-Su 07:00-21:00","priceRange":"₹₹"}</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CITYBYTEHUB – Internship Portal</title>
+  <meta name="description" content="Web Development & Data Analyst Internships at CITYBYTEHUB, Sikar, Rajasthan.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
+<body>
 
-<body class="pricing-loading">
-    <canvas aria-hidden="true" id="particle-canvas"></canvas>
-    <!-- ── SIDEBAR OVERLAY ── -->
-    <div class="sidebar-overlay" data-action="close-sidebar" id="sidebar-overlay"></div>
-    <!-- ── SIDEBAR ── -->
-    <aside aria-label="Site navigation" class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <img alt="CBH Logo" aria-hidden="true" class="cbh-logo-img" data-image-fallback="assets/logo-fallback.svg"
-                src="favicon.png" />
-            <div>
-                <div class="logo-txt">City<span>Byte</span>Hub</div>
-                <div class="u-e0b3b90">Piprali Road, Sikar</div>
-            </div>
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="#home" class="logo" data-nav="home">CITY<span>BYTE</span>HUB</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home" data-nav="home">Home</a></li>
+      <li><a href="#about" data-nav="about">About</a></li>
+      <li><a href="#internships" data-nav="internships">Internships</a></li>
+      <li><a href="#contact" data-nav="contact">Contact</a></li>
+      <li id="navAuthLoggedOut"><a href="#login" data-nav="login">Login</a></li>
+      <li id="navAuthLoggedOut2"><a href="#register" data-nav="register" class="nav-cta">Apply Now</a></li>
+      <li id="navAuthLoggedIn" style="display:none"><a href="#dashboard" data-nav="dashboard" class="nav-cta">Dashboard</a></li>
+      <li id="navAuthLogout" style="display:none"><a href="#" id="logoutBtn">Logout</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<!-- ================= HOME ================= -->
+<section class="page" id="page-home">
+  <div class="hero">
+    <h1>Launch Your Tech Career with <span>CITYBYTEHUB</span></h1>
+    <p>Join our hands-on internship programs in Web Development and Data Analytics. Learn real skills, build real projects, and get certified.</p>
+    <div class="hero-btns">
+      <a href="#internships" class="btn btn-primary" data-nav="internships">Explore Internships</a>
+      <a href="#register" class="btn btn-outline" data-nav="register">Register Free</a>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Our Internship Tracks</h2>
+    <p class="section-sub">Two focused programs designed to make you job-ready with practical, project-based learning.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <span class="tag">Most Popular</span>
+        <h3>Web Development Internship</h3>
+        <p>Master HTML, CSS, JavaScript, responsive design and modern web practices by building real websites.</p>
+        <ul>
+          <li>HTML5, CSS3 & JavaScript</li>
+          <li>Responsive & mobile-first design</li>
+          <li>Real project portfolio</li>
+          <li>Certificate on completion</li>
+        </ul>
+        <a href="#web-development" class="btn btn-primary" data-nav="web-development">View Details</a>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <span class="tag">High Demand</span>
+        <h3>Data Analyst Internship</h3>
+        <p>Learn data cleaning, analysis, visualization and reporting using industry-standard tools.</p>
+        <ul>
+          <li>Excel & data fundamentals</li>
+          <li>Data visualization</li>
+          <li>Real datasets & reports</li>
+          <li>Certificate on completion</li>
+        </ul>
+        <a href="#data-analyst" class="btn btn-primary" data-nav="data-analyst">View Details</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="background:#fff;">
+    <h2 class="section-title">Why CITYBYTEHUB?</h2>
+    <p class="section-sub">A registered technical training institute based in Sikar, Rajasthan.</p>
+    <div class="cards">
+      <div class="card"><div class="card-icon">🎯</div><h3>Practical Learning</h3><p>Project-first curriculum focused on real industry skills, not just theory.</p></div>
+      <div class="card"><div class="card-icon">🏅</div><h3>Certification</h3><p>Receive a verifiable internship certificate on successful completion.</p></div>
+      <div class="card"><div class="card-icon">👨‍🏫</div><h3>Mentor Support</h3><p>Guidance from experienced developers and data professionals.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="page" id="page-about" style="display:none">
+  <div class="content-page">
+    <h1>About CITYBYTEHUB</h1>
+    <p>CITYBYTEHUB is a registered technical training and IT services company based in Sikar, Rajasthan. We focus on practical, career-oriented training that helps students and professionals build real-world technology skills.</p>
+    <h2>Our Mission</h2>
+    <p>To bridge the gap between academic education and industry requirements by offering hands-on internship programs in high-demand technology fields.</p>
+    <h2>What We Offer</h2>
+    <ul>
+      <li>Web Development Internship – practical front-end and web fundamentals</li>
+      <li>Data Analyst Internship – data analysis, visualization and reporting</li>
+      <li>Mentor-guided projects and real-world assignments</li>
+      <li>Verifiable internship certificates</li>
+    </ul>
+    <h2>Business Details</h2>
+    <p><strong>Business Name:</strong> CITYBYTEHUB<br>
+    <strong>Category:</strong> Technical Training and IT Services<br>
+    <strong>Udyam Registration:</strong> UDYAM-RJ-30-0151284<br>
+    <strong>Address:</strong> Piprali Road, Sikar, Rajasthan, India – 332001<br>
+    <strong>Email:</strong> info@citybytehub.me<br>
+    <strong>Website:</strong> www.citybytehub.me</p>
+  </div>
+</section>
+
+<!-- ================= INTERNSHIPS ================= -->
+<section class="page" id="page-internships" style="display:none">
+  <div class="section">
+    <h2 class="section-title">Our Internship Programs</h2>
+    <p class="section-sub">Choose the track that matches your career goals. Both programs are project-based and mentored.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <span class="tag">Duration: 4–8 Weeks</span>
+        <h3>Web Development Internship</h3>
+        <p>Learn to build modern, responsive websites using HTML, CSS and JavaScript from the ground up.</p>
+        <ul>
+          <li>HTML5 & semantic markup</li>
+          <li>CSS3, Flexbox & Grid</li>
+          <li>JavaScript fundamentals</li>
+          <li>Responsive design</li>
+          <li>Final portfolio project</li>
+        </ul>
+        <a href="#web-development" class="btn btn-primary" data-nav="web-development">View Program</a>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <span class="tag">Duration: 4–8 Weeks</span>
+        <h3>Data Analyst Internship</h3>
+        <p>Learn to clean, analyze and visualize data to support real business decisions.</p>
+        <ul>
+          <li>Data fundamentals & Excel</li>
+          <li>Data cleaning techniques</li>
+          <li>Visualization & dashboards</li>
+          <li>Reporting & insights</li>
+          <li>Final analysis project</li>
+        </ul>
+        <a href="#data-analyst" class="btn btn-primary" data-nav="data-analyst">View Program</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WEB DEVELOPMENT ================= -->
+<section class="page" id="page-web-development" style="display:none">
+  <div class="content-page">
+    <h1>Web Development Internship</h1>
+    <p>Our Web Development internship is a hands-on program where you learn to build complete, responsive websites using HTML5, CSS3 and JavaScript — the core technologies of the web.</p>
+    <h2>Program Highlights</h2>
+    <ul>
+      <li><strong>Duration:</strong> 4–8 weeks (flexible)</li>
+      <li><strong>Mode:</strong> Online, self-paced with mentor support</li>
+      <li><strong>Level:</strong> Beginner to intermediate</li>
+      <li><strong>Certificate:</strong> Issued on successful completion</li>
+    </ul>
+    <h2>What You Will Learn</h2>
+    <ul>
+      <li>HTML5 structure and semantic markup</li>
+      <li>CSS3 styling, Flexbox and CSS Grid</li>
+      <li>JavaScript fundamentals and DOM manipulation</li>
+      <li>Responsive, mobile-first web design</li>
+      <li>Building and deploying a real project</li>
+    </ul>
+    <h2>Who Should Apply</h2>
+    <p>Students, graduates and beginners who want to start a career in web development or strengthen their front-end skills with practical experience.</p>
+    <a href="#register" class="btn btn-primary mt-2" data-nav="register">Apply for This Internship</a>
+  </div>
+</section>
+
+<!-- ================= DATA ANALYST ================= -->
+<section class="page" id="page-data-analyst" style="display:none">
+  <div class="content-page">
+    <h1>Data Analyst Internship</h1>
+    <p>Our Data Analyst internship teaches you how to turn raw data into meaningful insights using spreadsheets, visualization and reporting techniques.</p>
+    <h2>Program Highlights</h2>
+    <ul>
+      <li><strong>Duration:</strong> 4–8 weeks (flexible)</li>
+      <li><strong>Mode:</strong> Online, self-paced with mentor support</li>
+      <li><strong>Level:</strong> Beginner to intermediate</li>
+      <li><strong>Certificate:</strong> Issued on successful completion</li>
+    </ul>
+    <h2>What You Will Learn</h2>
+    <ul>
+      <li>Data fundamentals and spreadsheet skills</li>
+      <li>Data cleaning and preparation</li>
+      <li>Charts, dashboards and visualization</li>
+      <li>Reporting and business insights</li>
+      <li>Final data analysis project</li>
+    </ul>
+    <h2>Who Should Apply</h2>
+    <p>Students, graduates and beginners interested in data, analytics, business intelligence or reporting roles.</p>
+    <a href="#register" class="btn btn-primary mt-2" data-nav="register">Apply for This Internship</a>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="page" id="page-contact" style="display:none">
+  <div class="content-page">
+    <h1>Contact Us</h1>
+    <p>Have a question about our internships? Reach out to us.</p>
+    <h2>Contact Details</h2>
+    <p><strong>Email:</strong> <a href="mailto:info@citybytehub.me">info@citybytehub.me</a><br>
+    <strong>Website:</strong> <a href="https://www.citybytehub.me">www.citybytehub.me</a><br>
+    <strong>Address:</strong> Piprali Road, Sikar, Rajasthan, India – 332001</p>
+    <h2>Send a Message</h2>
+    <div class="auth-box" style="margin:0; max-width:100%; box-shadow:none; border:1px solid var(--border);">
+      <div id="contactAlert" class="alert alert-success"></div>
+      <form id="contactForm" novalidate>
+        <div class="field">
+          <label for="cName">Full Name</label>
+          <input type="text" id="cName" required>
+          <div class="err" id="cNameErr">Please enter your name</div>
         </div>
-        <div class="sidebar-status">
-            <span class="status-dot"></span>
-            Open Now · 7AM – 9PM
+        <div class="field">
+          <label for="cEmail">Email</label>
+          <input type="email" id="cEmail" required>
+          <div class="err" id="cEmailErr">Enter a valid email</div>
         </div>
-        <nav class="sidebar-nav">
-            <div class="nav-section-label">Main</div>
-            <a class="nav-item active" data-nav-target="home" href="#home"> <span class="nav-icon">🏠</span>
-                Home</a>
-            <a class="nav-item" data-nav-target="services" href="#services"> <span class="nav-icon">🎮</span>
-                Services</a>
-            <a class="nav-item" data-nav-target="pricing" href="#pricing"> <span class="nav-icon">💰</span>
-                Pricing</a>
-            <a class="nav-item" data-nav-target="prime" href="#prime"> <span class="nav-icon">⭐</span> Prime
-                Card</a>
-            <a class="nav-item" data-nav-target="booking" href="#booking"> <span class="nav-icon">📅</span> Book
-                Slot</a>
-            <a class="nav-item" data-nav-target="inquiry" href="#inquiry"> <span class="nav-icon">📞</span>
-                Inquiry / Contact</a>
-            <div class="nav-section-label u-3dc98b5">More Info</div>
-            <a class="nav-item" data-nav-target="about" href="#about"> <span class="nav-icon">🏢</span> About
-                Us</a>
-            <a class="nav-item" data-nav-target="faq" href="#faq"> <span class="nav-icon">❓</span> FAQ</a>
-            <a class="nav-item" data-nav-target="reviews" href="#reviews"> <span class="nav-icon">⭐</span>
-                Reviews</a>
-        </nav>
-        
-        <div class="sidebar-bottom">
-            <div class="sidebar-hours">
-                <strong>⏰ Open 7AM – 9PM</strong><br />
-                Monday to Sunday · Holidays Included<br />
-                📍 Piprali Road, Sikar, Rajasthan
-            </div>
+        <div class="field">
+          <label for="cMsg">Message</label>
+          <input type="text" id="cMsg" required>
+          <div class="err" id="cMsgErr">Please enter a message</div>
         </div>
-        
-    </aside>
-    <!-- ── MAIN CONTENT ── -->
-    <main class="main-content" id="main-content">
-        <!-- TOPBAR -->
-        <header class="topbar">
-            <div class="topbar-left">
-                <button aria-controls="sidebar" aria-expanded="false" aria-label="Open menu" class="menu-toggle"
-                    data-action="toggle-sidebar" id="menu-toggle" type="button">☰</button>
-                <span class="topbar-title" id="topbar-title">Home</span>
-            </div>
-            <div class="topbar-right">
-                <a class="btn btn-primary btn-sm btn-topbar-compact" data-nav-target="booking" href="#booking">📅
-                    Book Now</a>
-                <a class="btn btn-topbar-location btn-sm btn-topbar-compact"
-                    href="https://maps.google.com/?q=CityByteHub+Sikar+Piprali+Road" rel="noopener" target="_blank">📍
-                    Location</a>
-                <a class="btn btn-green btn-sm u-6b99de8" href="https://wa.me/918829822950?text=Hi%20CityByteHub!"
-                    id="wa-topbar" target="_blank">💬 WhatsApp</a>
-            </div>
-        </header>
-        <!-- ANNOUNCEMENT BAR -->
-        <div class="ann-bar" id="ann-bar">
-            <span class="ann-bar-icon">📢</span>
-            <span class="ann-bar-text" id="ann-bar-text">Loading announcement...</span>
-            <button aria-label="Close" data-action="dismiss-announcement" id="ann-bar-close" type="button">✕</button>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOGIN ================= -->
+<section class="page" id="page-login" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <h2>Welcome Back</h2>
+      <p class="sub">Login to your CITYBYTEHUB account</p>
+      <div id="loginAlert" class="alert alert-error"></div>
+      <button class="btn-google" id="googleLoginBtn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Continue with Google
+      </button>
+      <div class="divider">or login with email</div>
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required>
+          <div class="err" id="loginEmailErr">Enter a valid email</div>
         </div>
-        <!-- ── HOME SECTION ── -->
-        <section class="page-section active" id="sec-home">
-            <!-- HERO -->
-            <div class="hero" id="home">
-                <div aria-hidden="true" class="hero-bg"></div>
-                <div aria-hidden="true" class="hero-grid"></div>
-                <div class="hero-content">
-                    <div class="hero-badge">📍 Piprali Road, Sikar · Rajasthan</div>
-                    <h1 class="hero-title">
-                        <span class="line1">Level Up Your</span>
-                        <span class="line2">Gaming Experience</span>
-                    </h1>
-                    <p class="hero-sub">Sikar's most premium gaming zone &amp; cyber cafe. High-end PCs, PS5,
-                        blazing-fast
-                        internet — all under one roof.</p>
-                    <div class="hero-btns">
-                        <a class="btn btn-primary btn-lg" data-nav-target="booking" href="#booking"><span>📅</span> Book
-                            a Slot</a>
-                        <a class="btn btn-gold btn-lg" data-nav-target="prime" href="#prime"><span>⭐</span> Get
-                            Prime Card</a>
-                        <a class="btn btn-outline btn-lg" data-nav-target="pricing" href="#pricing"><span>💰</span> View
-                            Pricing</a>
-                    </div>
-                    <div class="hero-trust">
-                        <span class="trust-item"><span>✅</span> Open 7AM – 9PM</span>
-                        <span class="trust-item"><span>✅</span> High-Speed Internet</span>
-                        <span class="trust-item"><span>✅</span> AC Room</span>
-                        <span class="trust-item"><span>⭐</span> Student Prime Card</span>
-                    </div>
-                </div>
-                <div aria-hidden="true" class="hero-side">
-                    <div class="hero-radar">
-                        <span class="hero-ring hero-ring-1"></span>
-                        <span class="hero-ring hero-ring-2"></span>
-                        <span class="hero-ring hero-ring-3"></span>
-                        <span class="hero-ring hero-ring-4"></span>
-                        <span class="hero-core">CBH</span>
-                    </div>
-                </div>
-            </div>
-            <!-- STATS STRIP -->
-            <div class="stats-strip">
-                <div class="stats-row">
-                    <div class="stat-i">🖥️ High-End Gaming PCs</div>
-                    <div class="stat-div">|</div>
-                    <div class="stat-i">🎮 PS5 Available</div>
-                    <div class="stat-div">|</div>
-                    <div class="stat-i">⚡ Blazing-Fast Internet</div>
-                    <div class="stat-div">|</div>
-                    <div class="stat-i">🕐 Open 7AM – 9PM Daily</div>
-                    <div class="stat-div">|</div>
-                    <div class="stat-i">😊 <span id="happy-count">200</span>+ Happy Gamers</div>
-                </div>
-            </div>
-            <!-- PRIME BANNER -->
-            <div class="u-20935d5">
-                <div class="prime-banner reveal">
-                    <div class="prime-banner-badge">⭐ NEW</div>
-                    <div class="prime-banner-txt">
-                        <h3>Student <span class="hl-gold">Prime Card</span> — Exclusive Member Benefits</h3>
-                        <p>Weekly &amp; Monthly plans · Extra gaming hours · Priority booking · Special discounts</p>
-                    </div>
-                    <a class="btn btn-gold" data-nav-target="prime" href="#prime">Get Your Card →</a>
-                </div>
-            </div>
-            
-            <!-- SERVICES PREVIEW -->
-            <section class="section-pad" id="services">
-                <div class="container">
-                    <div class="sec-header">
-                        <div class="sec-tag">What We Offer</div>
-                        <h2 class="sec-title">Our <span class="hl">Services</span></h2>
-                        <p class="sec-sub">Everything you need — gaming, internet, printing &amp; more, all at one place
-                            in
-                            Sikar.</p>
-                    </div>
-                    <div class="services-grid">
-                        <article class="svc-card reveal">
-                            <span class="svc-icon">🖥️</span>
-                            <h3 class="svc-name">Gaming PCs</h3>
-                            <p class="svc-desc">High-performance gaming rigs with latest titles. Buttery-smooth gameplay
-                                on pro-grade hardware.</p>
-                            <ul class="svc-features">
-                                <li>Latest AAA Game Titles</li>
-                                <li>High Refresh Rate Monitors</li>
-                                <li>Mechanical Keyboards &amp; Pro Mice</li>
-                            </ul>
-                            <a class="btn btn-outline btn-sm" data-nav-target="pricing" href="#pricing">View
-                                Pricing →</a>
-                        </article>
-                        <article class="svc-card reveal reveal-d1">
-                            <span class="svc-icon">🎮</span>
-                            <h3 class="svc-name">PS5 Gaming</h3>
-                            <p class="svc-desc">Sony PlayStation 5 with latest game library. Play FIFA, God of War,
-                                Mortal Kombat &amp; more on big screen.</p>
-                            <ul class="svc-features">
-                                <li>Latest PS5 Titles</li>
-                                <li>Large Screen Display</li>
-                                <li>Dual Controllers Available</li>
-                            </ul>
-                            <a class="btn btn-outline btn-sm" data-nav-target="pricing" href="#pricing">View
-                                Pricing →</a>
-                        </article>
-                        <article class="svc-card reveal reveal-d2">
-                            <span class="svc-icon">⚡</span>
-                            <h3 class="svc-name">High-Speed Internet</h3>
-                            <p class="svc-desc">Lightning-fast broadband for browsing, downloads, video calls and all
-                                your online needs.</p>
-                            <ul class="svc-features">
-                                <li>High-Speed Broadband</li>
-                                <li>Private Browsing Sessions</li>
-                                <li>Video Call Friendly</li>
-                            </ul>
-                            <a class="btn btn-outline btn-sm" data-nav-target="pricing" href="#pricing">View
-                                Pricing →</a>
-                        </article>
-                        <article class="svc-card reveal">
-                            <span class="svc-icon">🖨️</span>
-                            <h3 class="svc-name">Printing &amp; Scanning</h3>
-                            <p class="svc-desc">B&amp;W and color printing, photocopying, and document scanning — quick
-                                and
-                                affordable.</p>
-                            <ul class="svc-features">
-                                <li>B&amp;W &amp; Color Printing</li>
-                                <li>Document Scanning</li>
-                                <li>Photocopy Service</li>
-                            </ul>
-                            <a class="btn btn-outline btn-sm" data-nav-target="inquiry" href="#inquiry">Get Quote
-                                →</a>
-                        </article>
-                        <article class="svc-card reveal reveal-d1">
-                            <span class="svc-icon">📋</span>
-                            <h3 class="svc-name">Online Form Filling</h3>
-                            <p class="svc-desc">Government forms, college admissions, bank forms — we help you fill and
-                                submit correctly.</p>
-                            <ul class="svc-features">
-                                <li>Government Portals</li>
-                                <li>College Admissions</li>
-                                <li>Job Applications</li>
-                            </ul>
-                            <a class="btn btn-outline btn-sm" data-nav-target="inquiry" href="#inquiry">Ask Us
-                                →</a>
-                        </article>
-                        <article class="svc-card prime-card-svc reveal reveal-d2">
-                            <div class="prime-badge-svc">⭐ PRIME</div>
-                            <span class="svc-icon">🎓</span>
-                            <h3 class="svc-name">Student Prime Card</h3>
-                            <p class="svc-desc">Exclusive membership card for students. Weekly &amp; monthly plans with
-                                extra gaming hours, priority access &amp; member rates.</p>
-                            <ul class="svc-features">
-                                <li>Weekly &amp; Monthly Plans</li>
-                                <li>Priority Seat Booking</li>
-                                <li>Member-Only Discounts</li>
-                            </ul>
-                            <a class="btn btn-gold-outline btn-sm" data-nav-target="prime" href="#prime">Get Prime
-                                Card →</a>
-                        </article>
-                    </div>
-                </div>
-            </section>
-            <!-- PRICING SECTION -->
-            <section class="section-pad u-0c86370" id="pricing">
-                <div class="container">
-                    <div class="sec-header center">
-                        <div class="sec-tag">Transparent Rates</div>
-                        <h2 class="sec-title">Simple <span class="hl">Pricing</span></h2>
-                        <p class="sec-sub">No hidden charges. Pay only for what you use. Student discounts available.
-                        </p>
-                    </div>
-                    <div class="pricing-grid" id="pricing-grid">
-                        <!-- Loaded dynamically from RTDB -->
-                        <article class="price-card reveal">
-                            <div class="offer-chip u-6b99de8" id="offer-chip-pc"></div>
-                            <span class="price-icon">🖥️</span>
-                            <h3 class="price-name">Gaming PC</h3>
-                            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask"
-                                    id="pc-price">...</span><span class="price-per">/hr</span></div>
-                            <ul class="price-feats">
-                                <li>✓ High-Performance Rig</li>
-                                <li>✓ All Popular Games</li>
-                                <li>✓ Headset Included</li>
-                                <li>✓ Mechanical Keyboard</li>
-                            </ul>
-                            <a class="btn btn-outline btn-block" data-nav-target="booking" href="#booking">Book
-                                Now</a>
-                        </article>
-                        <article class="price-card popular reveal reveal-d1">
-                            <div class="pop-badge">⭐ Most Popular</div>
-                            <div class="offer-chip u-6b99de8" id="offer-chip-ps5"></div>
-                            <span class="price-icon">🎮</span>
-                            <h3 class="price-name">PS5 Gaming</h3>
-                            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask"
-                                    id="ps5-price">...</span><span class="price-per">/hr</span></div>
-                            <ul class="price-feats">
-                                <li>✓ PlayStation 5 Console</li>
-                                <li>✓ Big Screen Display</li>
-                                <li>✓ Latest Game Library</li>
-                                <li>✓ 2 Controllers</li>
-                            </ul>
-                            <a class="btn btn-primary btn-block" data-nav-target="booking" href="#booking">Book
-                                Now</a>
-                        </article>
-                        <article class="price-card reveal reveal-d2">
-                            <div class="offer-chip u-6b99de8" id="offer-chip-net"></div>
-                            <span class="price-icon">🌐</span>
-                            <h3 class="price-name">Internet / Browsing</h3>
-                            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask"
-                                    id="net-price">...</span><span class="price-per">/hr</span></div>
-                            <ul class="price-feats">
-                                <li>✓ High-Speed Broadband</li>
-                                <li>✓ Private Session</li>
-                                <li>✓ Print/Scan Add-on Available</li>
-                                <li>✓ Form Filling Support</li>
-                            </ul>
-                            <a class="btn btn-outline btn-block" data-nav-target="booking" href="#booking">Book
-                                Now</a>
-                        </article>
-                        <article class="price-card prime reveal">
-                            <div class="prime-badge-pc">🎓 PRIME CARD</div>
-                            <div class="offer-chip u-6b99de8" id="offer-chip-prime"></div>
-                            <span class="price-icon">⭐</span>
-                            <h3 class="price-name">Student Prime</h3>
-                            <div class="price-amt"><span class="price-cur">₹</span><span class="price-num ask"
-                                    id="prime-price">...</span><span class="price-per">/week</span></div>
-                            <div class="price-amt u-3e06604"><span class="price-cur">₹</span><span class="price-num ask"
-                                    id="prime-price-monthly">...</span><span class="price-per">/month</span></div>
-                            <ul class="price-feats">
-                                <li>✓ Weekly &amp; Monthly Plans</li>
-                                <li>✓ Bonus Gaming Hours</li>
-                                <li>✓ Priority Booking</li>
-                                <li>✓ Exclusive Member Rates</li>
-                            </ul>
-                            <a class="btn btn-gold btn-block" data-nav-target="prime" href="#prime">Get Prime
-                                Card</a>
-                        </article>
-                    </div>
-                    <div class="pricing-master-card reveal u-b700c0f" id="pricing-all-card">
-                        <div class="pricing-master-head">
-                            <div class="pricing-master-title">📊 All Live Prices &amp; Offers</div>
-                            <div class="pricing-master-sub">Prices and offers update automatically here.</div>
-                        </div>
-                        <div class="pricing-master-grid" id="pricing-all-card-body">
-                            <div class="u-57f9e31">Loading live pricing details...</div>
-                        </div>
-                    </div>
-                    <div class="price-note u-fc511f0">
-                        <span>💡</span>
-                        <span>Prices may vary based on packages &amp; duration. <strong>Student discounts</strong>
-                            available
-                            with valid ID. <a class="u-e39ebac" data-nav-target="prime" href="#prime">Get
-                                Prime Card</a> for best rates!</span>
-                    </div>
-                </div>
-            </section>
-            <!-- WHY US -->
-            <!-- PARTNERS SHORT SECTION -->
-            <section class="section-pad u-d72bf82" id="partners-short">
-                <div class="container u-dac4fe6">
-                    <div class="sec-header center">
-                        <div class="sec-tag">Partners</div>
-                        <h2 class="sec-title u-b2c4927">Our <span class="hl">Partners</span></h2>
-                    </div>
-                    <div class="u-30d2fe5">
-                        <div class="u-a764376">
-                            <img alt="Partner 1" class="u-5ae69d9" src="partner1.jpeg" />
-                            <div class="u-4304b96">Partner 1</div>
-                        </div>
-                        <a class="u-8b61e47" href="#about">More
-                            Details</a>
-                        <div class="u-a764376">
-                            <img alt="Partner 2" class="u-5ae69d9" src="partner2.jpeg" />
-                            <div class="u-4304b96">Partner 2</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section class="section-pad" id="why-us">
-                <div class="container">
-                    <div class="sec-header center">
-                        <div class="sec-tag">Why CityByteHub?</div>
-                        <h2 class="sec-title">Sikar's <span class="hl">Best</span> Gaming Zone</h2>
-                        <p class="sec-sub">We're not just another cyber cafe. We're a premium gaming experience built
-                            for serious players and everyday users.</p>
-                    </div>
-                    <div class="why-grid">
-                        <div class="why-card reveal"><span class="why-icon">⚡</span>
-                            <h3>Blazing Fast Internet</h3>
-                            <p>High-speed broadband ensures zero lag during gaming, downloads or video calls.</p>
-                        </div>
-                        <div class="why-card reveal reveal-d1"><span class="why-icon">❄️</span>
-                            <h3>AC Comfort</h3>
-                            <p>Fully air-conditioned space so you game in comfort even on the hottest Rajasthan days.
-                            </p>
-                        </div>
-                        <div class="why-card reveal reveal-d2"><span class="why-icon">🎯</span>
-                            <h3>Pro Gaming Setup</h3>
-                            <p>High-end PCs, mechanical keyboards, gaming mice, and high-refresh monitors.</p>
-                        </div>
-                        <div class="why-card reveal"><span class="why-icon">📍</span>
-                            <h3>Prime Location</h3>
-                            <p>Conveniently located on Piprali Road, Sikar — easy to reach from anywhere in the city.
-                            </p>
-                        </div>
-                        <div class="why-card reveal reveal-d1"><span class="why-icon">🤝</span>
-                            <h3>Friendly Staff</h3>
-                            <p>Our team includes a dedicated tech expert and support staff — always ready to help.</p>
-                        </div>
-                        <div class="why-card reveal reveal-d2"><span class="why-icon">🎓</span>
-                            <h3>Student Friendly</h3>
-                            <p>Special discounts for students. <a class="u-e39ebac" data-nav-target="prime"
-                                    href="#prime">Get Prime Card →</a></p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </section><!-- end #sec-home -->
-        <!-- ── PRIME CARD SECTION ── -->
-        <section class="page-section" id="sec-prime">
-            <div class="prime-hero">
-                <div class="container">
-                    <div class="sec-tag">Exclusive Membership</div>
-                    <h2 class="sec-title">Student <span class="hl-gold">Prime Card</span></h2>
-                    <p class="sec-sub u-2e22ac2">Weekly &amp; Monthly membership with
-                        exclusive gaming hours, priority seats, and member-only rates.</p>
-                </div>
-            </div>
-            <div class="container section-pad">
-                <!-- PLAN TOGGLE + CARD PREVIEW + FORM -->
-                <div class="card-preview-wrap" id="prime">
-                    <!-- LEFT: Card Preview -->
-                    <div class="card-preview-box">
-                        <div class="sec-header">
-                            <div class="sec-tag">Preview Your Card</div>
-                            <h3 class="sec-title u-bea3ad6">How It <span class="hl">Looks</span></h3>
-                            <p class="u-df645d2">
-                                This is a demo preview. Your actual card will have your name &amp; unique ID.</p>
-                        </div>
-                        <!-- Plan switcher for preview -->
-                        <div class="plan-toggle u-3ffdc92">
-                            <button class="plan-btn weekly active" data-card-preview="weekly" data-plan="weekly"
-                                type="button">📅
-                                Weekly</button>
-                            <button class="plan-btn monthly" data-card-preview="monthly" data-plan="monthly"
-                                type="button">📆
-                                Monthly</button>
-                        </div>
-                        <!-- WEEKLY CARD PREVIEW -->
-                        <div class="prime-card-visual weekly" id="card-preview-weekly">
-                            <div class="card-top">
-                                <div>
-                                    <div class="card-logo-txt">CITYBYTEHUB</div>
-                                    <div class="card-plan-badge">WEEKLY PRIME</div>
-                                </div>
-                                <div class="u-54c2afb">
-                                    <div class="u-f1f99e8">
-                                        MEMBER CARD</div>
-                                </div>
-                            </div>
-                            <div class="card-chip"></div>
-                            <div class="card-mid">
-                                <div class="card-number" id="prev-w-num">CBH — XXXX — XXXX</div>
-                                <div class="card-holder" id="prev-w-name">YOUR NAME HERE</div>
-                            </div>
-                            <div class="card-bottom">
-                                <div>
-                                    <div class="card-expiry-lbl">VALID TILL</div>
-                                    <div class="card-expiry-val" id="prev-w-exp">MM/YY</div>
-                                </div>
-                                <div>
-                                    <div class="card-expiry-lbl">BALANCE</div>
-                                    <div class="card-expiry-val" id="prev-w-bal">-- hrs</div>
-                                </div>
-                                <div class="u-54c2afb">
-                                    <div class="card-wolf">🐺</div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- MONTHLY CARD PREVIEW -->
-                        <div class="prime-card-visual monthly u-6b99de8" id="card-preview-monthly" hidden>
-                            <div class="card-top">
-                                <div>
-                                    <div class="card-logo-txt">CITYBYTEHUB</div>
-                                    <div class="card-plan-badge">MONTHLY PRIME</div>
-                                </div>
-                                <div class="u-54c2afb">
-                                    <div class="u-0b5c996">
-                                        PREMIUM MEMBER</div>
-                                </div>
-                            </div>
-                            <div class="card-chip"></div>
-                            <div class="card-mid">
-                                <div class="card-number" id="prev-m-num">CBH — XXXX — XXXX</div>
-                                <div class="card-holder" id="prev-m-name">YOUR NAME HERE</div>
-                            </div>
-                            <div class="card-bottom">
-                                <div>
-                                    <div class="card-expiry-lbl">VALID TILL</div>
-                                    <div class="card-expiry-val" id="prev-m-exp">MM/YY</div>
-                                </div>
-                                <div>
-                                    <div class="card-expiry-lbl">BALANCE</div>
-                                    <div class="card-expiry-val" id="prev-m-bal">-- hrs</div>
-                                </div>
-                                <div class="u-54c2afb">
-                                    <div class="card-wolf">👑</div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- OFFERS & BENEFITS -->
-                        <div class="u-5625e55">
-                            <div class="u-bc5908f">
-                                🎁 MEMBER BENEFITS</div>
-                            <div id="plan-benefits-weekly">
-                                <div class="u-187dce5">
-                                    <div class="benefit-row"><span class="u-15434ad">✓</span> <span>Extra gaming
-                                            hours bonus</span></div>
-                                    <div class="benefit-row"><span class="u-15434ad">✓</span> <span>Priority
-                                            seat booking</span></div>
-                                    <div class="benefit-row"><span class="u-15434ad">✓</span> <span>Member-only
-                                            pricing</span></div>
-                                    <div class="benefit-row"><span class="u-15434ad">✓</span> <span>Free 1
-                                            print/day</span></div>
-                                    <div class="benefit-row"><span class="u-15434ad">✓</span> <span>Valid for 7
-                                            days</span></div>
-                                </div>
-                            </div>
-                            <div class="plan-benefits-monthly" id="plan-benefits-monthly" hidden>
-                                <div class="u-187dce5">
-                                    <div class="benefit-row"><span class="u-e39ebac">✓</span> <span>Max bonus
-                                            gaming hours</span></div>
-                                    <div class="benefit-row"><span class="u-e39ebac">✓</span> <span>Priority
-                                            seat + advance booking</span></div>
-                                    <div class="benefit-row"><span class="u-e39ebac">✓</span> <span>Best
-                                            member-only pricing</span></div>
-                                    <div class="benefit-row"><span class="u-e39ebac">✓</span> <span>Free 3
-                                            prints/day</span></div>
-                                    <div class="benefit-row"><span class="u-e39ebac">✓</span> <span>Valid for 30
-                                            days</span></div>
-                                    <div class="benefit-row"><span class="u-e39ebac">✓</span> <span>PS5 priority
-                                            slot</span></div>
-                                </div>
-                            </div>
-                            <div class="u-368740f">
-                                ⚠️ Card is issued after payment verification by staff. Apply below and visit us to
-                                complete payment.
-                            </div>
-                        </div>
-                    </div>
-                    <!-- RIGHT: Application Form -->
-                    <div class="mem-form-wrap">
-                        <div class="sec-header">
-                            <div class="sec-tag">Apply Now</div>
-                            <h3 class="sec-title u-bea3ad6">Get Your <span class="hl-gold">Prime
-                                    Card</span></h3>
-                            <p class="u-df645d2">
-                                Fill the form — our staff will review and activate your card after payment.</p>
-                        </div>
-                        <div class="plan-toggle" id="form-plan-toggle">
-                            <button class="plan-btn weekly active" data-form-plan="weekly" data-plan="weekly"
-                                id="form-weekly-btn" type="button">📅 Weekly Plan</button>
-                            <button class="plan-btn monthly" data-form-plan="monthly" data-plan="monthly"
-                                id="form-monthly-btn" type="button">📆
-                                Monthly Plan</button>
-                        </div>
-                        <input id="selected-plan" type="hidden" value="weekly" />
-                        <form class="form-wrap js-managed-form" data-submit-action="submit-prime" novalidate="">
-                            <div class="form-group">
-                                <label for="prime-name">Full Name *</label>
-                                <input autocomplete="name" class="fi" data-input-action="update-card-preview"
-                                    id="prime-name" maxlength="80" placeholder="Enter your full name" required=""
-                                    type="text" />
-                                <span class="field-err" id="prime-name-err"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="prime-phone">Phone Number *</label>
-                                <input autocomplete="tel" class="fi" id="prime-phone" inputmode="numeric" maxlength="10"
-                                    pattern="[6-9][0-9]{9}" placeholder="10-digit mobile number" required=""
-                                    type="tel" />
-                                <span class="field-err" id="prime-phone-err"></span>
-                            </div>
-                            <div aria-hidden="true" class="hp-field">
-                                <label for="prime-website">Website</label>
-                                <input autocomplete="off" id="prime-website" tabindex="-1" type="text" />
-                            </div>
-                            <div class="form-group">
-                                <label for="prime-college">College / School (Optional)</label>
-                                <input class="fi" id="prime-college" maxlength="100" placeholder="Your institution name"
-                                    type="text" />
-                            </div>
-                            <div class="form-group">
-                                <label for="prime-note">Note / Special Request (Optional)</label>
-                                <textarea class="fi" id="prime-note" maxlength="300"
-                                    placeholder="Any special request? Let us know..." rows="2"></textarea>
-                            </div>
-                            <!-- Offer section -->
-                            <div class="u-871460c">
-                                <div class="u-9d5c326">
-                                    🎁 CURRENT OFFER</div>
-                                <div class="u-4ad92fe" id="current-offer-txt">
-                                    Loading current offers...
-                                </div>
-                            </div>
-                            <button class="btn btn-gold btn-block" id="prime-apply-btn" type="submit">
-                                <span id="prime-apply-txt">⭐ Apply for Prime Card</span>
-                                <span class="u-6b99de8" id="prime-apply-load">Sending...</span>
-                            </button>
-                            <div class="recaptcha-wrap">
-                                <div id="rc-prime"></div>
-                            </div>
-                            <div class="form-success u-6b99de8" id="prime-ok"></div>
-                            <div class="form-err" id="prime-err"></div>
-                        </form>
-                        <!-- Already a member? Lookup -->
-                        <div class="u-5625e55">
-                            <div class="u-bc5908f">
-                                🔍 CHECK YOUR CARD STATUS</div>
-                            <div class="u-118c1e8">
-                                <input class="fi u-ef0b7a1" id="card-check-input" maxlength="24"
-                                    placeholder="Card number (CBH-...)" type="text" />
-                                <button class="btn btn-outline u-86abdab" data-action="check-card-status"
-                                    type="button">Check</button>
-                            </div>
-                            <div class="u-fc25e84" id="card-check-result">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- ── BOOKING SECTION ── -->
-        <section class="page-section" id="sec-booking">
-            <div class="u-b186b4a">
-                <div class="container">
-                    <div class="sec-tag">Reserve Your Seat</div>
-                    <h2 class="sec-title">Book a <span class="hl">Time</span></h2>
-                    <p class="sec-sub u-c0c75bd">Book in advance — choose your time and service.
-                        Advance bookings are confirmed after a call and payment.</p>
-                    <div class="booking-grid">
-                        <!-- Availability Info -->
-                        <div>
-                            <div class="booking-info reveal u-363cdaa">
-                                <div class="u-fb091c8">
-                                    📊 TODAY'S AVAILABILITY</div>
-                                <div class="avail-row"><span class="avail-label">🖥️ Gaming PCs</span><span
-                                        class="avail-val u-7f24e27" id="avail-pc">Loading...</span>
-                                </div>
-                                <div class="avail-row"><span class="avail-label">🎮 PS5 Consoles</span><span
-                                        class="avail-val u-7f24e27" id="avail-ps5">Loading...</span>
-                                </div>
-                                <div class="avail-row"><span class="avail-label">🌐 Internet Browsing PCs</span><span
-                                        class="avail-val u-7f24e27" id="avail-net-pc">Loading...</span>
-                                </div>
-                                <div class="avail-row"><span class="avail-label">📱 Mobile Seats</span><span
-                                        class="avail-val u-7f24e27" id="avail-mobile">Loading...</span>
-                                </div>
-                                <div class="avail-row"><span class="avail-label">🕐 Open Hours</span><span
-                                        class="avail-val" id="avail-hours">Loading...</span></div>
-                                <div class="u-3dc98b5" id="slot-availability" aria-live="polite"></div>
-                            </div>
-                            <div class="booking-info reveal u-8fe5608">
-                                <div class="u-71f7a03">
-                                    💡 BOOKING TIPS</div>
-                                <div class="u-619e934">
-                                    • Only <strong class="u-15434ad">today or tomorrow</strong> bookings are
-                                    allowed<br />
-                                    • Tomorrow bookings require a <strong class="u-e39ebac">payment confirmation
-                                        call</strong><br />
-                                    • Peak hours: 4PM – 8PM — book early<br />
-                                    • PC: max 5 per time window  ·  PS5: max 2 per time window<br />
-                                    • Mobile / Browsing seat: <strong class="u-e39ebac" id="mobile-tip-price">Loading
-                                        live rate...</strong><br />
-                                    • We will call to confirm after booking<br />
-                                    • Walk-ins are welcome anytime
-                                </div>
-                            </div>
-                            <div class="booking-info reveal u-2239d6d">
-                                <div class="u-f195b1f">
-                                    💸 LIVE SERVICE RATES</div>
-                                <div class="u-4ad92fe" id="bk-live-rate-list">
-                                    Loading rates...
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Booking Form -->
-                        <form class="form-wrap reveal js-managed-form" data-submit-action="submit-booking"
-                            novalidate="">
-                            <div class="form-title">📅 Advance Booking</div>
-                            <div class="form-group">
-                                <label for="bk-name">Full Name *</label>
-                                <input autocomplete="name" class="fi" id="bk-name" maxlength="80"
-                                    placeholder="Your full name" required="" type="text" />
-                                <span class="field-err" id="bk-name-err"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="bk-phone">Phone Number *</label>
-                                <input autocomplete="tel" class="fi" id="bk-phone" inputmode="numeric" maxlength="10"
-                                    pattern="[6-9][0-9]{9}" placeholder="10-digit mobile number" required=""
-                                    type="tel" />
-                                <span class="field-err" id="bk-phone-err"></span>
-                            </div>
-                            <div aria-hidden="true" class="hp-field">
-                                <label for="bk-website">Website</label>
-                                <input autocomplete="off" id="bk-website" tabindex="-1" type="text" />
-                            </div>
-                            <div class="form-group">
-                                <label for="bk-service">Service *</label>
-                                <select class="fi" id="bk-service" required="">
-                                    <option value="">-- Select Service --</option>
-                                    <option value="gaming-pc">🖥️ Gaming PC</option>
-                                    <option value="ps5">🎮 PS5 Gaming</option>
-                                    <option value="internet">🌐 Internet / Browsing</option>
-                                    <option value="printing">🖨️ Printing &amp; Scanning</option>
-                                    <option value="form-filling">📋 Online Form Filling</option>
-                                    <option value="other">🔧 Other</option>
-                                </select>
-                                <div class="u-293faea">
-                                    Owner-added custom services will appear here automatically.</div>
-                                <span class="field-err" id="bk-service-err"></span>
-                            </div>
-                            <div class="u-2adda3a" id="bk-service-detail-box">
-                                <div class="u-2908cf3" id="bk-service-detail-title">
-                                    SERVICE DETAILS</div>
-                                <div class="u-6b99de8" id="bk-print-fields">
-                                    <div class="form-group u-bc7edc6">
-                                        <label for="bk-print-single">Single Side Pages</label>
-                                        <input class="fi" id="bk-print-single" max="500" min="0" step="1" type="number"
-                                            value="0" />
-                                    </div>
-                                    <div class="form-group u-89588eb">
-                                        <label for="bk-print-double">Both Side Sheets</label>
-                                        <input class="fi" id="bk-print-double" max="500" min="0" step="1" type="number"
-                                            value="0" />
-                                    </div>
-                                </div>
-                                <div class="u-6b99de8" id="bk-form-fields">
-                                    <div class="form-group u-bc7edc6">
-                                        <label for="bk-form-kind">Form Type</label>
-                                        <input class="fi" id="bk-form-kind" maxlength="90"
-                                            placeholder="e.g. Scholarship, Admit Card, Govt Form" type="text" />
-                                    </div>
-                                    <div class="form-group u-89588eb">
-                                        <label for="bk-form-extra">Form Notes</label>
-                                        <textarea class="fi" id="bk-form-extra" maxlength="220"
-                                            placeholder="Required docs, urgency, extra details" rows="2"></textarea>
-                                    </div>
-                                </div>
-                                <div class="u-6b99de8" id="bk-custom-fields">
-                                    <div class="form-group u-89588eb">
-                                        <label for="bk-custom-qty">Quantity / Units</label>
-                                        <input class="fi" id="bk-custom-qty" max="200" min="1" step="1" type="number"
-                                            value="1" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="bk-date">Preferred Date * <small class="u-e08b4c6"
-                                        id="bk-date-hint"></small></label>
-                                <input class="fi" id="bk-date" required="" type="date" />
-                                <span class="field-err" id="bk-date-err"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="bk-time">Start Time *</label>
-                                <div class="time-ampm-row">
-                                    <input class="fi booking-time-input" id="bk-time" type="time" min="07:00"
-                                        max="21:00" step="60" autocomplete="off" required
-                                        aria-describedby="bk-time-help" />
-                                </div>
-                                <div class="time-note" id="bk-time-help">Cafe open window: 7:00 AM to 9:00 PM · Use the
-                                    clock picker or type the time directly.</div>
-                                <span class="field-err" id="bk-time-err"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="bk-end-time">End Time *</label>
-                                <div class="time-ampm-row">
-                                    <input class="fi booking-time-input" id="bk-end-time" type="time" min="07:00"
-                                        max="21:00" step="60" autocomplete="off" required
-                                        aria-describedby="bk-end-time-help" />
-                                </div>
-                                <span class="field-err" id="bk-end-time-err"></span>
-                                <div class="time-note" id="bk-end-time-help">Choose an end time after the start time.
-                                    The duration will be calculated automatically.</div>
-                            </div>
-                            <div class="form-group">
-                                <label for="bk-duration">Duration (Minutes)</label>
-                                <input class="fi" id="bk-duration" max="480" min="15"
-                                    placeholder="Auto after Start + End time" step="15" type="number" />
-                                <div class="time-note u-6b99de8" id="bk-duration-lock-note">Duration
-                                    auto-locked by Start/End time range.</div>
-                            </div>
-                            <div class="billing-preview u-6b99de8" id="bk-bill-preview">
-                                <div class="bill-main">
-                                    <span id="bk-bill-main-txt">Estimated charge</span>
-                                    <span class="bill-amt" id="bk-bill-amt">₹0</span>
-                                </div>
-                                <div class="bill-note" id="bk-bill-note">Select service and duration to see the
-                                    estimate.</div>
-                            </div>
-                            <div class="form-group">
-                                <label for="bk-card">Prime Card Number (Optional)</label>
-                                <input class="fi" id="bk-card" maxlength="24" placeholder="If you have a prime card"
-                                    type="text" />
-                            </div>
-                            <div class="form-group">
-                                <label for="bk-note">Special Request</label>
-                                <textarea class="fi" id="bk-note" maxlength="300"
-                                    placeholder="Any special request? Let us know..." rows="2"></textarea>
-                            </div>
-                            <!-- Payment box — shows for advance bookings -->
-                            <div class="u-02414fb" id="bk-payment-box">
-                                <div class="u-69ba3da">
-                                    💳 ADVANCE BOOKING — PAYMENT REQUIRED</div>
-                                <p class="u-97e3575">
-                                    Tomorrow bookings require <strong class="u-e39ebac">advance
-                                        payment</strong>.<br />
-                                    After booking, call this number:<br />
-                                    <a class="u-7985b27" href="tel:+918829822950">📞
-                                        8829822950</a><br />
-                                    <span class="u-d41ef9f">We will confirm your booking
-                                        after payment.</span>
-                                </p>
-                            </div>
-                            <!-- Human Verification -->
-                            <div class="form-group u-363cdaa">
-                                <label class="u-7919835">
-                                    <input class="u-fefb41a" id="bk-human-verify" required="" type="checkbox" />
-                                    <span class="u-c821f2f">I confirm I am human and this booking is genuine
-                                        ✅</span>
-                                </label>
-                                <span class="field-err u-22239af" id="bk-human-err"></span>
-                            </div>
-                            <button class="btn btn-primary btn-block" id="bk-btn" type="submit">
-                                <span id="bk-txt">📅 Confirm Booking</span>
-                                <span class="u-6b99de8" id="bk-load">Checking availability...</span>
-                            </button>
-                            <div class="form-success u-6b99de8" id="bk-ok"></div>
-                            <div class="form-err u-6b99de8" id="bk-err"></div>
-                        </form>
-                    </div>
-                    <!-- ── BOOKING STATUS CHECKER ── -->
-                    <div class="u-ec84911">
-                        <div class="sec-tag u-aee885a">Track Booking</div>
-                        <h3 class="u-4a82d84">
-                            🔍 Check Your Booking</h3>
-                        <p class="u-b53b63c">
-                            Enter your <strong class="u-15434ad">8-character booking code</strong> and the
-                            booking phone number to see status.
-                        </p>
-                        <div class="booking-track-row u-ee2a2f4">
-                            <input class="fi u-024bed8" data-enter-action="check-booking-status" id="bk-track-phone"
-                                inputmode="numeric" maxlength="10" placeholder="Booking phone number" type="tel" />
-                            <input class="fi u-16d3f95" data-enter-action="check-booking-status" id="bk-track-input"
-                                maxlength="8" placeholder="e.g. A1B2C3D4" type="text" />
-                            <button class="btn btn-primary u-651945a" data-action="check-booking-status" type="button">
-                                🔍 Check Status
-                            </button>
-                        </div>
-                        <div class="u-6b99de8" id="bk-track-result"></div>
-                        <!-- Instructions -->
-                        <div class="u-1826567">
-                            <div class="u-37974e1">
-                                📋 HOW TO USE THE CODE</div>
-                            <div class="u-95d5164">
-                                <div>1️⃣ After booking, you will see an <strong class="u-6c45f98">8-character
-                                        code</strong> on screen</div>
-                                <div>2️⃣ Save it or take a screenshot — this is your booking reference</div>
-                                <div>3️⃣ Enter the code and the booking <strong class="u-6c45f98">phone
-                                        number</strong> here</div>
-                                <div>4️⃣ Status can be:</div>
-                                <div class="u-27ccdf5">
-                                    <span class="u-2af27e9">⏳ Pending</span> — We are reviewing,
-                                    you will get a call soon<br />
-                                    <span class="u-2aa48ae">✅ Confirmed</span> — Booking
-                                    confirmed, enjoy your gaming 🎮<br />
-                                    <span class="u-31ced19">❌ Rejected</span> — Time was
-                                    unavailable. Book another slot or call us
-                                </div>
-                                <div class="u-3dc98b5">5️⃣ Any problem? WhatsApp: <a class="u-6c4219c"
-                                        href="https://wa.me/918829822950">8829822950</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- ── INQUIRY SECTION ── -->
-        <section class="page-section" id="sec-inquiry">
-            <div class="u-d690042">
-                <div class="container">
-                    <div class="sec-tag">Get In Touch</div>
-                    <h2 class="sec-title">Contact &amp; <span class="hl">Inquiry</span></h2>
-                    <p class="sec-sub u-c0c75bd">Have a question? Send your name, number, and reason.
-                        We will call you back.</p>
-                    <div class="contact-grid">
-                        <div>
-                            <div class="info-cards">
-                                <div class="info-card reveal"><span class="info-icon">📍</span>
-                                    <div>
-                                        <h4>Location</h4>
-                                        <p>Piprali Road, Sikar, Rajasthan</p>
-                                    </div>
-                                </div>
-                                <div class="info-card reveal"><span class="info-icon">📧</span>
-                                    <div>
-                                        <h4>Email</h4><a href="mailto:citybytehub@gmail.com">citybytehub@gmail.com</a>
-                                    </div>
-                                </div>
-                                <div class="info-card reveal"><span class="info-icon">⏰</span>
-                                    <div>
-                                        <h4>Timings</h4>
-                                        <p>Mon – Sun: 7:00 AM – 9:00 PM</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="u-43cfd34">
-                                <a class="btn btn-whatsapp btn-block"
-                                    href="https://wa.me/918829822950?text=Hi%20CityByteHub%2C%20I%20want%20to%20enquire!"
-                                    target="_blank">💬 Chat on WhatsApp</a>
-                            </div>
-                            <div class="map-box reveal u-43cfd34">
-                                <div class="map-inner">
-                                    <div class="map-pin">📍</div>
-                                    <p>CityByteHub</p>
-                                    <p class="sub">Piprali Road, Sikar</p>
-                                    <a class="btn btn-outline btn-sm"
-                                        href="https://maps.google.com/?q=CityByteHub+Sikar+Piprali+Road" rel="noopener"
-                                        target="_blank">Open in Google Maps</a>
-                                </div>
-                            </div>
-                        </div>
-                        <form class="form-wrap reveal js-managed-form" data-submit-action="submit-inquiry"
-                            novalidate="">
-                            <div class="form-title">📞 Send Inquiry</div>
-                            <p class="u-a06dc77">
-                                Enter your name, number, and reason — we will call you.</p>
-                            <div class="form-group">
-                                <label for="inq-name">Full Name *</label>
-                                <input autocomplete="name" class="fi" id="inq-name" maxlength="80"
-                                    placeholder="Your full name" required="" type="text" />
-                                <span class="field-err" id="inq-name-err"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="inq-phone">Phone Number * <small class="u-e08b4c6">(We
-                                        will call on this)</small></label>
-                                <input autocomplete="tel" class="fi" id="inq-phone" inputmode="numeric" maxlength="10"
-                                    pattern="[6-9][0-9]{9}" placeholder="10-digit mobile number" required=""
-                                    type="tel" />
-                                <span class="field-err" id="inq-phone-err"></span>
-                            </div>
-                            <div aria-hidden="true" class="hp-field">
-                                <label for="inq-website">Website</label>
-                                <input autocomplete="off" id="inq-website" tabindex="-1" type="text" />
-                            </div>
-                            <div class="form-group">
-                                <label for="inq-reason">Reason / Service *</label>
-                                <select class="fi" id="inq-reason" required="">
-                                    <option value="">-- Select Reason --</option>
-                                    <option value="gaming">Gaming PC / PS5 Enquiry</option>
-                                    <option value="prime-card">Prime Card Application</option>
-                                    <option value="booking">Slot Booking</option>
-                                    <option value="printing">Printing / Scanning</option>
-                                    <option value="form-filling">Online Form Filling</option>
-                                    <option value="pricing">Pricing Enquiry</option>
-                                    <option value="other">Other</option>
-                                </select>
-                                <span class="field-err" id="inq-reason-err"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="inq-msg">Message</label>
-                                <textarea class="fi" id="inq-msg" maxlength="300"
-                                    placeholder="Any extra details or questions?" rows="3"></textarea>
-                            </div>
-                            <button class="btn btn-primary btn-block" id="inq-btn" type="submit">
-                                <span id="inq-txt">📞 Send &amp; Request Call Back</span>
-                                <span class="u-6b99de8" id="inq-load">Sending...</span>
-                            </button>
-                            <div class="recaptcha-wrap">
-                                <div id="rc-inquiry"></div>
-                            </div>
-                            <div class="form-success u-6b99de8" id="inq-ok"></div>
-                            <div class="form-err" id="inq-err"></div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- ── ABOUT SECTION ── -->
-        <section class="page-section" id="sec-about">
-            <div class="container section-pad">
-                <div class="sec-tag">Our Story</div>
-                <h2 class="sec-title">Born in <span class="hl">Sikar</span>, Built for Gamers</h2>
-                <div class="about-grid u-de7eb30">
-                    <div>
-                        <p class="u-fe5f6d5">CityByteHub
-                            was founded by two passionate partners — one with deep technical expertise and the other
-                            handling operations — with a shared dream: to bring a truly premium gaming and internet
-                            experience to Sikar.</p>
-                        <p class="u-2edbef9">Located on
-                            Piprali Road, we offer the best gaming hardware, fastest internet, and a welcoming
-                            environment for students, gamers, and professionals alike.</p>
-                        <div class="about-partners u-c1ddbea">
-                            <div class="info-card reveal u-2f7ab6d"><span class="info-icon">👨‍💼</span>
-                                <div>
-                                    <h4>Karan Yadav</h4>
-                                    <p>Operations Partner · Customer experience, bookings, and daily management.</p>
-                                </div>
-                            </div>
-                            <div class="info-card reveal u-2f7ab6d"><span class="info-icon">👨‍💻</span>
-                                <div>
-                                    <h4>Sachin Yadav</h4>
-                                    <p>Technical Partner · Hardware, tech support, and system setup.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="booking-info reveal u-363cdaa">
-                            <div class="u-fb091c8">
-                                ⏰ OPENING HOURS</div>
-                            <div class="avail-row"><span class="avail-label">Monday – Sunday</span><span
-                                    class="avail-val u-7f24e27">7:00 AM – 9:00 PM</span></div>
-                            <div class="avail-row"><span class="avail-label">Holidays</span><span
-                                    class="avail-val u-7f24e27">Open ✓</span></div>
-                            <div class="avail-row"><span class="avail-label">Location</span><span
-                                    class="avail-val">Piprali Road, Sikar</span></div>
-                        </div>
-                        <a class="btn btn-whatsapp btn-block" href="https://wa.me/918829822950" target="_blank">💬
-                            Contact on WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- ── FAQ SECTION ── -->
-        <section class="page-section" id="sec-faq">
-            <div class="container section-pad">
-                <div class="sec-header">
-                    <div class="sec-tag">Common Questions</div>
-                    <h2 class="sec-title">FAQ</h2>
-                </div>
-                <div class="faq-wrap">
-                    <div class="faq-list">
-                        <div class="faq-item"><button aria-controls="faq-answer-1" aria-expanded="false" class="faq-q"
-                                data-faq-toggle="" type="button"><span>What are your
-                                    opening hours?</span><span class="faq-icon">+</span></button>
-                            <div class="faq-a" id="faq-answer-1">
-                                <p>We are open every day — Monday to Sunday — from <strong>7:00 AM to 9:00 PM</strong>,
-                                    including holidays.</p>
-                            </div>
-                        </div>
-                        <div class="faq-item"><button aria-controls="faq-answer-2" aria-expanded="false" class="faq-q"
-                                data-faq-toggle="" type="button"><span>Where exactly is
-                                    CityByteHub located?</span><span class="faq-icon">+</span></button>
-                            <div class="faq-a" id="faq-answer-2">
-                                <p>We are located on <strong>Piprali Road, Sikar, Rajasthan</strong>. Just search
-                                    "CityByteHub Sikar" on Google Maps.</p>
-                            </div>
-                        </div>
-                        <div class="faq-item"><button aria-controls="faq-answer-3" aria-expanded="false" class="faq-q"
-                                data-faq-toggle="" type="button"><span>Do you offer student
-                                    discounts?</span><span class="faq-icon">+</span></button>
-                            <div class="faq-a" id="faq-answer-3">
-                                <p>Yes! We have special student-friendly pricing. Get our <a class="u-e39ebac"
-                                        data-nav-target="prime" href="#prime">Student Prime Card</a>
-                                    for exclusive monthly/weekly benefits!</p>
-                            </div>
-                        </div>
-                        <div class="faq-item"><button aria-controls="faq-answer-4" aria-expanded="false" class="faq-q"
-                                data-faq-toggle="" type="button"><span>Can I book in
-                                    advance?</span><span class="faq-icon">+</span></button>
-                            <div class="faq-a" id="faq-answer-4">
-                                <p>Yes! Go to the <a class="u-15434ad" data-nav-target="booking" href="#booking">booking
-                                        section</a> and pick a time. Or message
-                                    us on WhatsApp.</p>
-                            </div>
-                        </div>
-                        <div class="faq-item"><button aria-controls="faq-answer-5" aria-expanded="false" class="faq-q"
-                                data-faq-toggle="" type="button"><span>What printing
-                                    services do you offer?</span><span class="faq-icon">+</span></button>
-                            <div class="faq-a" id="faq-answer-5">
-                                <p>Black &amp; white printing, color printing, photocopying, and document scanning. Ask
-                                    us
-                                    for current rates per page.</p>
-                            </div>
-                        </div>
-                        <div class="faq-item"><button aria-controls="faq-answer-6" aria-expanded="false" class="faq-q"
-                                data-faq-toggle="" type="button"><span>What is the Student
-                                    Prime Card?</span><span class="faq-icon">+</span></button>
-                            <div class="faq-a" id="faq-answer-6">
-                                <p>The <strong>CityByteHub Student Prime Card</strong> is an exclusive membership for
-                                    students — weekly or monthly plans with extra hours, priority seat booking, and
-                                    member-only discounts. Each card has a unique QR code and ID. <a class="u-e39ebac"
-                                        data-nav-target="prime" href="#prime">Learn more →</a></p>
-                            </div>
-                        </div>
-                        <div class="faq-item"><button aria-controls="faq-answer-7" aria-expanded="false" class="faq-q"
-                                data-faq-toggle="" type="button"><span>How does the Prime
-                                    Card work?</span><span class="faq-icon">+</span></button>
-                            <div class="faq-a" id="faq-answer-7">
-                                <p>Apply online or visit us directly. After payment, staff will activate your card. The
-                                    card has a unique QR code so staff can scan and view your details and balance.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- ── REVIEWS SECTION ── -->
-        <section class="page-section" id="sec-reviews">
-            <div class="container section-pad">
-                <div class="sec-header center">
-                    <div class="sec-tag">What Gamers Say</div>
-                    <h2 class="sec-title">Real <span class="hl">Reviews</span></h2>
-                </div>
-                <div class="testi-grid">
-                    <article class="testi-card reveal">
-                        <div class="stars">★★★★★</div>
-                        <p class="testi-txt">"Best gaming setup I've seen in Sikar. The PCs are super fast and the
-                            atmosphere is awesome. Totally worth it!"</p>
-                        <div class="testi-author">
-                            <div class="author-av">🧑</div>
-                            <div><strong>Arjun S.</strong><span>Gamer, Sikar</span></div>
-                        </div>
-                    </article>
-                    <article class="testi-card reveal reveal-d1">
-                        <div class="stars">★★★★★</div>
-                        <p class="testi-txt">"Came here for printing and ended up gaming for 2 hours! The staff is very
-                            helpful and the internet is super fast."</p>
-                        <div class="testi-author">
-                            <div class="author-av">👩</div>
-                            <div><strong>Priya M.</strong><span>Student, Sikar</span></div>
-                        </div>
-                    </article>
-                    <article class="testi-card reveal reveal-d2">
-                        <div class="stars">★★★★★</div>
-                        <p class="testi-txt">"PS5 gaming experience was insane. Played FIFA with my friends and it was
-                            the best evening. Will definitely come again!"</p>
-                        <div class="testi-author">
-                            <div class="author-av">🧑</div>
-                            <div><strong>Rahul K.</strong><span>PS5 Gamer</span></div>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
-        <!-- ── FOOTER ── -->
-        <footer class="footer" role="contentinfo">
-            <div class="footer-grid">
-                <div>
-                    <div class="u-5ac3e61">
-                        <span class="u-fb89ef3">⬡</span>
-                        <span class="u-51a73bd">City<span class="u-15434ad">Byte</span>Hub</span>
-                    </div>
-                    <p class="footer-tagline">Sikar's Premium Gaming Zone &amp; Cyber Cafe on Piprali Road.</p>
-                    <p class="footer-hours">🕐 Open Daily: 7:00 AM – 9:00 PM</p>
-                </div>
-                <div>
-                    <h4>Quick Links</h4>
-                    <ul class="footer-links">
-                        <li><a data-nav-target="services" href="#services">Services</a></li>
-                        <li><a data-nav-target="pricing" href="#pricing">Pricing</a></li>
-                        <li><a data-nav-target="about" href="#about">About Us</a></li>
-                        <li><a data-nav-target="faq" href="#faq">FAQ</a></li>
-                        <li><a data-nav-target="inquiry" href="#inquiry">Contact</a></li>
-                        <li><a class="u-e39ebac" data-nav-target="prime" href="#prime">⭐ Prime Card</a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Services</h4>
-                    <ul class="footer-svcs">
-                        <li>Gaming PCs</li>
-                        <li>PS5 / Console Gaming</li>
-                        <li>High-Speed Internet</li>
-                        <li>Printing &amp; Scanning</li>
-                        <li>Online Form Filling</li>
-                        <li>Student Prime Card</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Contact</h4>
-                    <div class="footer-contact">
-                        <p>📍 Piprali Road, Sikar, Rajasthan</p>
-                        <p>📧 <a href="mailto:citybytehub@gmail.com">citybytehub@gmail.com</a></p>
-                        <p>🕐 7:00 AM – 9:00 PM Daily</p>
-                    </div>
-                    <div class="social-row">
-                        <a aria-label="Instagram" class="social-btn" href="#">📸</a>
-                        <a aria-label="Facebook" class="social-btn" href="#">📘</a>
-                        <a aria-label="YouTube" class="social-btn" href="#">▶️</a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>© 2025 CityByteHub, Sikar. All rights reserved. | Best Gaming Zone in Sikar | Cyber Cafe Piprali Road
-                </p>
-                <div class="footer-legal"><a href="#">Privacy Policy</a><span>•</span><a href="#">Terms &amp;
-                        Conditions</a>
-                </div>
-            </div>
-        </footer>
-    </main>
-    <!-- end .main-content -->
-    <!-- FLOATING BUTTONS -->
-    <a aria-label="WhatsApp" class="float-wa"
-        href="https://wa.me/918829822950?text=Hi%20CityByteHub%2C%20I%20want%20to%20book%20a%20session!" rel="noopener"
-        target="_blank">💬</a>
-    <a class="float-book" data-nav-target="booking" href="#booking" id="float-book">🎮 Book a Seat</a>
-    <script src="script.js" type="module"></script>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required minlength="6">
+          <div class="err" id="loginPasswordErr">Password must be at least 6 characters</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+      <div class="auth-foot">Don't have an account? <a href="#register" data-nav="register">Register</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REGISTER ================= -->
+<section class="page" id="page-register" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <h2>Create Account</h2>
+      <p class="sub">Register for a CITYBYTEHUB internship</p>
+      <div id="registerAlert" class="alert alert-error"></div>
+      <button class="btn-google" id="googleRegisterBtn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Sign up with Google
+      </button>
+      <div class="divider">or sign up with email</div>
+      <form id="registerForm" novalidate>
+        <div class="field">
+          <label for="regName">Full Name</label>
+          <input type="text" id="regName" required>
+          <div class="err" id="regNameErr">Please enter your full name</div>
+        </div>
+        <div class="field">
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" required>
+          <div class="err" id="regEmailErr">Enter a valid email</div>
+        </div>
+        <div class="field">
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" required minlength="6">
+          <div class="err" id="regPasswordErr">Password must be at least 6 characters</div>
+        </div>
+        <div class="field">
+          <label for="regTrack">Select Internship</label>
+          <select id="regTrack" required>
+            <option value="">-- Choose a track --</option>
+            <option value="web-development">Web Development</option>
+            <option value="data-analyst">Data Analyst</option>
+          </select>
+          <div class="err" id="regTrackErr">Please select an internship</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Account</button>
+      </form>
+      <div class="auth-foot">Already have an account? <a href="#login" data-nav="login">Login</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DASHBOARD ================= -->
+<section class="page" id="page-dashboard" style="display:none">
+  <div class="dash-header">
+    <div class="container">
+      <h1>Welcome, <span id="dashName">Student</span> 👋</h1>
+      <p id="dashEmail">Loading...</p>
+    </div>
+  </div>
+  <div class="dash-grid" id="dashGrid">
+    <div class="dash-card">
+      <h3>Your Internship</h3>
+      <p id="dashTrack" style="color:var(--muted)">Loading...</p>
+    </div>
+    <div class="dash-card">
+      <h3>Status</h3>
+      <span id="dashStatus" class="status pending">Pending</span>
+    </div>
+    <div class="dash-card">
+      <h3>Learning Progress</h3>
+      <p style="color:var(--muted); font-size:0.9rem">Complete your modules to unlock your certificate.</p>
+      <div class="progress-bar"><span id="dashProgress" style="width:0%"></span></div>
+      <p style="margin-top:8px; font-size:0.85rem; color:var(--muted)"><span id="dashProgressText">0%</span> completed</p>
+    </div>
+    <div class="dash-card">
+      <h3>Certificate</h3>
+      <p id="dashCert" style="color:var(--muted)">Not available yet</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="page" id="page-faq" style="display:none">
+  <div class="content-page">
+    <h1>Frequently Asked Questions</h1>
+    <h2>How do I apply for an internship?</h2>
+    <p>Click "Apply Now", sign up with Google or email, and select your preferred track.</p>
+    <h2>Is the internship free?</h2>
+    <p>Registration is free. Contact us at info@citybytehub.me for program details.</p>
+    <h2>Do I get a certificate?</h2>
+    <p>Yes, a verifiable internship certificate is issued on successful completion.</p>
+    <h2>What is the duration?</h2>
+    <p>Most programs run 4–8 weeks and are self-paced with mentor support.</p>
+    <h2>How do I contact support?</h2>
+    <p>Email us at info@citybytehub.me or use the Contact page.</p>
+  </div>
+</section>
+
+<!-- ================= TERMS ================= -->
+<section class="page" id="page-terms" style="display:none">
+  <div class="content-page">
+    <h1>Terms & Conditions</h1>
+    <p>By using the CITYBYTEHUB internship portal, you agree to these terms.</p>
+    <h2>1. Use of Service</h2>
+    <p>The portal is provided for internship registration and learning purposes only.</p>
+    <h2>2. Account Responsibility</h2>
+    <p>You are responsible for maintaining the confidentiality of your account credentials.</p>
+    <h2>3. Content</h2>
+    <p>All training content is the intellectual property of CITYBYTEHUB and may not be redistributed.</p>
+    <h2>4. Changes</h2>
+    <p>We may update these terms at any time. Continued use means acceptance of updated terms.</p>
+  </div>
+</section>
+
+<!-- ================= PRIVACY ================= -->
+<section class="page" id="page-privacy" style="display:none">
+  <div class="content-page">
+    <h1>Privacy Policy</h1>
+    <p>CITYBYTEHUB respects your privacy. This policy explains how we handle your data.</p>
+    <h2>Data We Collect</h2>
+    <ul>
+      <li>Name and email (from Google Sign-In or registration form)</li>
+      <li>Internship track selection</li>
+      <li>Learning progress data</li>
+    </ul>
+    <h2>How We Use Data</h2>
+    <p>Data is used to provide internship services, track progress and issue certificates.</p>
+    <h2>Data Storage</h2>
+    <p>Data is securely stored using Google Firebase services.</p>
+    <h2>Contact</h2>
+    <p>For privacy questions, email <a href="mailto:info@citybytehub.me">info@citybytehub.me</a>.</p>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <h4>CITYBYTEHUB</h4>
+      <p>Technical Training & IT Services<br>Piprali Road, Sikar, Rajasthan – 332001<br>Udyam: UDYAM-RJ-30-0151284</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <a href="#about" data-nav="about">About Us</a>
+      <a href="#internships" data-nav="internships">Internships</a>
+      <a href="#contact" data-nav="contact">Contact</a>
+      <a href="#faq" data-nav="faq">FAQ</a>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <a href="#terms" data-nav="terms">Terms & Conditions</a>
+      <a href="#privacy" data-nav="privacy">Privacy Policy</a>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <a href="mailto:info@citybytehub.me">info@citybytehub.me</a>
+      <a href="https://www.citybytehub.me">www.citybytehub.me</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 CITYBYTEHUB. All rights reserved.</div>
+</footer>
+
+<script type="module" src="app.js"></script>
 </body>
-
 </html>
