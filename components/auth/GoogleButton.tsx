@@ -1,1 +1,0 @@
-'use client'; import {GoogleAuthProvider,signInWithPopup} from 'firebase/auth'; import {auth} from '@/lib/firebase-client'; export default function GoogleButton(){return <button className="btn" type="button" onClick={async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider());location.href='/dashboard'}catch(e){console.error(e)}}}>Continue with Google</button>}

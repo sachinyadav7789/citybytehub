@@ -1,1 +1,0 @@
-export default function Sidebar(){return <aside className="card"><b>CITYBYTEHUB</b><nav style={{display:'grid',gap:12,marginTop:20}}>{[['Dashboard','/dashboard'],['My Courses','/my-courses'],['Programs','/programs'],['Profile','/profile'],['Certificates','/certificate'],['Notifications','/notifications']].map(([n,u])=><a key={u} href={u}>{n}</a>)}</nav></aside>}

@@ -1,1 +1,0 @@
-export default function StatsCard({title,value}:{title:string;value:string}){return <div className="card"><p className="muted">{title}</p><h2>{value}</h2></div>}

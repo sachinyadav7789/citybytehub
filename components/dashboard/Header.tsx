@@ -1,1 +1,0 @@
-'use client'; import {signOut} from 'firebase/auth'; import {auth} from '@/lib/firebase-client'; export default function Header(){return <header style={{display:'flex',justifyContent:'space-between',padding:'18px 0'}}><b>Student Portal</b><button onClick={()=>signOut(auth).then(()=>location.href='/login')}>Logout</button></header>}
