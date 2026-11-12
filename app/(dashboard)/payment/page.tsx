@@ -1,0 +1,1 @@
+export default function Page(){return <><h1>Payment status</h1><div className="card">Your payment requests and approval status will be shown here.</div></>}

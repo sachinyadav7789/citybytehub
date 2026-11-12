@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server'; export async function POST(){return NextResponse.json({ok:true,message:'Use Firebase Auth client SDK; server session-cookie exchange should be enabled before production.'})}

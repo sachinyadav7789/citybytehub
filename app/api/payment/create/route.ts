@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server'; export async function POST(){return NextResponse.json({error:'Payment request API is not configured. Do not accept real payments until server-side authentication, validation and storage are implemented.'},{status:501})}

@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server'; export async function POST(){return NextResponse.json({error:'Manual payment verification is performed only by an authorized admin.'},{status:403})}
