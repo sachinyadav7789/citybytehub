@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-   "@citybytehub/firebase": "*",
+   "@citybytehub/firebase": "workspace:*",
     "firebase": "^11.10.0",
     "firebase-admin": "^13.10.0",
     "html2canvas": "^1.4.1",
