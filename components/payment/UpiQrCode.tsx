@@ -1,0 +1,1 @@
+export default function UpiQrCode({upiId='citybytehub@slc'}:{upiId?:string}){return <div className="card"><h3>Pay using UPI</h3><p>UPI ID: <b>{upiId}</b></p><p className="muted">The live QR image and UPI ID should be loaded from protected admin-managed settings.</p></div>}
