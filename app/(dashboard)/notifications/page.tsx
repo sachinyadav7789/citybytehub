@@ -1,1 +1,0 @@
-export default function Page(){return <><h1>Notifications</h1><div className="card">No new notifications.</div></>}

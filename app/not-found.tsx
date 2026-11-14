@@ -1,1 +1,0 @@
-export default function NotFound(){return <main className="container" style={{padding:60}}><h1>Page not found</h1><a href="/">Return home</a></main>}

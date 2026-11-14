@@ -1,1 +1,0 @@
-import {NextResponse} from 'next/server'; export async function POST(){return NextResponse.json({error:'Secure upload endpoint requires authenticated Firebase Storage integration.'},{status:501})}

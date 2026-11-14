@@ -1,1 +1,0 @@
-export default async function Page({params}:{params:Promise<{id:string}>}){const {id}=await params;return <div className="card"><h1>Training details</h1><p>Program ID: {id}</p><p>Review the training details and continue to checkout when ready.</p><a className="btn" href={'/checkout?program='+id}>Continue to checkout</a></div>}
